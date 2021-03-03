@@ -1,0 +1,33 @@
+<div aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="Modal-Lock-{{ lockable_resource.id }}" class="modal fade">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <div class="modal-header">
+            <button aria-hidden="true" data-dismiss="modal" class="close" type="button">×</button>
+            <h4 class="modal-title">
+                <b>Lock {{ lockable_resource.name }} ?</b>
+            </h4>
+         </div>
+         <div class="modal-body">
+            <form class="form-inline" role="form" method="POST">
+               {% csrf_token %}
+
+               <div class="form-group">
+                  <label for="signoff-{{ lockable_resource.id }}">Please include a sign off that will describe who locks the resource</label>
+                  <input type="text" class="form-control center-block" id="signoff-{{ lockable_resource.id }}"
+                          placeholder="Sign off" required="true" name="signoff-{{ lockable_resource.id }}">
+               </div>
+
+               <br>
+               <br>
+               <br>
+                <input type="hidden" id='id' name="id" value="{{ lockable_resource.id }}"/>
+                <input type="hidden" id='action' name="action" value="lock"/>
+                <button type="submit" class="btn btn-danger">
+                    <i style="margin-right: 5px"  class="icon_lock"></i>
+                    <b>Confirm Lock</b>
+                </button>
+            </form>
+         </div>
+      </div>
+   </div>
+</div>

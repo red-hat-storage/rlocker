@@ -1,0 +1,81 @@
+---
+lockable_resources:
+  - provider: AWS
+    name: aws-resource-1
+    labels_string: aws
+
+  - provider: AWS
+    name: aws-resource-2
+    labels_string: aws
+
+  - provider: AWS
+    name: aws-resource-3
+    labels_string: aws
+
+  - provider: AWS
+    name: aws-resource-4
+    labels_string: aws
+
+  - provider: GCP
+    name: gcp-resource-1
+    labels_string: gcp
+
+  - provider: GCP
+    name: gcp-resource-2
+    labels_string: gcp
+
+  - provider: GCP
+    name: gcp-resource-3
+    labels_string: gcp
+
+  - provider: GCP
+    name: gcp-resource-4
+    labels_string: gcp
+
+  - provider: Baremetal
+    name: baremetal-resource-1
+    labels_string: baremetal
+
+  - provider: Baremetal
+    name: baremetal-resource-2
+    labels_string: baremetal
+
+  - provider: Baremetal
+    name: baremetal-resource-3
+    labels_string: baremetal
+
+  - provider: Baremetal
+    name: baremetal-resource-4
+    labels_string: baremetal
+
+  - provider: Vsphere
+    name: vsphere-resource-1
+    labels_string: vsphere
+
+  - provider: Vsphere
+    name: vsphere-resource-2
+    labels_string: vsphere
+
+  - provider: Vsphere
+    name: vsphere-resource-3
+    labels_string: vsphere
+
+  - provider: Vsphere
+    name: vsphere-resource-4
+    labels_string: vsphere
+
+  - provider: Vsphere
+    name: vsphere-resource-5
+    labels_string: vsphere
+
+  - provider: Vsphere
+    name: vsphere-resource-6
+    labels_string: vsphere
+
+  - provider: Vsphere
+    name: vsphere-resource-7
+    labels_string: vsphere
+
+  - provider: Vsphere
+    name: vsphere-resource-8
+    labels_string: vsphere

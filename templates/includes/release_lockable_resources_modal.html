@@ -1,0 +1,29 @@
+<div aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="Modal-Release-{{ lockable_resource.id }}" class="modal fade">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <div class="modal-header">
+            <button aria-hidden="true" data-dismiss="modal" class="close" type="button">×</button>
+            <h4 class="modal-title">
+                <b>Release {{ lockable_resource.name }} ?</b>
+            </h4>
+         </div>
+         <div class="modal-body">
+             <h5>By clicking Confirm Release, this resource will not be locked anymore.</h5>
+            <form class="form-inline" role="form" method="POST">
+               {% csrf_token %}
+
+               <br>
+               <br>
+               <br>
+
+               <input type="hidden" id='id' name="id" value="{{ lockable_resource.id }}"/>
+               <input type="hidden" id='action' name="action" value="release"/>
+               <button type="submit" class="btn btn-success">
+                   <i style="margin-right: 5px"  class="icon_lock-open"></i>
+                   <b>Confirm Release</b>
+               </button>
+            </form>
+         </div>
+      </div>
+   </div>
+</div>
