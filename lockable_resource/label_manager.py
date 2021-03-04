@@ -2,6 +2,7 @@
 from lockable_resource.models import LockableResource
 from lockable_resource.exceptions import FreeResourceNotAvailableException
 
+
 class LabelManager:
     def __init__(self, label):
         '''
@@ -41,7 +42,6 @@ class LabelManager:
         resources_prioritized = self.get_free_resources()
         resources_prioritized.sort(key=lambda_prioritize)
         return resources_prioritized
-
 
     def retrieve_free_resource(self, not_exist_ok=True):
         '''

@@ -1,12 +1,11 @@
 from django.db import models
 from lockable_resource.exceptions import AlreadyFreeException, AlreadyLockedException
 import lockable_resource.constants as const
-import pprint as pp
 
 
 class LockableResource(models.Model):
 
-    #Columns:
+    #Fields:
         # id - Primary key to identify each lockable resource obj. (Auto Generated)
         # provider - The Cloud provider.
         # name - Name of the resource.
@@ -22,7 +21,6 @@ class LockableResource(models.Model):
     is_locked = models.BooleanField(default=False)
     labels_string = models.CharField(max_length=2048)
     signoff = models.CharField(max_length=2048, null=True, default=None, blank=True)
-
 
     @property
     def labels(self):
@@ -78,7 +76,7 @@ class LockableResource(models.Model):
         :raises: AlreadyLockedException
         :returns: None
         '''
-        if not self.is_locked:
+        if self.can_lock:
             self.is_locked = True
             self.signoff = signoff
             self.save()
@@ -95,7 +93,7 @@ class LockableResource(models.Model):
         :raises: AlreadyFreeException
         :returns: None
         '''
-        if self.is_locked:
+        if self.can_release:
             self.is_locked = False
             self.delete_signoff()
             self.save()
@@ -115,24 +113,6 @@ class LockableResource(models.Model):
     def has_signoff(self):
         return self.signoff is not None
 
-    def change(self, **kwargs):
-        '''
-        Instance Method:
-            Dynamically perform one of the valid actions
-        :param kwargs:
-            action - lock or release
-            signoff - mandatory when locking, describes the message about
-                who locked the resource
-        :return: None
-        '''
-        action = kwargs.get('action')
-        if action == const.ACTION_LOCK:
-            signoff = kwargs.get('signoff')
-            self.lock(signoff)
-
-        if action == const.ACTION_RELEASE:
-            self.release()
-
     @staticmethod
     def get_all_free_resources():
         return LockableResource.objects.filter(is_locked=False)
@@ -140,11 +120,12 @@ class LockableResource(models.Model):
     def __str__(self):
         '''
         Instance Magic Method __str__
-        This will make the object more descriptive especially
-            in the Admin page
+        This will make the object more descriptive.
+        Helpful in the Admin page
         '''
         return self.name
 
     # Meta Class
     class Meta:
+        #Override verbose name plural to get nicer description in Admin Page:
         verbose_name_plural = "Lockable Resources"

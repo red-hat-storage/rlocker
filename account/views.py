@@ -13,7 +13,7 @@ def login_page(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request,user)
-            messages.success(request, f"You are logged in as {user.username}")
+            messages.info(request, f"You are logged in as {user.username}")
             return redirect('lockable_resources_page')
         else:
             messages.error(request, 'The combination of the user name and the password is wrong!')
@@ -21,5 +21,5 @@ def login_page(request):
 
 def logout_page(request):
     logout(request)
-    messages.success(request, f'You have been logged out!')
+    messages.info(request, f'You have been logged out!')
     return redirect('lockable_resources_page')

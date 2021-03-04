@@ -51,37 +51,37 @@
                <div class="icon-reorder tooltips" data-original-title="Toggle Navigation" data-placement="bottom"><i class="icon_menu"></i></div>
             </div>
             <!--logo start-->
-            <a href="#" class="logo">Resource <span class="lite">Locker</span></a>
+            <a href="{% url 'lockable_resources_page' %}" class="logo">Resource <span class="lite">Locker</span></a>
             <!--logo end-->
             <div class="top-nav notification-row">
                <ul class="nav pull-right top-menu">
-                   {% if user.is_authenticated %}
-                     <li class="dropdown">
-                        <a data-toggle="dropdown" class="dropdown-toggle" href="#">
-                            <span>
-                                <i class="fa fa-arrow-down"></i>
-                            </span>
-                            <span class="username" style="margin-left: 10px;color: white; font-weight: bold; font-size: 18px">
-                                Welcome, {{ user.username }}
-                            </span>
-                        </a>
-                        <ul class="dropdown-menu extended logout">
-                            <li>
-                                <a href="{% url 'logout_page' %}"><i class="icon_key_alt"></i>Log Out</a>
-                            </li>
-                            <li>
-                                <a href="#"><i class="fa fa-file"></i> Documentation</a>
-                            </li>
-                        </ul>
-                     </li>
-                   {% else %}
-                    <li>
-                        <a href="{% url 'login_page' %}">
-                            <i style="margin-left: 10px" class="icon_key_alt"></i>
-                            Login
-                        </a>
-                    </li>
-                   {% endif %}
+                  {% if user.is_authenticated %}
+                  <li class="dropdown">
+                     <a data-toggle="dropdown" class="dropdown-toggle" href="">
+                     <span>
+                     <i class="fa fa-arrow-down"></i>
+                     </span>
+                     <span class="username" style="margin-left: 10px;color: white; font-weight: bold; font-size: 18px">
+                     Welcome, {{ user.username }}
+                     </span>
+                     </a>
+                     <ul class="dropdown-menu extended logout">
+                        <li>
+                           <a href="{% url 'logout_page' %}"><i class="icon_key_alt"></i>Log Out</a>
+                        </li>
+                        <li>
+                           <a onclick="copyToClipboard()" href=""><i class="fa fa-file"></i> Copy API Token</a>
+                        </li>
+                     </ul>
+                  </li>
+                  {% else %}
+                  <li>
+                     <a href="{% url 'login_page' %}">
+                     <i style="margin-left: 10px" class="icon_key_alt"></i>
+                     Login
+                     </a>
+                  </li>
+                  {% endif %}
                </ul>
             </div>
          </header>
@@ -92,6 +92,18 @@
          <!--main content start-->
          <section id="main-content">
             <section class="wrapper">
+               <!-- Django Messages Area start -->
+               {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} fade in">
+                            <button data-dismiss="alert" class="ml-2 mb-1 close" type="button">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            <strong>{{ message }}</strong>
+                        </div>
+                    {% endfor %}
+               {% endif %}
+               <!-- Django Messages Area end -->
                <div class="row">
                   <div class="col-lg-12">
                      <h3 class="page-header"><i class="fa fa fa-bars"></i>
@@ -137,5 +149,22 @@
       <script src="{% static 'js/jquery.nicescroll.js' %}" type="text/javascript"></script>
       <!--custome script for all page-->
       <script src="{% static 'js/scripts.js' %}"></script>
+      <script>
+         function copyToClipboard() {
+             // The safer approach to copy any text to clipboard without making it visible in the Inspect
+             // SO link: https://stackoverflow.com/questions/400212/how-do-i-copy-to-the-clipboard-in-javascript
+             var input = document.createElement('textarea');
+             {% if user.auth_token %}
+                 input.innerHTML = "{{ user.auth_token }}";
+                 document.body.appendChild(input);
+                 input.select();
+                 document.execCommand('copy');
+                 alert("API Token copied to clipboard!");
+                 document.body.removeChild(input);
+             {% else %}
+                 alert("User does not own an API token, please contact to System.");
+             {% endif %}
+         }
+      </script>
    </body>
 </html>

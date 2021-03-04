@@ -1,5 +1,6 @@
 #Exceptions that are used with in the lockable_resource app
 
+
 class AlreadyLockedException(Exception):
     def __init__(self):
         print("The Lockable Resource you are trying to Lock is already Locked!")

@@ -37,6 +37,18 @@
    </head>
    <body class="login-body">
       <div class="container">
+         <!-- Django Messages Area start -->
+         {% if messages %}
+              {% for message in messages %}
+                  <div class="alert alert-danger fade in">
+                      <button data-dismiss="alert" class="ml-2 mb-1 close" type="button">
+                          <span aria-hidden="true">&times;</span>
+                      </button>
+                      <strong>{{ message }}</strong>
+                  </div>
+              {% endfor %}
+         {% endif %}
+         <!-- Django Messages Area end -->
          <form class="login-form" action="" method="POST">
             {% csrf_token %}
             <div class="login-wrap">
@@ -60,5 +72,13 @@
             </div>
          </form>
       </div>
+      <!-- javascripts -->
+      <script src="{% static 'js/jquery.js' %}"></script>
+      <script src="{% static 'js/bootstrap.min.js' %}"></script>
+      <!-- nice scroll -->
+      <script src="{% static 'js/jquery.scrollTo.min.js' %}"></script>
+      <script src="{% static 'js/jquery.nicescroll.js' %}" type="text/javascript"></script>
+      <!--custome script for all page-->
+      <script src="{% static 'js/scripts.js' %}"></script>
    </body>
 </html>

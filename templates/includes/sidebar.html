@@ -3,17 +3,25 @@
       <!-- sidebar menu start-->
       <ul class="sidebar-menu">
          <li class="active">
-            <a href="#">
+            <a href="{% url 'lockable_resources_page' %}">
             <i class="icon_house_alt"></i>
             <span>Home</span>
             </a>
          </li>
          <li>
             <a href="#">
-            <i class="icon_genius"></i>
-            <span>Some Other tab</span>
+            <i class="icon_document"></i>
+            <span>Documentation</span>
             </a>
          </li>
+         {% if user.is_staff %}
+            <li>
+                <a style="color: #fabb3d" href="{% url 'admin:index' %}">
+                <i class="icon_error-triangle"></i>
+                <span>Admin Page</span>
+                </a>
+            </li>
+         {% endif %}
       </ul>
       <!-- sidebar menu end-->
    </div>
