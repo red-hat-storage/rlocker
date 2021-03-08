@@ -7,13 +7,12 @@ metadata:
     type: local
     app: postgres
 spec:
-  storageClassName: manual
+  storageClassName: thin
+  volumeMode: Filesystem
   capacity:
     storage: 15Gi
   accessModes:
-    - ReadWriteMany
-  hostPath:
-    path: "/mnt/data"
+    - ReadWriteOnce
 ---
 kind: PersistentVolumeClaim
 apiVersion: v1
@@ -23,9 +22,10 @@ metadata:
   labels:
     app: postgres
 spec:
-  storageClassName: manual
+  storageClassName: thin
+  volumeMode: Filesystem
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
   resources:
     requests:
       storage: 15Gi
