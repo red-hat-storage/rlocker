@@ -1,11 +1,13 @@
 import os
 from scripts.utils import parse_args
+from django.conf import settings
+
 
 DJANGO_NS = "web"
 NGINX_NS = "web"
 DB_NS = "db"
 class OpenshiftDeployment:
-    def __init__(self, api_url, token, skip_db=True, skip_nginx=True, skip_django=True):
+    def __init__(self, api_url=None, token=None, skip_db=True, skip_nginx=True, skip_django=True):
         '''
         Constructor
         :param api_url:
@@ -20,14 +22,17 @@ class OpenshiftDeployment:
         self.skip_nginx = skip_nginx
         self.skip_django = skip_django
 
-        self.django_location = os.path.join(os.curdir, "deployment", "openshift", DJANGO_NS, 'django')
-        self.nginx_location = os.path.join(os.curdir, "deployment", "openshift", NGINX_NS, 'nginx')
-        self.db_location = os.path.join(os.curdir, "deployment", "openshift", DB_NS)
+        self.django_location = os.path.join(settings.BASE_DIR, "scripts", "deployment", "openshift", DJANGO_NS, 'django')
+        self.nginx_location = os.path.join(settings.BASE_DIR, "scripts", "deployment", "openshift", NGINX_NS, 'nginx')
+        self.db_location = os.path.join(settings.BASE_DIR, "scripts", "deployment", "openshift", DB_NS)
 
         self.login()
 
     def login(self):
-        os.system(f"oc login {self.api_url} --token={self.token}")
+        if self.api_url is not None and self.token is not None:
+            os.system(f"oc login {self.api_url} --token={self.token}")
+        else:
+            print("Skipping Login...")
 
     def create_namespace(self, name):
         os.system(f"oc create namespace {name}")
