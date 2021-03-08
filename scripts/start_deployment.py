@@ -46,7 +46,11 @@ class OpenshiftDeployment:
             deployment_file = os.path.join(self.django_location, yaml_file)
             self.apply(deployment_file)
 
-
+    def deploy_db(self):
+        self.create_namespace(DB_NS)
+        for yaml_file in os.listdir(self.db_location):
+            deployment_file = os.path.join(self.django_location, yaml_file)
+            self.apply(deployment_file)
 
 
 def run(*args):
@@ -57,7 +61,11 @@ def run(*args):
     '''
     bool_args, kw_args = parse_args(args)
     deployment = OpenshiftDeployment(kw_args.get('api_url'), kw_args.get('token'))
-    deployment.deploy_django()
+    if 'django' in bool_args:
+        deployment.deploy_django()
+
+    if 'db' in bool_args:
+        deployment.deploy_db()
 
 
 
