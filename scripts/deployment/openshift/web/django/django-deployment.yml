@@ -1,0 +1,31 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: django
+  namespace: web
+  labels:
+    app: django
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: django
+  template:
+    metadata:
+      name: django
+      labels:
+        app: django
+    spec:
+      containers:
+        - name: django
+          image: 'jimdevops/my-images:rlocker'
+          imagePullPolicy: "Always"
+          envFrom:
+            - configMapRef:
+                name: django-config
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      securityContext: {}
+      imagePullSecrets:
+        - name: pull-secret-jsc2

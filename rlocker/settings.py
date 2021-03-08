@@ -20,10 +20,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '487$7pk@#2cn-1)cf)4_9gg#*b_6_-#yw$5_)-i)78w_^+v*op'
+# Could add here for debugging only: os.environ['DJANGO_SECRET'] = $YOUR_SECRET
+SECRET_KEY = os.environ.get('DJANGO_SECRET')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# We use string by purpose since its env var
+DEBUG = os.environ.get('DEBUG') == "True"
 
 ALLOWED_HOSTS = ['*']
 
@@ -80,13 +82,25 @@ WSGI_APPLICATION = 'rlocker.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
-DATABASES = {
+PROD_DB = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'rlocker',
+        'USER': 'admin',
+        'PASSWORD': 'admin',
+        'HOST': 'postgres.db'
+    }
+}
+
+DEV_DB = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
+
+DATABASES = PROD_DB if not DEBUG else DEV_DB
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators

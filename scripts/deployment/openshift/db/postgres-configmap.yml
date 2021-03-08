@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-config
+  namespace: db
+  labels:
+    app: postgres
+data:
+  POSTGRES_DB: rlocker
+  POSTGRES_USER:
+  POSTGRES_PASSWORD:

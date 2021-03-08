@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: django-config
+  namespace: web
+  labels:
+    app: django
+data:
+  DJANGO_SECRET:
+  DEBUG: "False"
