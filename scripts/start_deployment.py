@@ -49,7 +49,7 @@ class OpenshiftDeployment:
     def deploy_db(self):
         self.create_namespace(DB_NS)
         for yaml_file in os.listdir(self.db_location):
-            deployment_file = os.path.join(self.django_location, yaml_file)
+            deployment_file = os.path.join(self.db_location, yaml_file)
             self.apply(deployment_file)
 
 
