@@ -18,11 +18,9 @@ spec:
     spec:
       containers:
         - name: nginx
-          image: 'jimdevops/my-images:nginx-prod'
+          image: 'quay.io/cerginba/rlocker-nginx'
           imagePullPolicy: Always
       restartPolicy: Always
       terminationGracePeriodSeconds: 30
       dnsPolicy: ClusterFirst
       securityContext: {}
-      imagePullSecrets:
-        - name: pull-secret-jsc2
