@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: django
-          image: 'jimdevops/my-images:rlocker'
+          image: 'quay.io/cerginba/rlocker-django'
           imagePullPolicy: "Always"
           envFrom:
             - configMapRef:
