@@ -46,6 +46,12 @@ class OpenshiftDeployment:
             deployment_file = os.path.join(self.django_location, yaml_file)
             self.apply(deployment_file)
 
+    def deploy_nginx(self):
+        self.create_namespace(NGINX_NS)
+        for yaml_file in os.listdir(self.nginx_location):
+            deployment_file = os.path.join(self.nginx_location, yaml_file)
+            self.apply(deployment_file)
+
 
 def run(*args):
     '''
