@@ -88,7 +88,7 @@ PROD_DB = {
         'NAME': 'rlocker',
         'USER': 'admin',
         'PASSWORD': 'admin',
-        'HOST': 'postgres.db'
+        'HOST': 'postgresql.db'
     }
 }
 
