@@ -21,12 +21,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 # Could add here for debugging only: os.environ['DJANGO_SECRET'] = $YOUR_SECRET
-os.environ['DJANGO_SECRET'] = '487$7pk@#2cn-1)cf)4_9gg#*b_6_-#yw$5_)-i)78w_^+v*op'
 SECRET_KEY = os.environ.get('DJANGO_SECRET')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # We use string by purpose since its env var
-os.environ['DEBUG'] = "True"
 DEBUG = os.environ.get('DEBUG') == "True"
 
 ALLOWED_HOSTS = ['*']
@@ -142,6 +140,9 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+#Location of the static files for debug mode, the location that the Django should search for:
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
+#Location where the static files would be collected once running python manage.py collectstatic --noinput
+STATIC_ROOT = BASE_DIR / "nginx" / "static"
