@@ -6,7 +6,7 @@ from lockable_resource.models import *
 
 def lockable_resources_page(request):
     if request.method == 'GET':
-        lockable_resources = LockableResource.objects.all()
+        lockable_resources = LockableResource.objects.all().order_by('id')
         return render(request, template_name='lockable_resource/all.html',
                   context={"lockable_resources" : lockable_resources })
 
