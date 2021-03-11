@@ -4,3 +4,4 @@ django_extensions
 djangorestframework
 django-filter
 markdown
+pyyaml
