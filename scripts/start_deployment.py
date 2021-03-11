@@ -64,4 +64,5 @@ def run(*args):
     if 'django' in bool_args:
         deployment.deploy_django()
 
-
+    if 'nginx' in bool_args:
+        deployment.deploy_nginx()
