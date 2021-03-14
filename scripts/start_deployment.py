@@ -47,7 +47,7 @@ class OpenshiftDeployment:
 
     def instantiate_db_template(self):
         template_envs_file_location = os.path.join(self.db_location, "instantiate-template.env")
-        os.system(f"oc process -f postgresql-persistent --param-file={template_envs_file_location} -n openshift")
+        os.system(f"oc process postgresql-persistent -n openshift --param-file={template_envs_file_location} | oc create -f - -n {DB_NS}")
 
     def deploy_db(self):
         self.create_namespace(DB_NS)
