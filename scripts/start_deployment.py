@@ -7,21 +7,14 @@ DJANGO_NS = "web"
 NGINX_NS = "web"
 DB_NS = "db"
 class OpenshiftDeployment:
-    def __init__(self, api_url=None, token=None, skip_db=True, skip_nginx=True, skip_django=True):
+    def __init__(self, api_url=None, token=None):
         '''
         Constructor
         :param api_url:
         :param token:
-        :param skip_db:
-        :param skip_nginx:
-        :param skip_django:
         '''
         self.api_url = api_url
         self.token = token
-        self.skip_db = skip_db
-        self.skip_nginx = skip_nginx
-        self.skip_django = skip_django
-
         self.django_location = os.path.join(settings.BASE_DIR, "scripts", "deployment", "openshift", DJANGO_NS, 'django')
         self.nginx_location = os.path.join(settings.BASE_DIR, "scripts", "deployment", "openshift", NGINX_NS, 'nginx')
         self.db_location = os.path.join(settings.BASE_DIR, "scripts", "deployment", "openshift", DB_NS)
@@ -52,6 +45,14 @@ class OpenshiftDeployment:
             deployment_file = os.path.join(self.nginx_location, yaml_file)
             self.apply(deployment_file)
 
+    def instantiate_db_template(self):
+        template_envs_file_location = os.path.join(self.db_location, "instantiate-template.env")
+        os.system(f"oc process -f persistent-postgres --param-file={template_envs_file_location} -n {DB_NS}")
+
+    def deploy_db(self):
+        self.create_namespace(DB_NS)
+        self.instantiate_db_template()
+
 
 def run(*args):
     '''
@@ -66,3 +67,6 @@ def run(*args):
 
     if 'nginx' in bool_args:
         deployment.deploy_nginx()
+
+    if 'db' in bool_args:
+        deployment.deploy_db()
