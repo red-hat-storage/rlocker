@@ -6,6 +6,7 @@ from django.conf import settings
 DJANGO_NS = "web"
 NGINX_NS = "web"
 DB_NS = "db"
+
 class OpenshiftDeployment:
     def __init__(self, api_url=None, token=None):
         '''

@@ -6,5 +6,6 @@ metadata:
   labels:
     app: django
 data:
+
   DJANGO_SECRET:
   DEBUG: "False"
