@@ -1,17 +1,19 @@
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from api.custom_permissions import HasValidToken
+from rest_framework.decorators import api_view, permission_classes
 from lockable_resource.models import LockableResource
 from lockable_resource.label_manager import LabelManager
 from django.shortcuts import  redirect
 from lockable_resource.exceptions import AlreadyLockedException, LockWithoutSignoffException
 from api.serializers import LockableResourceSerializer
-
+import pprint as pp
 
 def redirect_to_prior_location(request):
     return redirect('resources_view')
 
 @api_view(['GET', 'POST'])
+@permission_classes([HasValidToken])
 def resources_view(request):
     '''
     :param request:
@@ -53,6 +55,7 @@ def resources_view(request):
             return Response(extended_data, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET', 'PUT'])
+@permission_classes([HasValidToken])
 def resource_view(request, slug):
     '''
     :param request:
@@ -80,7 +83,7 @@ def resource_view(request, slug):
         extended_data = {}
         if serializer.is_valid():
             try:
-                #Try saving the changes
+                #Try saving the changes. This could be both for lock and release
                 serializer.save()
                 #If no problem with save(), prepare the response:
                 extended_data['status'] = 'OK'
@@ -102,6 +105,7 @@ def resource_view(request, slug):
             return Response(extended_data, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
+@permission_classes([HasValidToken])
 def retrieve_resource_view(request, slug):
     '''
     Api View designed to gather one free resource among all the resources,
