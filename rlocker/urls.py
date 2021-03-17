@@ -21,4 +21,5 @@ urlpatterns = [
     path('', include('lockable_resource.urls')),
     path('api/', include('api.urls')),
     path('', include('account.urls')),
+    path('', include('rqueue.urls')),
 ]
