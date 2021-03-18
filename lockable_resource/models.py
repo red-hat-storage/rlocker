@@ -4,7 +4,6 @@ import lockable_resource.constants as const
 
 
 class LockableResource(models.Model):
-
     #Fields:
         # id - Primary key to identify each lockable resource obj. (Auto Generated)
         # provider - The Cloud provider.

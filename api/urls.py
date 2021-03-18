@@ -6,4 +6,6 @@ urlpatterns = [
     path('resources/', views.resources_view, name='resources_view'),
     path('resource/retrieve/<slug>', views.retrieve_resource_view, name='retrieve_resource_view'),
     path('resource/<slug>', views.resource_view, name='resource_view'),
+    path('pendingrequest/<slug>', views.pendingrequest_view, name='pendingrequest_view'),
+    path('pendingrequests', views.pendingrequests_view, name='pendingrequests_view'),
 ]

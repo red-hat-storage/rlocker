@@ -9,6 +9,12 @@
             </a>
          </li>
          <li>
+            <a href="{% url 'pending_requests_page' %}">
+            <i class="icon_loading"></i>
+            <span>Pending Requests</span>
+            </a>
+         </li>
+         <li>
             <a href="#">
             <i class="icon_document"></i>
             <span>Documentation</span>
@@ -16,6 +22,12 @@
          </li>
          {% if user.is_staff %}
             <li>
+                <a style="color: #fabb3d" href="{% url 'redirect_to_prior_location' %}">
+                <i class="icon_error-triangle"></i>
+                <span>Rest API </span>
+                </a>
+            </li>
+             <li>
                 <a style="color: #fabb3d" href="{% url 'admin:index' %}">
                 <i class="icon_error-triangle"></i>
                 <span>Admin Page</span>

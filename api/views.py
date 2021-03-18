@@ -3,10 +3,11 @@ from rest_framework.response import Response
 from api.custom_permissions import HasValidToken
 from rest_framework.decorators import api_view, permission_classes
 from lockable_resource.models import LockableResource
+from rqueue.models import Rqueue
 from lockable_resource.label_manager import LabelManager
 from django.shortcuts import  redirect
 from lockable_resource.exceptions import AlreadyLockedException, LockWithoutSignoffException
-from api.serializers import LockableResourceSerializer
+from api.serializers import LockableResourceSerializer, RqueueSerializer
 import pprint as pp
 
 def redirect_to_prior_location(request):
@@ -154,3 +155,31 @@ def retrieve_resource_view(request, slug):
             return Response({
                 'message' : 'There are no free resources that matches the given name or label'
             },status=status.HTTP_206_PARTIAL_CONTENT)
+
+@api_view(['GET'])
+def pendingrequest_view(request, slug):
+    '''
+    :param request:
+    :slug: We will identify the requested Rqueue with it's id
+    GET:
+        Return Response with the requested Rqueue in a JSON Object
+
+    '''
+    rqueue = Rqueue.objects.get(id=slug)
+
+    if request.method == 'GET':
+        serializer = RqueueSerializer(rqueue)
+        return Response(serializer.data)
+
+@api_view(['GET'])
+def pendingrequests_view(request):
+    '''
+    :param request:
+    GET:
+        Return Response with all the Rqueues in a JSON Object
+    '''
+    rqueue = Rqueue.objects.all()
+
+    if request.method == 'GET':
+        serializer = RqueueSerializer(rqueue, many=True)
+        return Response(serializer.data)
