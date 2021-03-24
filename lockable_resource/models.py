@@ -1,7 +1,7 @@
 from django.db import models
 from lockable_resource.exceptions import AlreadyFreeException, AlreadyLockedException
 import lockable_resource.constants as const
-
+import json
 
 class LockableResource(models.Model):
     #Fields:
@@ -123,6 +123,26 @@ class LockableResource(models.Model):
         Helpful in the Admin page
         '''
         return self.name
+
+    def json_parse(self, **kwargs):
+        '''
+        Instance Method
+        Method prepares the object in parsed json.
+        We want to omit several key values from the
+        built-in __dict__ attribute, to have cleaner data
+        Removals are in list: key_removals
+        :return: JSON object
+        '''
+        key_removals = ['_state']
+        obj_dict = self.__dict__
+        for key_removal in key_removals:
+            #Try to remove the key SILENTLY:
+            obj_dict.pop(key_removal, None)
+
+        if kwargs.get('override_signoff'):
+            obj_dict['signoff'] = kwargs.get('signoff')
+            return json.dumps(obj_dict)
+
 
     # Meta Class
     class Meta:

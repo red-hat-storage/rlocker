@@ -15,4 +15,4 @@ class LockableResourceSerializer(serializers.ModelSerializer):
 class RqueueSerializer(serializers.ModelSerializer):
     class Meta:
         model = Rqueue
-        fields = 'id','priority', 'time_requested', 'pending_time', 'data'
+        fields = 'id','priority', 'time_requested', 'pending_time', 'pending_time_descriptive', 'data'

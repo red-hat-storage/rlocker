@@ -43,7 +43,7 @@
                     </td>
                     <td>
                         <span id="pending-time-{{ rqueue.id }}">
-                            {{ rqueue.pending_time }}
+                            {{ rqueue.pending_time_descriptive }}
                         </span>
                         <div class="loader pull-right"></div>
                         <!-- To keep the pending time updated every second, we will run this script -->
@@ -51,7 +51,7 @@
                             setInterval(function() {
                               fetch("{% url 'pendingrequest_view' rqueue.id %}")
                                 .then(response => response.json())
-                                .then(data => document.getElementById('pending-time-{{ rqueue.id }}').innerHTML = data.pending_time);
+                                .then(data => document.getElementById('pending-time-{{ rqueue.id }}').innerHTML = data.pending_time_descriptive);
                             }, 36000);
                         </script>
                         <!-- To keep the pending time updated every second, we will run this script -->
@@ -62,7 +62,9 @@
       </table>
     </section>
   </div>
-  <div id="messages-area" class="col-lg-3"></div>
+  <div id="messages-area" class="col-lg-3">
+
+  </div>
 </div>
 
 <!-- To tell to our users that the page needs to be refreshed, we will run this script -->
