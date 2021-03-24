@@ -124,6 +124,28 @@ class LockableResource(models.Model):
         '''
         return self.name
 
+    @staticmethod
+    def get_all_labels():
+        '''
+        Static Method
+        Responsible to return a non-duplicated list of ALL the labels
+            of the entire platform
+        :return:
+        '''
+        all_labels = []
+        for lockable_resource in LockableResource.objects.all():
+            for label in lockable_resource.labels:
+                all_labels.append(label)
+
+        #Lets remove duplicates by converting to a set:
+        all_labels = set(all_labels)
+
+        #Now revert this back to list:
+        all_labels = list(all_labels)
+
+        return all_labels
+
+
     def json_parse(self, **kwargs):
         '''
         Instance Method
@@ -141,7 +163,8 @@ class LockableResource(models.Model):
 
         if kwargs.get('override_signoff'):
             obj_dict['signoff'] = kwargs.get('signoff')
-            return json.dumps(obj_dict)
+
+        return json.dumps(obj_dict)
 
 
     # Meta Class

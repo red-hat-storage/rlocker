@@ -13,3 +13,9 @@ class Priority(Enum):
          - DEVELOPMENT_RUN
     '''
     UI = 0
+    LIVE_TESTING = 1
+    PRODUCTION_RUN = 2
+    DEVELOPMENT_RUN = 3
+
+INTERVAL = 10
+REQUEST_TIMEOUT = 600

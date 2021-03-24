@@ -107,23 +107,23 @@ def resource_view(request, slug):
 
 @api_view(['GET'])
 @permission_classes([HasValidToken])
-def retrieve_resource_view(request, slug):
+def retrieve_resource_view(request, search_string):
     '''
     Api View designed to gather one free resource among all the resources,
-        We should first check if the given slug is an absolute name of a resource.
+        We should first check if the given search_string is an absolute name of a resource.
         If not, then we should try to find a resource that matches the label, and it is free
 
     :param request:
-    :param slug: Could be the absolute name of the resource or just a label to pick up from
+    :param search_string: Could be the absolute name of the resource or just a label to pick up from
     :return:
     '''
     if request.method == 'GET':
-        #First, check if the given slug is an absolute name:
+        #First, check if the given search_string is an absolute name:
         try:
             #get() - Throws exception when the filtration does not match
             #Hence, everything has to be wrapped around try catch:
             #See this SO poll: https://stackoverflow.com/questions/3090302/how-do-i-get-the-object-if-it-exists-or-none-if-it-does-not-exist
-            resource = LockableResource.objects.get(name=slug)
+            resource = LockableResource.objects.get(name=search_string)
             if resource.can_lock:
                 #Prepare the Response:
                 serializer = LockableResourceSerializer(resource)
@@ -133,19 +133,23 @@ def retrieve_resource_view(request, slug):
 
 
         except LockableResource.DoesNotExist:
-            #We;d only like to print this in the background, because maybe the given slug
+            #We'd only like to print this in the background, because maybe the given search_string
                 #is actually a label.
-            print(f"Could not find a free resource by it's name: {slug}."
+            print(f"Could not find a free resource by it's name: {search_string}."
                   "Searching based on resources labels.")
 
         except AlreadyLockedException:
-            return Response({
-                'message' : 'The requested resource matched to an existing name, but it is locked'
-            },status=status.HTTP_206_PARTIAL_CONTENT)
+            #Ignore warning from Pycharm about could be referenced before assignment)
+            #If we hit here, it means that the resource exists.
+            #Otherwise, we would hit .DoesNotExist above ...
+            #We'd like to wait until this gets fr
+            put_in_queue = Rqueue(data=resource.json_parse(), priority=1)
+            put_in_queue.save()
+
 
 
         #If no resource found by filtering with name, we'll try to find a matching label
-        resource_by_label = LabelManager(label=slug)
+        resource_by_label = LabelManager(label=search_string)
         resource = resource_by_label.retrieve_free_resource()
         if resource:
             serializer = LockableResourceSerializer(resource)

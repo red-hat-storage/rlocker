@@ -1,3 +1,7 @@
+import time
+import rqueue.constants as const
+from lockable_resource.models import LockableResource
+
 def get_time_descriptive(total_seconds):
     '''
     We receive the total seconds and decide a descriptive way that makes sense
@@ -32,3 +36,15 @@ def get_time_descriptive(total_seconds):
 
     if seconds > 0:
         return f"Less than a minute"
+
+
+def check_resource_released_by_name(name):
+    counter = 0
+    while counter <= const.REQUEST_TIMEOUT // const.INTERVAL:
+        resource = LockableResource.objects.get(name=name)
+        if resource.is_locked:
+            time.sleep(const.INTERVAL)
+            counter += 1
+        else:
+            return resource
+

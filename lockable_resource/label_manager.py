@@ -1,6 +1,6 @@
 #This file will include filtration functionalities based on resource labels
 from lockable_resource.models import LockableResource
-from lockable_resource.exceptions import FreeResourceNotAvailableException
+from lockable_resource.exceptions import FreeResourceNotAvailableException, InvalidLabelException
 
 
 class LabelManager:
@@ -11,9 +11,13 @@ class LabelManager:
             wanted label
         all_free_resources - gather all the Lockable resource objects that
             could be locked (Not filtered by a label)
+        We should raise an exception if the given label does NOT MATCH ALL the
+            existing labels in the entire platform
         '''
-        self.all_free_resources = LockableResource.get_all_free_resources()
         self.label = label
+        self.validate_label()
+        self.all_free_resources = LockableResource.get_all_free_resources()
+
 
     def get_free_resources(self):
         '''
@@ -68,3 +72,12 @@ class LabelManager:
                 return None
             else:
                 raise FreeResourceNotAvailableException(self.label)
+
+    def validate_label(self):
+        '''
+        Instance Method
+        We check here if the given label is a label that exists in the entire platform
+        :return:
+        '''
+        if self.label not in LockableResource.get_all_labels():
+            raise InvalidLabelException(self.label)
