@@ -59,6 +59,21 @@ class Rqueue(models.Model):
 
         self.delete()
 
+    @staticmethod
+    def filter_from_data(key, value):
+        '''
+        Static method to filter Rqueue objects from the given key
+            from the JSONFIELD
+        :param key:
+        :return: Rqueue object/s
+        '''
+        filter_matches = []
+        for rqueue in Rqueue.objects.all():
+            if json.loads(rqueue.data).get(key) == value:
+                filter_matches.append(rqueue)
+
+        return filter_matches
+
     class Meta:
         #Here you can put more descriptive to display in Admin
         verbose_name_plural = "Requests in Queue"

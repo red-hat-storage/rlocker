@@ -44,7 +44,24 @@ def check_resource_released_by_name(name):
         resource = LockableResource.objects.get(name=name)
         if resource.is_locked:
             time.sleep(const.INTERVAL)
+            print(f"Someone wants the resource {name} "
+                  f"but it is currently locked! \n"
+                  f"Trying in {const.INTERVAL} seconds ...")
             counter += 1
         else:
             return resource
 
+def check_resource_released_by_label(label):
+    counter = 0
+    while counter <= const.REQUEST_TIMEOUT // const.INTERVAL:
+        resources = LockableResource.objects.filter(labels_string__icontains=label)
+        #Here write a logic that will check if all resources are locked
+        if len(set([resource.is_locked for resource in resources])) == 1:
+            time.sleep(const.INTERVAL)
+            print(f"Someone wants a resource with label {label} "
+                  f"but all of them are currently locked! \n"
+                  f"Trying in {const.INTERVAL} seconds ...")
+            counter += 1
+        else:
+            #Something got free ...
+            pass

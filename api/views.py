@@ -3,14 +3,18 @@ from rest_framework.response import Response
 from api.custom_permissions import HasValidToken
 from rest_framework.decorators import api_view, permission_classes
 from lockable_resource.models import LockableResource
-from rqueue.models import Rqueue
+from rqueue.models import Rqueue, FinishedQueue
 from lockable_resource.label_manager import LabelManager
-from django.shortcuts import  redirect
+from django.shortcuts import  redirect, HttpResponseRedirect, reverse
 from lockable_resource.exceptions import AlreadyLockedException, LockWithoutSignoffException
 from api.serializers import LockableResourceSerializer, RqueueSerializer
-import pprint as pp
 
 def redirect_to_prior_location(request):
+    '''
+    We use this only if there is a entry to /api and redirect to somewhere
+    :param request:
+    :return:
+    '''
     return redirect('resources_view')
 
 @api_view(['GET', 'POST'])
@@ -105,60 +109,84 @@ def resource_view(request, slug):
             extended_data.update(serializer.errors)
             return Response(extended_data, status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(['GET'])
+
+@api_view(['PUT'])
 @permission_classes([HasValidToken])
-def retrieve_resource_view(request, search_string):
+def retrieve_resource_entrypoint(request, search_string):
     '''
-    Api View designed to gather one free resource among all the resources,
-        We should first check if the given search_string is an absolute name of a resource.
-        If not, then we should try to find a resource that matches the label, and it is free
+    This view designed to decide where the request should be sent
+        right after we identify what is the search_string methodology
+    The search string could retrieve a resource by an absolute name of
+        a resource
+    Or
+    It could retrieve a resource by a label that matches the resource
 
+    Therefore, before we enter into queue mechanism, we should first
+        check what is the kind of the search_string
     :param request:
-    :param search_string: Could be the absolute name of the resource or just a label to pick up from
-    :return:
+    :param search_string: The way to retrieve a resource
+    :return: Redirects to view with name or label resource finding
     '''
-    if request.method == 'GET':
-        #First, check if the given search_string is an absolute name:
-        try:
-            #get() - Throws exception when the filtration does not match
-            #Hence, everything has to be wrapped around try catch:
-            #See this SO poll: https://stackoverflow.com/questions/3090302/how-do-i-get-the-object-if-it-exists-or-none-if-it-does-not-exist
-            resource = LockableResource.objects.get(name=search_string)
-            if resource.can_lock:
-                #Prepare the Response:
-                serializer = LockableResourceSerializer(resource)
-                return Response(serializer.data)
-            else:
-                raise AlreadyLockedException
+    request_data = dict(request.data)
+    request_signoff = request_data.get('signoff')
+    request_priority = int(request_data.get('priority'))
+    additional_kwargs = {"priority": request_priority, "signoff": request_signoff}
+    try:
+        # get() - Throws exception when the filtration does not match
+        # Hence, everything has to be wrapped around try catch:
+        # See this SO poll: https://stackoverflow.com/questions/3090302/how-do-i-get-the-object-if-it-exists-or-none-if-it-does-not-exist
+        by_name = LockableResource.objects.get(name=search_string)
+        print(f'Search String: {search_string} matches a Lockable resource by name. ID: {by_name.id} \n'
+              f'Preparing Request ...')
+        by_name_url = reverse(
+            'retrieve_resource_by_name',
+            kwargs={"name":search_string, **additional_kwargs }
+        )
+        return redirect(by_name_url)
 
-
-        except LockableResource.DoesNotExist:
-            #We'd only like to print this in the background, because maybe the given search_string
-                #is actually a label.
-            print(f"Could not find a free resource by it's name: {search_string}."
-                  "Searching based on resources labels.")
-
-        except AlreadyLockedException:
-            #Ignore warning from Pycharm about could be referenced before assignment)
-            #If we hit here, it means that the resource exists.
-            #Otherwise, we would hit .DoesNotExist above ...
-            #We'd like to wait until this gets fr
-            put_in_queue = Rqueue(data=resource.json_parse(), priority=1)
-            put_in_queue.save()
-
-
-
-        #If no resource found by filtering with name, we'll try to find a matching label
-        resource_by_label = LabelManager(label=search_string)
-        resource = resource_by_label.retrieve_free_resource()
-        if resource:
-            serializer = LockableResourceSerializer(resource)
-            return Response(serializer.data)
-
+    except LockableResource.DoesNotExist:
+        by_label = search_string in LockableResource.get_all_labels()
+        if by_label:
+            print(f'Search String: {search_string} is a valid label.  \n'
+                  f'Preparing Request ...')
+            by_label_url = reverse(
+                'retrieve_resource_by_label',
+                kwargs={"label": search_string, **additional_kwargs }
+            )
+            return redirect(by_label_url)
         else:
             return Response({
-                'message' : 'There are no free resources that matches the given name or label'
-            },status=status.HTTP_206_PARTIAL_CONTENT)
+                'message': f"Search String FAILED in entrypoint. "
+                           f"No lockable resource exists that matches this Search String by a name or by a label"
+
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+@permission_classes([HasValidToken])
+def retrieve_resource_by_name(request, name, priority, signoff):
+    resource = LockableResource.objects.get(name=name)
+    #We should get the priority and convert this to int
+    put_in_queue = Rqueue(data=resource.json_parse(override_signoff=True, signoff=signoff), priority=int(priority))
+    put_in_queue.save()
+    #If we got pass this line, it means the queue has done it's job
+    #And we can return success message
+    #Bring the latest Finished Queue
+    return Response({
+        'message': f"{name} has been locked!",
+        'waited_time' : FinishedQueue.objects.last().pended_time_descriptive
+
+    }, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+@permission_classes([HasValidToken])
+def retrieve_resource_by_label(request, label, priority, signoff):
+    resource_by_label = LabelManager(label)
+    resource = resource_by_label.retrieve_free_resource(not_exist_ok=True)
+    if resource:
+        #Dont know what to do here yet
+        pass
+
 
 @api_view(['GET'])
 def pendingrequest_view(request, slug):
@@ -169,11 +197,12 @@ def pendingrequest_view(request, slug):
         Return Response with the requested Rqueue in a JSON Object
 
     '''
-    rqueue = Rqueue.objects.get(id=slug)
-
-    if request.method == 'GET':
+    try:
+        rqueue = Rqueue.objects.get(id=slug)
         serializer = RqueueSerializer(rqueue)
         return Response(serializer.data)
+    except:
+        return Response(None)
 
 @api_view(['GET'])
 def pendingrequests_view(request):
