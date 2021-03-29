@@ -8,7 +8,7 @@ from lockable_resource.label_manager import LabelManager
 from django.shortcuts import  redirect, HttpResponseRedirect, reverse
 from lockable_resource.exceptions import AlreadyLockedException, LockWithoutSignoffException
 from api.serializers import LockableResourceSerializer, RqueueSerializer
-
+import json
 def redirect_to_prior_location(request):
     '''
     We use this only if there is a entry to /api and redirect to somewhere
@@ -145,8 +145,12 @@ def retrieve_resource_entrypoint(request, search_string):
         return redirect(by_name_url)
 
     except LockableResource.DoesNotExist:
+        #If we hit here it means that the requestes resource is not searched by
+            # it's name. So we should go ahead and search by a label.
         by_label = search_string in LockableResource.get_all_labels()
         if by_label:
+            #This means that we have some resources that are matching a label
+                # among all the labels of all resources of the platform
             print(f'Search String: {search_string} is a valid label.  \n'
                   f'Preparing Request ...')
             by_label_url = reverse(
@@ -172,6 +176,10 @@ def retrieve_resource_by_name(request, name, priority, signoff):
     #And we can return success message
     #Bring the latest Finished Queue
     return Response({
+        #We'd like to return response that the request has been completed and moved to
+            # Finished Queue.
+        #Since we immediately store the info of Rqueue in FinishedQueue, then we can use .last()
+        #For the FinishedQueue objects
         'message': f"{name} has been locked!",
         'waited_time' : FinishedQueue.objects.last().pended_time_descriptive
 
@@ -181,12 +189,28 @@ def retrieve_resource_by_name(request, name, priority, signoff):
 @api_view(['GET'])
 @permission_classes([HasValidToken])
 def retrieve_resource_by_label(request, label, priority, signoff):
-    resource_by_label = LabelManager(label)
-    resource = resource_by_label.retrieve_free_resource(not_exist_ok=True)
-    if resource:
-        #Dont know what to do here yet
-        pass
+    # The data will be sent to Rqueue without knowing which resource is going to be locked yet.
+        # This will be handled by the signals
+    custom_data = {
+        "search_string" : label,
+        "signoff" : signoff,
+    }
 
+    put_in_queue = Rqueue(data=json.dumps(custom_data), priority=int(priority))
+    put_in_queue.save()
+
+    #TODO: We should be aware what resource was locked
+    #Additional logs about which specific resource really locked will the throwen by the signal itself
+
+    return Response({
+        #We'd like to return response that the request has been completed and moved to
+            # Finished Queue.
+        #Since we immediately store the info of Rqueue in FinishedQueue, then we can use .last()
+        #For the FinishedQueue objects
+        'message': f"Resource with label {label} has been locked!",
+        'waited_time' : FinishedQueue.objects.last().pended_time_descriptive
+
+    }, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
 def pendingrequest_view(request, slug):

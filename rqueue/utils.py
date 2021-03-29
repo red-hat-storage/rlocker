@@ -1,6 +1,7 @@
 import time
 import rqueue.constants as const
 from lockable_resource.models import LockableResource
+from lockable_resource.label_manager import LabelManager
 
 def get_time_descriptive(total_seconds):
     '''
@@ -53,15 +54,15 @@ def check_resource_released_by_name(name):
 
 def check_resource_released_by_label(label):
     counter = 0
+    resource_by_label = LabelManager(label)
+
     while counter <= const.REQUEST_TIMEOUT // const.INTERVAL:
-        resources = LockableResource.objects.filter(labels_string__icontains=label)
-        #Here write a logic that will check if all resources are locked
-        if len(set([resource.is_locked for resource in resources])) == 1:
+        resource = resource_by_label.retrieve_free_resource()
+        if resource:
+            return resource
+        else:
             time.sleep(const.INTERVAL)
-            print(f"Someone wants a resource with label {label} "
-                  f"but all of them are currently locked! \n"
+            print(f"Someone wants a resource with label {label}"
+                  f"but all of them are currently locked!"
                   f"Trying in {const.INTERVAL} seconds ...")
             counter += 1
-        else:
-            #Something got free ...
-            pass

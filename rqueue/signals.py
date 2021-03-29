@@ -30,39 +30,54 @@ def fetch_for_available_lockable_resources(sender, instance, created, **kwargs):
     data_id = data.get('id')
     data_signoff = data.get('signoff')
     data_name = data.get('name')
+    data_search_string = data.get('search_string')
+    # We should use this as an indication to check if the Rqueue is with an associated lockable resource.
+    # If ID is not None, it means that it has an associated lockable resource. Otherwise it's not.
+    has_associated_resource = data_id is not None
 
-    if created and instance.priority == Priority.UI.value:
-        # If there is an ID and signoff in the data, it means that the request includes a specific
-        # Lockable resource that needs to be locked and NOT search_string.
-        if data_id and data_signoff:
+    if created:
+        if instance.priority == Priority.UI.value and data_id:
+            # If there is an ID in the data, it means that the request includes a specific
+            # Lockable resource that needs to be locked and NOT search_string.
             lock_res_object = LockableResource.objects.get(id=data_id)
-            lock_res_object.lock(signoff=f"{data_signoff} - Lock Type:{Priority.UI.name}")
+            lock_res_object.lock(signoff=f"{data_signoff} - Lock Type:{instance.priority}")
             #Let's Customize our data before reporting it:
-            del data['is_locked']
-            data['priority'] = Priority.UI.value
-            data['finished_time'] = str(datetime.datetime.utcnow().replace(tzinfo=utc))
-            instance.report_and_delete(data_json=data)
-            print(f'A queue has been deleted. \n'
-                  f'Moved to Finished Queues. \n'
-                  f'Resource {data_name} has been locked with priority {Priority.UI.value}')
-
-
-    if created and instance.priority > Priority.UI.value:
-        resource_free = check_resource_released_by_name(name=data['name'])
-
-        #Now that the resource is free, we should not interrupt higher priority locks from it.
-        rqueues_with_data_name = Rqueue.filter_from_data(key='name', value=data_name)
-        if len(rqueues_with_data_name) == 1:
-            #This means that this was the only rqueue for this specific resource
-            #So we can lock it
-            resource_free.lock(signoff=f"{data_signoff} - Lock Type:{instance.priority}")
-            # Let's Customize our data before reporting it:
-            del data['is_locked']
-            data['finished_time'] = str(datetime.datetime.utcnow().replace(tzinfo=utc))
-            instance.report_and_delete(data_json=data)
+            customized_data = instance.customize_data(data_json=data)
+            instance.report_and_delete(data_json=customized_data)
             print(f'A queue has been deleted. \n'
                   f'Moved to Finished Queues. \n'
                   f'Resource {data_name} has been locked with priority {instance.priority}')
 
-        if len(rqueues_with_data_name) > 1:
-            print('wait ... there are more queues with that wants to lock')
+
+        elif instance.priority > Priority.UI.value:
+            resource_free = check_resource_released_by_name(name=data_name) if has_associated_resource else check_resource_released_by_label(label=data_search_string)
+
+            #Now that the resource is free, we should not interrupt higher priority locks from it.
+            rqueues_with_data_name = Rqueue.filter_from_data(key='name', value=resource_free.name, sort_field='priority')
+
+            if len(rqueues_with_data_name) == 1:
+                #This means that this was the only rqueue for this specific resource
+                #So we can lock it
+                resource_free.lock(signoff=f"{data_signoff} - Lock Type:{instance.priority}")
+
+                # Let's Customize our data before reporting it:
+                customized_data = instance.customize_data(lr_obj=resource_free)
+                instance.report_and_delete(data_json=customized_data)
+                print(f'A queue has been deleted. \n'
+                      f'Moved to Finished Queues. \n'
+                      f'Resource {data_name} has been locked with priority {instance.priority}')
+
+            elif len(rqueues_with_data_name) > 1:
+                # If there are more than one queues for the wanted resource, then we should first
+                # Handle the queue that is more urgent
+                # The lower priority number is, the more urgent to put this queue to finished
+                # We could index the zero, since we sort by priority ascending
+                prior_queue = rqueues_with_data_name[0]
+                resource_free.lock(signoff=f"{data_signoff} - Lock Type:{prior_queue.priority}")
+
+                # Let's Customize our data before reporting it:
+                customized_data = prior_queue.customize_data(lr_obj=resource_free)
+                prior_queue.report_and_delete(data_json=customized_data)
+                print(f'A queue has been deleted. \n'
+                      f'Moved to Finished Queues. \n'
+                      f'Resource {data_name} has been locked with priority {prior_queue.priority}')
