@@ -60,15 +60,11 @@ class Rqueue(models.Model):
         self.delete()
 
     @staticmethod
-    def filter_from_data(key, value, sort_field='priority'):
+    def filter_from_data(key, value):
         '''
         Static method to filter Rqueue objects from the given key
             from the JSONFIELD
-        It is a great idea to return this sorted by priority ascending
-            by default
         :param key:
-        :param value:
-        :param sort_field:
         :return: Rqueue object/s
         '''
         filter_matches = []
@@ -76,24 +72,7 @@ class Rqueue(models.Model):
             if json.loads(rqueue.data).get(key) == value:
                 filter_matches.append(rqueue)
 
-        if filter_matches != []:
-            return sorted(filter_matches, key=lambda x: (int(getattr(x, sort_field)),x.time_requested))
-        else:
-            return None
-
-    def customize_data(self, data_json=None, lr_obj=None):
-        '''
-        Instance Method
-        Sometimes we need to customize a data before we report it and do
-            something with it, because not everything is necessary for some actions
-        Specially when we move the data to being a finished queue
-        :param data_json:
-        :return data_json
-        '''
-        data_json = data_json if data_json else json.loads(lr_obj.json_parse())
-        del data_json['is_locked']
-        data_json['finished_time'] = str(datetime.datetime.utcnow().replace(tzinfo=utc))
-        return data_json
+        return filter_matches
 
     class Meta:
         #Here you can put more descriptive to display in Admin
