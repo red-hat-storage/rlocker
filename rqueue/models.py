@@ -76,10 +76,12 @@ class Rqueue(models.Model):
             if json.loads(rqueue.data).get(key) == value:
                 filter_matches.append(rqueue)
 
+        if filter_matches != []:
+            return sorted(filter_matches, key=lambda x: (int(getattr(x, sort_field)),x.time_requested))
+        else:
+            return None
 
-        return sorted(filter_matches, key=lambda x: (int(getattr(x, sort_field)),x.time_requested))
-
-    def customize_data(self, data_json, lr_obj):
+    def customize_data(self, data_json=None, lr_obj=None):
         '''
         Instance Method
         Sometimes we need to customize a data before we report it and do

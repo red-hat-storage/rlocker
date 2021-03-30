@@ -1,8 +1,7 @@
 import json
-import datetime
+from collections import deque
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.utils.timezone import utc
 from rqueue.models import Rqueue
 from rqueue.constants import Priority
 from rqueue.utils import *
@@ -51,13 +50,16 @@ def fetch_for_available_lockable_resources(sender, instance, created, **kwargs):
 
         elif instance.priority > Priority.UI.value:
             resource_free = check_resource_released_by_name(name=data_name) if has_associated_resource else check_resource_released_by_label(label=data_search_string)
+            print(f" {resource_free.name} We are releasing!!!")
 
             #Now that the resource is free, we should not interrupt higher priority locks from it.
             rqueues_with_data_name = Rqueue.filter_from_data(key='name', value=resource_free.name, sort_field='priority')
 
-            if len(rqueues_with_data_name) == 1:
-                #This means that this was the only rqueue for this specific resource
-                #So we can lock it
+            #Convert this to being FIFO list after the sorting
+            rqueues_with_data_name = deque(rqueues_with_data_name)
+
+            queue_to_handle = rqueues_with_data_name.popleft()
+            if instance == queue_to_handle:
                 resource_free.lock(signoff=f"{data_signoff} - Lock Type:{instance.priority}")
 
                 # Let's Customize our data before reporting it:
@@ -66,18 +68,3 @@ def fetch_for_available_lockable_resources(sender, instance, created, **kwargs):
                 print(f'A queue has been deleted. \n'
                       f'Moved to Finished Queues. \n'
                       f'Resource {data_name} has been locked with priority {instance.priority}')
-
-            elif len(rqueues_with_data_name) > 1:
-                # If there are more than one queues for the wanted resource, then we should first
-                # Handle the queue that is more urgent
-                # The lower priority number is, the more urgent to put this queue to finished
-                # We could index the zero, since we sort by priority ascending
-                prior_queue = rqueues_with_data_name[0]
-                resource_free.lock(signoff=f"{data_signoff} - Lock Type:{prior_queue.priority}")
-
-                # Let's Customize our data before reporting it:
-                customized_data = prior_queue.customize_data(lr_obj=resource_free)
-                prior_queue.report_and_delete(data_json=customized_data)
-                print(f'A queue has been deleted. \n'
-                      f'Moved to Finished Queues. \n'
-                      f'Resource {data_name} has been locked with priority {prior_queue.priority}')

@@ -40,6 +40,14 @@ def get_time_descriptive(total_seconds):
 
 
 def check_resource_released_by_name(name):
+    '''
+    We need to be sure that this function does not get executed in parallel by two or more
+        requests.
+    Otherwise, some threads might think in the same millisecond that the resource is free.
+        And then, we will screw things up.
+    :param name:
+    :return:
+    '''
     counter = 0
     while counter <= const.REQUEST_TIMEOUT // const.INTERVAL:
         resource = LockableResource.objects.get(name=name)
