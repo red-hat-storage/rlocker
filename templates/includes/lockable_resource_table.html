@@ -45,8 +45,14 @@
                     </a>
                   {% endif %}
 
+                  {% if user.is_staff %}
+                    <a style="margin-left: 5px" class="btn btn-danger pull-right" href="">
+                      <i class="icon_stop_alt2"></i>
+                      <span><b>Maintenance</b></span>
+                    </a>
+                  {% endif %}
                   {% if perms.lockable_resource.change_lockableresource %}
-                    <a class="btn btn-warning centered" href="{% url 'admin:lockable_resource_lockableresource_change' lockable_resource.id %}">
+                    <a class="btn btn-warning pull-right" href="{% url 'admin:lockable_resource_lockableresource_change' lockable_resource.id %}">
                       <i class="icon_pencil-edit"></i>
                       <span>Edit</span>
                     </a>
