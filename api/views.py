@@ -8,6 +8,7 @@ from lockable_resource.label_manager import LabelManager
 from django.shortcuts import  redirect, HttpResponseRedirect, reverse
 from lockable_resource.exceptions import AlreadyLockedException, LockWithoutSignoffException
 from api.serializers import LockableResourceSerializer, RqueueSerializer
+from api.utils import get_user_object_by_token
 import json
 def redirect_to_prior_location(request):
     '''
@@ -169,19 +170,23 @@ def retrieve_resource_entrypoint(request, search_string):
 @permission_classes([HasValidToken])
 def retrieve_resource_by_name(request, name, priority, signoff):
     resource = LockableResource.objects.get(name=name)
-    #We should get the priority and convert this to int
-    put_in_queue = Rqueue(data=resource.json_parse(override_signoff=True, signoff=signoff), priority=int(priority))
+
+    #We want to add some more fields to our data before sending it as Request Queue
+    custom_data = dict(resource.json_parse(override_signoff=True, signoff=signoff))
+    custom_data['username'] = get_user_object_by_token(request).username
+    #Creating the Rqueue and saving it
+    put_in_queue = Rqueue(data=json.dumps(custom_data), priority=int(priority))
     put_in_queue.save()
+
     #If we got pass this line, it means the queue has done it's job
     #And we can return success message
-    #Bring the latest Finished Queue
     return Response({
         #We'd like to return response that the request has been completed and moved to
             # Finished Queue.
         #Since we immediately store the info of Rqueue in FinishedQueue, then we can use .last()
         #For the FinishedQueue objects
         'message': f"{name} has been locked!",
-        'waited_time' : FinishedQueue.objects.last().pended_time_descriptive
+        'waited_time' : FinishedQueue.objects.last().pended_time_descriptive,
 
     }, status=status.HTTP_200_OK)
 
@@ -194,12 +199,12 @@ def retrieve_resource_by_label(request, label, priority, signoff):
     custom_data = {
         "label" : label,
         "signoff" : signoff,
+        "username" : get_user_object_by_token(request).username
     }
 
     put_in_queue = Rqueue(data=json.dumps(custom_data), priority=int(priority))
     put_in_queue.save()
 
-    #TODO: We should be aware what resource was locked
     #Additional logs about which specific resource really locked will the throwen by the signal itself
 
     return Response({
