@@ -1,0 +1,29 @@
+{% for i in '1234'|make_list %}
+<div aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="Change-Priority-{{ i }}-{{ rqueue.id }}" class="modal fade">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <div class="modal-header">
+            <button aria-hidden="true" data-dismiss="modal" class="close" type="button">×</button>
+            <h4 class="modal-title">
+               <b>Change Priority for Pending request with ID: {{ rqueue.id }}</b>
+            </h4>
+         </div>
+         <div class="modal-body" style="">
+            <h5>
+               By clicking Confirm, this pending request's priority will change to {{ i }}
+            </h5>
+            <form class="form-inline" role="form" method="POST">
+               {% csrf_token %}
+               <input type="hidden" id='id' name="id" value="{{ rqueue.id }}"/>
+               <input type="hidden" id='priority' name="priority" value="{{ i }}"/>
+
+                <button type="submit" class="btn btn-large btn-danger">
+                   <i style="margin-right: 5px"  class="arrow_up"></i>
+                   Confirm Change of Priority to <b>{{ i }}</b>
+               </button>
+            </form>
+         </div>
+      </div>
+   </div>
+</div>
+{% endfor %}

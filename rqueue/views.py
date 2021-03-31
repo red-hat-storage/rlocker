@@ -1,12 +1,21 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from rqueue.models import Rqueue, FinishedQueue
 
 
 def pending_requests_page(request):
-    rqueues = Rqueue.objects.all().order_by('priority')
-    return render(request,
-                  template_name='rqueue/pending_requests.html',
-                  context={'rqueues':rqueues})
+    if request.method == 'GET':
+        rqueues = Rqueue.objects.all().order_by('priority')
+        return render(request,
+                      template_name='rqueue/pending_requests.html',
+                      context={'rqueues':rqueues})
+
+    if request.method == 'POST':
+        rqueue_id = request.POST.get('id')
+        rqueue_changed_priority = request.POST.get('priority')
+        rqueue_obj = Rqueue.objects.get(id=rqueue_id)
+        rqueue_obj.priority = int(rqueue_changed_priority)
+        rqueue_obj.save()
+        return redirect('pending_requests_page')
 
 def finished_requests_page(request):
     finished_requests = FinishedQueue.objects.all().order_by('-id')
