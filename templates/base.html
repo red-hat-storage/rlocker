@@ -104,23 +104,39 @@
                     {% endfor %}
                {% endif %}
                <!-- Django Messages Area end -->
+               <!-- Display queued requests if there are any -->
+               {% if pending_requests %}
+                    {% url 'pending_requests_page' as pending_request_url %}
+                    {% if request.path != pending_request_url %}
+                        <div class="alert alert-danger fade in">
+                            <button data-dismiss="alert" class="ml-2 mb-1 close" type="button">
+                                <span aria-hidden="true"></span>
+                            </button>
+                            <strong>
+                                There are {{ pending_requests_amount }} Lock Requests that are pending in queue.
+                            </strong>
+                            <a href="{% url 'pending_requests_page' %}"><strong>Visit Pending Requests page</strong></a>
+                        </div>
+                    {% endif %}
+               {% endif %}
+               <!-- End display queued requests if there are any -->
                <div class="row">
                   <div class="col-lg-12">
                      <h3 class="page-header"><i class="fa fa fa-bars"></i>
                         {% block pageheader_title %}
-                        Page Header Title
+                            Page Header Title
                         {% endblock %}
                      </h3>
                      <ol class="breadcrumb">
                         {% block page_description %}
-                        Page Description
+                            Page Description
                         {% endblock %}
                      </ol>
                   </div>
                </div>
                <!-- page start-->
                {% block content %}
-               Content
+                    Content
                {% endblock %}
                <!-- page end-->
             </section>

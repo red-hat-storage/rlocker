@@ -1,0 +1,35 @@
+<div aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="Display-Data-{{ rqueue.id }}" class="modal fade">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <div class="modal-header">
+            <button aria-hidden="true" data-dismiss="modal" class="close" type="button">×</button>
+            <h4 class="modal-title">
+                <b>JSON Data of Pending request with ID: {{ rqueue.id }} </b>
+            </h4>
+         </div>
+         <div class="modal-body" style="">
+             <span id="json-data-{{ rqueue.id }}">
+                {{ rqueue.data }}
+             </span>
+         </div>
+      </div>
+   </div>
+</div>
+
+<div aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="DisplayFinishedQueue-Data-{{ finishedqueue.id }}" class="modal fade">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <div class="modal-header">
+            <button aria-hidden="true" data-dismiss="modal" class="close" type="button">×</button>
+            <h4 class="modal-title">
+                <b>Finished Request JSON</b>
+            </h4>
+         </div>
+         <div class="modal-body" style="">
+             <span id="json-data-{{ finishedqueue.id }}">
+                {{ finishedqueue.rqueue_data }}
+             </span>
+         </div>
+      </div>
+   </div>
+</div>

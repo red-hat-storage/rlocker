@@ -1,10 +1,9 @@
 from django.db import models
 from lockable_resource.exceptions import AlreadyFreeException, AlreadyLockedException
 import lockable_resource.constants as const
-
+import json
 
 class LockableResource(models.Model):
-
     #Fields:
         # id - Primary key to identify each lockable resource obj. (Auto Generated)
         # provider - The Cloud provider.
@@ -124,6 +123,49 @@ class LockableResource(models.Model):
         Helpful in the Admin page
         '''
         return self.name
+
+    @staticmethod
+    def get_all_labels():
+        '''
+        Static Method
+        Responsible to return a non-duplicated list of ALL the labels
+            of the entire platform
+        :return:
+        '''
+        all_labels = []
+        for lockable_resource in LockableResource.objects.all():
+            for label in lockable_resource.labels:
+                all_labels.append(label)
+
+        #Lets remove duplicates by converting to a set:
+        all_labels = set(all_labels)
+
+        #Now revert this back to list:
+        all_labels = list(all_labels)
+
+        return all_labels
+
+
+    def json_parse(self, **kwargs):
+        '''
+        Instance Method
+        Method prepares the object in parsed json.
+        We want to omit several key values from the
+        built-in __dict__ attribute, to have cleaner data
+        Removals are in list: key_removals
+        :return: JSON object
+        '''
+        key_removals = ['labels_string','_state']
+        obj_dict = self.__dict__
+        for key_removal in key_removals:
+            #Try to remove the key SILENTLY:
+            obj_dict.pop(key_removal, None)
+
+        if kwargs.get('override_signoff'):
+            obj_dict['signoff'] = kwargs.get('signoff')
+
+        return json.dumps(obj_dict)
+
 
     # Meta Class
     class Meta:

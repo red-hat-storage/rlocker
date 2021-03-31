@@ -21,6 +21,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 # Could add here for debugging only: os.environ['DJANGO_SECRET'] = $YOUR_SECRET
+os.environ['DJANGO_SECRET'] = '487$7pk@#2cn-1)cf)4_9gg#*b_6_-#yw$5_)-i)78w_^+v*op'
+os.environ['DEBUG'] = "True"
 SECRET_KEY = os.environ.get('DJANGO_SECRET')
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -33,6 +35,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'rqueue.apps.RqueueConfig',
     'api.apps.ApiConfig',
     'rest_framework',
     'rest_framework.authtoken',
@@ -71,6 +74,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'rqueue.context_processors.rqueue_context_processors',
             ],
         },
     },

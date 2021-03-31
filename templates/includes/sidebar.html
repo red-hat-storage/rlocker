@@ -9,13 +9,25 @@
             </a>
          </li>
          <li>
+            <a href="{% url 'pending_requests_page' %}">
+            <i class="icon_loading"></i>
+            <span>Pending Requests</span>
+            </a>
+         </li>
+         <li>
+            <a href="{% url 'finished_requests_page' %}">
+            <i class="icon_check"></i>
+            <span>Finished Requests</span>
+            </a>
+         </li>
+         <li>
             <a href="#">
             <i class="icon_document"></i>
             <span>Documentation</span>
             </a>
          </li>
          {% if user.is_staff %}
-            <li>
+             <li>
                 <a style="color: #fabb3d" href="{% url 'admin:index' %}">
                 <i class="icon_error-triangle"></i>
                 <span>Admin Page</span>

@@ -2,6 +2,7 @@ psycopg2
 django
 django_extensions
 djangorestframework
+django-jsonfield
 django-filter
 markdown
 pyyaml

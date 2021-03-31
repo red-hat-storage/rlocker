@@ -15,7 +15,7 @@
             <th style="text-align: center"><i class="icon_pens"></i> Sign Off</th>
             <th style="text-align: center"><i class="icon_question"></i> Status</th>
             <th style="text-align: center"><i class="icon_tools"></i> Actions</th>
-            <th style="text-align: center"><i class="fa fa-file"></i> History</th>
+
           </tr>
             {% for lockable_resource in lockable_resources %}
                 <tr>
@@ -51,12 +51,6 @@
                       <span>Edit</span>
                     </a>
                   {% endif %}
-
-                  </td>
-                  <td>
-                    <a class="btn btn-info" href="#">
-                        <span>See History</span>
-                    </a>
                   </td>
                 </tr>
             {% endfor %}

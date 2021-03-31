@@ -1,0 +1,104 @@
+<style>
+  .loader {
+  border: 6px solid #f3f3f3; /* Light grey */
+  border-top: 6px solid #007aff; /* Blue */
+  border-radius: 50%;
+  width: 45px;
+  height: 45px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+</style>
+<div class="row">
+  <div class="col-lg-9 justify-content-center">
+    <section class="panel">
+      <header class="panel-heading">
+        Pending Requests All Priorities
+      </header>
+
+      <table class="table table-striped table-advance table-hover center-block" style="text-align: center">
+        <tbody>
+          <tr>
+            <th style="text-align: center"><i class="icon_loading"></i> ID</th>
+            <th style="text-align: center"><i class="icon_clock"></i> Time Requested</th>
+            <th style="text-align: center"><i class="arrow_up"></i> Priority Level</th>
+            <th style="text-align: center"><i class="icon_datareport"></i> JSON Data</th>
+            <th style="text-align: center"><i class="icon_clock"></i> Time Waiting</th>
+          </tr>
+            {% for rqueue in rqueues %}
+                <tr>
+                    <td>{{ rqueue.id }}</td>
+                    <td>{{ rqueue.time_requested }}</td>
+                    <td>{{ rqueue.priority }}</td>
+                    <td>
+                        {% include 'includes/display_json_data_modal.html' %}
+                        <a class="btn btn-primary" href="#Display-Data-{{ rqueue.id }}" data-toggle="modal">
+                            <i class="icon_pencil"></i>
+                            <span>Show JSON</span>
+                        </a>
+                    </td>
+                    <td>
+                        <span id="pending-time-{{ rqueue.id }}">
+                            {{ rqueue.pending_time_descriptive }}
+                        </span>
+                        <div class="loader pull-right"></div>
+                        <!-- To keep the pending time updated every second, we will run this script -->
+                        <script>
+                            setInterval(function() {
+                              fetch("{% url 'pendingrequest_view' rqueue.id %}")
+                                .then(response => response.json())
+                                .then(data => document.getElementById('pending-time-{{ rqueue.id }}').innerHTML = data.pending_time_descriptive);
+                            }, 36000);
+                        </script>
+                        <!-- To keep the pending time updated every second, we will run this script -->
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+      </table>
+    </section>
+  </div>
+  <div id="messages-area" class="col-lg-3">
+
+  </div>
+</div>
+
+<!-- To tell to our users that the page needs to be refreshed, we will run this script -->
+<script>
+    keep_fetching = true;
+    total_rqueues = null;
+    setInterval(function(){
+        if (keep_fetching) {
+            fetch("{% url 'pendingrequests_view' %}")
+                .then(response => response.json())
+                .then(data => total_rqueues = data.length)
+        }
+    }, 5000);
+
+    setInterval(function(){
+        if (keep_fetching) {
+            previous_total_rqueues = parseInt('{{ pending_requests_amount }}');
+            if (total_rqueues !== previous_total_rqueues ) {
+                message_div = document.createElement('div');
+                message_div.className = 'alert alert-danger fade in';
+                message_div.innerHTML = "                            <button data-dismiss=\"alert\" class=\"ml-2 mb-1 close\" type=\"button\">\n" +
+                    "                                <span aria-hidden=\"true\"></span>\n" +
+                    "                            </button>\n" +
+                    "                            <strong>\n" +
+                    "                                Some changes occured to Requests in queue.\n" +
+                    "                            </strong>\n" +
+                    "                            <br>\n" +
+                    "                            <a href=\"{{ request.path }}\"><strong>Click here to Refresh</strong></a>";
+
+                main_content = document.getElementById('messages-area');
+                main_content.appendChild(message_div);
+                keep_fetching = false;
+            }
+        }
+    }, 10000);
+</script>
+<!-- To tell to our users that the page needs to be refreshed, we will run this script -->
