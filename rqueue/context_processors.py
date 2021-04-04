@@ -3,9 +3,9 @@
     #using the jinja syntax from ALL the HTML templates
 
 from rqueue.models import Rqueue
-
+from rqueue.constants import Status
 def rqueue_context_processors(request):
     return {
-        'pending_requests' : len(Rqueue.objects.all()) > 0,
-        'pending_requests_amount' : len(Rqueue.objects.all()),
+        'pending_requests' : len(Rqueue.objects.filter(status=Status.PENDING)) > 0,
+        'pending_requests_amount' : len(Rqueue.objects.filter(status=Status.PENDING)),
     }

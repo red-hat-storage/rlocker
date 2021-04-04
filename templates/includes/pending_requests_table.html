@@ -70,7 +70,7 @@
                         <!-- To keep the pending time updated every second, we will run this script -->
                         <script>
                             setInterval(function() {
-                              fetch("{% url 'pendingrequest_view' rqueue.id %}")
+                              fetch("{% url 'rqueue_view' rqueue.id %}")
                                 .then(response => response.json())
                                 .then(data => document.getElementById('pending-time-{{ rqueue.id }}').innerHTML = data.pending_time_descriptive);
                             }, 36000);
@@ -94,7 +94,7 @@
     total_rqueues = null;
     setInterval(function(){
         if (keep_fetching) {
-            fetch("{% url 'pendingrequests_view' %}")
+            fetch("{% url 'rqueues_status_pending_view' %}")
                 .then(response => response.json())
                 .then(data => total_rqueues = data.length)
         }

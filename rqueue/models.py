@@ -4,8 +4,10 @@ from django.utils import timezone
 from django.utils.timezone import utc
 from rqueue.utils import get_time_descriptive
 from django.core.validators import MinValueValidator, MaxValueValidator
+from rqueue.constants import Status
 import datetime
 import json
+
 
 class Rqueue(models.Model):
     #Fields:
@@ -15,6 +17,12 @@ class Rqueue(models.Model):
         # priority - Priority level. This will allow us to prioritize different requests that are in queue.
         # time_requested - The time that the lock is requested, we should always store the current time when the
             #row is being stored to the DB
+        # status - This is going to describe the status of the Rqueue, we are going to describe the different status
+            # options by a list of constants from rqueue.constants
+        # pended_time_descriptive - The time that the queue was pending till it deleted.
+            # It is enough to receive this only descriptive and store in the DB
+                # We will always store None by default till there will be an automatic update by the queue when it's done
+
 
     data = JSONField()
     priority = models.IntegerField(
@@ -25,6 +33,12 @@ class Rqueue(models.Model):
         ]
     )
     time_requested = models.DateTimeField(default=timezone.now)
+    status = models.CharField(
+        max_length=32,
+        choices=Status.CHOICES,
+        default=Status.PENDING,
+    )
+    pended_time_descriptive = models.CharField(max_length=1024, null=True, default=None)
 
     @property
     def pending_time(self):
@@ -50,17 +64,20 @@ class Rqueue(models.Model):
         #Here we override each object definition
         return f'Rqueue{self.id}:P-{self.priority}'
 
-    def report_and_delete(self, data_json):
-        report = FinishedQueue(
-            rqueue_data=data_json,
-            pended_time_descriptive=self.pending_time_descriptive # We'd like to store the exact pended time as a DB row
-        )
-        report.save()
+    def report_finish(self):
+        '''
+        Instance Method
+        We want to change the status from the default PENDING, to finished because
+            the queue finished to wait and a lockable resource is locked
+        :return: None
+        '''
+        self.status = Status.FINISHED
+        self.pended_time_descriptive = self.pending_time_descriptive
+        self.save()
 
-        self.delete()
 
     @staticmethod
-    def filter_from_data(key, value, sort_field='priority'):
+    def pending_queues_by_jsondata(key, value, sort_field='priority'):
         '''
         Static method to filter Rqueue objects from the given key
             from the JSONFIELD
@@ -72,7 +89,7 @@ class Rqueue(models.Model):
         :return: Rqueue object/s
         '''
         filter_matches = []
-        for rqueue in Rqueue.objects.all():
+        for rqueue in Rqueue.objects.filter(status=Status.PENDING):
             if json.loads(rqueue.data).get(key) == value:
                 filter_matches.append(rqueue)
 
@@ -81,41 +98,34 @@ class Rqueue(models.Model):
         else:
             return None
 
-    def customize_data(self, data_json=None, lr_obj=None):
+    def add_to_data_json(self, json_to_add=None, **kwargs):
         '''
         Instance Method
-        Sometimes we need to customize a data before we report it and do
-            something with it, because not everything is necessary for some actions
-        Specially when we move the data to being a finished queue
-        :param data_json:
-        :return data_json
+        Will handle to add additional key values to the JSON where we store data
+            about the locked request
+        Sometimes the data may be passed as pure JSON, or sometimes as key value dict
+        :param json_to_add: None by default - Optional to add data by json
+        :param kwargs: key value pairs to add
+        :return:
         '''
-        data_json = data_json if data_json else json.loads(lr_obj.json_parse())
-        del data_json['is_locked']
-        data_json['finished_time'] = str(datetime.datetime.utcnow().replace(tzinfo=utc))
-        return data_json
+        data = json.loads(self.data)
+        if json_to_add:
+            json_to_dict = json.loads(json_to_add)
+            #Merge dicts:
+            data.update(json_to_dict)
+            self.data = data
+
+        if not json_to_add:
+            for key, value in kwargs.items():
+                data[key] = value
+            # Update the Rqueue object
+            self.data = data
+
+        self.save()
+
+
+
 
     class Meta:
         #Here you can put more descriptive to display in Admin
         verbose_name_plural = "Requests in Queue"
-
-class FinishedQueue(models.Model):
-    #Fields:
-        #id - Primary key to identify each Finished queue obj. (Auto Generated)
-        #rqueue_data - JSON field with all the data from the request queue
-            # We want to keep this JSON field so that we don't have to update multiple fields
-                # in multiple models every time.
-        #pended_time_descriptive - The time that the queue was pending till it deleted.
-            #It is enough to receive this only descriptive
-
-    rqueue_data = JSONField()
-    pended_time_descriptive = models.CharField(max_length=1024, null=True, default=None)
-
-
-    def __str__(self):
-        #Here we override each object definifion
-        return f'FinishedQueue {self.id}'
-
-    class Meta:
-        #Here you can put more descriptive to display in Admin
-        verbose_name_plural = "Finished Queues"

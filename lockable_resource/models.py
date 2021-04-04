@@ -155,7 +155,7 @@ class LockableResource(models.Model):
         Removals are in list: key_removals
         :return: JSON object
         '''
-        key_removals = ['labels_string','_state']
+        key_removals = ['_state']
         obj_dict = self.__dict__
         for key_removal in key_removals:
             #Try to remove the key SILENTLY:

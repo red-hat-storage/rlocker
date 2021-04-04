@@ -3,10 +3,10 @@ from rest_framework.response import Response
 from api.custom_permissions import HasValidToken
 from rest_framework.decorators import api_view, permission_classes
 from lockable_resource.models import LockableResource
-from rqueue.models import Rqueue, FinishedQueue
-from lockable_resource.label_manager import LabelManager
-from django.shortcuts import  redirect, HttpResponseRedirect, reverse
-from lockable_resource.exceptions import AlreadyLockedException, LockWithoutSignoffException
+from rqueue.models import Rqueue
+from rqueue.constants import Status
+from django.shortcuts import  redirect, reverse
+from lockable_resource.exceptions import LockWithoutSignoffException
 from api.serializers import LockableResourceSerializer, RqueueSerializer
 from api.utils import get_user_object_by_token
 import json
@@ -172,21 +172,25 @@ def retrieve_resource_by_name(request, name, priority, signoff):
     resource = LockableResource.objects.get(name=name)
 
     #We want to add some more fields to our data before sending it as Request Queue
-    custom_data = dict(resource.json_parse(override_signoff=True, signoff=signoff))
+    custom_data = json.loads(resource.json_parse(override_signoff=True, signoff=signoff))
     custom_data['username'] = get_user_object_by_token(request).username
     #Creating the Rqueue and saving it
     put_in_queue = Rqueue(data=json.dumps(custom_data), priority=int(priority))
     put_in_queue.save()
 
-    #If we got pass this line, it means the queue has done it's job
-    #And we can return success message
+    #Additional logs about which specific resource really locked will the throwen by the signal itself
+
+    #Since the signal should add some more data to json that we can access, we can read it:
+    data_post_save = dict(put_in_queue.data)
+
     return Response({
-        #We'd like to return response that the request has been completed and moved to
-            # Finished Queue.
-        #Since we immediately store the info of Rqueue in FinishedQueue, then we can use .last()
-        #For the FinishedQueue objects
+        #We'd like to return response that the request has been completed and chaned to
+            # status FINISHED.
         'message': f"{name} has been locked!",
-        'waited_time' : FinishedQueue.objects.last().pended_time_descriptive,
+        'waited_time' : put_in_queue.pended_time_descriptive,
+        'id': data_post_save.get('id'),
+        'name': data_post_save.get('name'),
+        'labels_string': data_post_save.get('labels_string'),
 
     }, status=status.HTTP_200_OK)
 
@@ -207,19 +211,23 @@ def retrieve_resource_by_label(request, label, priority, signoff):
 
     #Additional logs about which specific resource really locked will the throwen by the signal itself
 
+    #Since the signal should add some more data to json that we can access, we can read it:
+    data_post_save = dict(put_in_queue.data)
+
+
     return Response({
-        #We'd like to return response that the request has been completed and moved to
-            # Finished Queue.
-        #Since we immediately store the info of Rqueue in FinishedQueue, then we can use .last()
-        #For the FinishedQueue objects
+        #We'd like to return response that the request has been completed and chaned to
+            # status FINISHED.
         'message': f"Resource with label {label} has been locked!",
-        'waited_time' : FinishedQueue.objects.last().pended_time_descriptive
-        #TODO: Add key values of name, labels, ID of the resource
+        'waited_time' : put_in_queue.pended_time_descriptive,
+        'id' : data_post_save.get('id'),
+        'name' : data_post_save.get('name'),
+        'labels_string' : data_post_save.get('labels_string'),
 
     }, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
-def pendingrequest_view(request, slug):
+def rqueue_view(request, slug):
     '''
     :param request:
     :slug: We will identify the requested Rqueue with it's id
@@ -235,13 +243,28 @@ def pendingrequest_view(request, slug):
         return Response(None)
 
 @api_view(['GET'])
-def pendingrequests_view(request):
+def rqueues_view(request):
     '''
     :param request:
     GET:
         Return Response with all the Rqueues in a JSON Object
     '''
     rqueue = Rqueue.objects.all()
+
+    if request.method == 'GET':
+        serializer = RqueueSerializer(rqueue, many=True)
+        return Response(serializer.data)
+
+
+@api_view(['GET'])
+def rqueues_status_pending_view(request):
+    '''
+    :param request:
+    GET:
+        Return Response with all the Rqueues that are in status Pending
+            in a JSON Object
+    '''
+    rqueue = Rqueue.objects.filter(status=Status.PENDING)
 
     if request.method == 'GET':
         serializer = RqueueSerializer(rqueue, many=True)
