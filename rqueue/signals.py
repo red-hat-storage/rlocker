@@ -27,27 +27,26 @@ def fetch_for_available_lockable_resources(sender, instance, created, **kwargs):
     :param kwargs:
     :return:
     '''
-    data = json.loads(instance.data)
-    data_id = data.get('id')
-    data_signoff = data.get('signoff')
-    data_name = data.get('name')
-    data_label = data.get('label')
-    # We should use this as an indication to check if the Rqueue is with an associated lockable resource.
-    # If ID is not None, it means that it has an associated lockable resource. Otherwise it's not.
-    has_associated_resource = data_id is not None
 
     if created:
+        data = json.loads(instance.data)
+        data_id = data.get('id')
+        data_signoff = data.get('signoff')
+        data_name = data.get('name')
+        data_label = data.get('label')
+        # We should use this as an indication to check if the Rqueue is with an associated lockable resource.
+        # If ID is not None, it means that it has an associated lockable resource. Otherwise it's not.
+        has_associated_resource = data_id is not None
+
         if instance.priority == Priority.UI.value and data_id:
             # If there is an ID in the data, it means that the request includes a specific
             # Lockable resource that needs to be locked and NOT search_string.
             lock_res_object = LockableResource.objects.get(id=data_id)
             lock_res_object.lock(signoff=f"{data_signoff} - Lock Type:{instance.priority}")
-            #Let's Customize our data before reporting it:
-            customized_data = instance.customize_data(data_json=data)
-            instance.report_and_delete(data_json=customized_data)
-            print(f'A queue has been deleted. \n'
-                  f'Moved to Finished Queues. \n'
-                  f'Resource {data_name} has been locked with priority {instance.priority}')
+            instance.add_to_data_json(json_to_add=lock_res_object.json_parse())
+            instance.report_finish()
+            print(f'A queue has been to status FINISHED. \n'
+                  f'Resource {lock_res_object.name} has been locked with priority {instance.priority}')
 
 
         elif instance.priority > Priority.UI.value:
@@ -57,10 +56,10 @@ def fetch_for_available_lockable_resources(sender, instance, created, **kwargs):
 
             while True:
                 #Let's see how we are going to check Requests in queue, by name or label
-                requests_in_queue = Rqueue.filter_from_data(key='name', value=data_name, sort_field='priority') \
+                requests_in_queue = Rqueue.pending_queues_by_jsondata(key='name', value=data_name, sort_field='priority') \
                     if has_associated_resource \
                     else \
-                    Rqueue.filter_from_data(key='label', value=data_label, sort_field='priority')
+                    Rqueue.pending_queues_by_jsondata(key='label', value=data_label, sort_field='priority')
 
                 if requests_in_queue[0] == instance:
                     print(f"The Request with ID {instance.id} is next in turn!")
@@ -73,11 +72,9 @@ def fetch_for_available_lockable_resources(sender, instance, created, **kwargs):
 
                     if requested_resource:
                         requested_resource.lock(signoff=f"{data_signoff} - Lock Type:{instance.priority}")
-                        customized_data = instance.customize_data(lr_obj=requested_resource)
-                        instance.report_and_delete(data_json=customized_data)
-                        # Final report:
-                        print(f'A queue has been deleted. \n'
-                              f'Moved to Finished Queues. \n'
+                        instance.add_to_data_json(json_to_add=requested_resource.json_parse())
+                        instance.report_finish()
+                        print(f'A queue has been to status FINISHED. \n'
                               f'Resource {requested_resource.name} has been locked with priority {instance.priority}')
                         break
 
@@ -91,3 +88,6 @@ def fetch_for_available_lockable_resources(sender, instance, created, **kwargs):
                           f"Once the request with ID {instance.id} will be next, it will notify.\n"
                           f"Current status: {requests_in_queue}")
                     time.sleep(Interval.QUEUE_TURN_WAIT)
+
+    if not created:
+        pass

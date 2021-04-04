@@ -1,10 +1,10 @@
 from django.shortcuts import render, redirect
-from rqueue.models import Rqueue, FinishedQueue
-
+from rqueue.models import Rqueue
+from rqueue.constants import Status
 
 def pending_requests_page(request):
     if request.method == 'GET':
-        rqueues = Rqueue.objects.all().order_by('priority')
+        rqueues = Rqueue.objects.filter(status=Status.PENDING).order_by('priority')
         return render(request,
                       template_name='rqueue/pending_requests.html',
                       context={'rqueues':rqueues})
@@ -18,7 +18,7 @@ def pending_requests_page(request):
         return redirect('pending_requests_page')
 
 def finished_requests_page(request):
-    finished_requests = FinishedQueue.objects.all().order_by('-id')
+    finished_requests =Rqueue.objects.filter(status=Status.FINISHED).order_by('-id')
     return render(request,
                   template_name='rqueue/finished_requests.html',
                   context={'finishedqueues':finished_requests})

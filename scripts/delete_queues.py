@@ -1,14 +1,10 @@
-from rqueue.models import Rqueue, FinishedQueue
+from rqueue.models import Rqueue
 def run():
     '''
-        Delete all Finished and Pending Queues
+        Delete all Rqueues
 
     :return: None
     '''
 
     Rqueue.objects.all().delete()
-    print('Pending Queues have been deleted')
-
-
-    FinishedQueue.objects.all().delete()
-    print('Finished Queue have been deleted')
+    print('RQueue objects have been deleted')

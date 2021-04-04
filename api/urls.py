@@ -10,6 +10,7 @@ urlpatterns = [
     path('resource/retrieve_label/<label>?priority=<priority>?signoff=<signoff>', views.retrieve_resource_by_label, name='retrieve_resource_by_label'),
 
     path('resource/<slug>', views.resource_view, name='resource_view'),
-    path('pendingrequest/<slug>', views.pendingrequest_view, name='pendingrequest_view'),
-    path('pendingrequests', views.pendingrequests_view, name='pendingrequests_view'),
+    path('rqueue/<slug>', views.rqueue_view, name='rqueue_view'),
+    path('rqueues', views.rqueues_view, name='rqueues_view'),
+    path('pendingrequests', views.rqueues_status_pending_view, name='rqueues_status_pending_view'),
 ]
