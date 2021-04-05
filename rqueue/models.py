@@ -22,7 +22,7 @@ class Rqueue(models.Model):
         # pended_time_descriptive - The time that the queue was pending till it deleted.
             # It is enough to receive this only descriptive and store in the DB
                 # We will always store None by default till there will be an automatic update by the queue when it's done
-
+        # description - We want to have some random text to describe each queue after it's creation
 
     data = JSONField()
     priority = models.IntegerField(
@@ -39,6 +39,7 @@ class Rqueue(models.Model):
         default=Status.PENDING,
     )
     pended_time_descriptive = models.CharField(max_length=1024, null=True, default=None)
+    description = models.CharField(max_length=2048, null=True, default=None, blank=True)
 
     @property
     def pending_time(self):
