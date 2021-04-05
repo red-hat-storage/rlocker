@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.contrib import messages
 from rqueue.models import Rqueue
 from rqueue.constants import Status
 
@@ -10,11 +11,21 @@ def pending_requests_page(request):
                       context={'rqueues':rqueues})
 
     if request.method == 'POST':
+        #We do enter here when a priority is changed!:
         rqueue_id = request.POST.get('id')
         rqueue_changed_priority = request.POST.get('priority')
         rqueue_obj = Rqueue.objects.get(id=rqueue_id)
+
+        #Get the previous priority before changing it to send a message:
+        previous_priority = rqueue_obj.priority
+
         rqueue_obj.priority = int(rqueue_changed_priority)
         rqueue_obj.save()
+        messages.info(request,
+                      message=f"Queue with ID {rqueue_obj.id} has been changed! \n"
+                      f"Previous Priority: {previous_priority} \n"
+                      f"New Priority: {rqueue_obj.priority}"
+        )
         return redirect('pending_requests_page')
 
 def finished_requests_page(request):
