@@ -14,12 +14,15 @@ class LockableResource(models.Model):
         # labels - All the labels a lockable resource can have.
         # signoff - To be aware who locked the resource, we want to have a signoff
         #               that will describe who was in charge to change the status of it.
+        # TODO: signoff should support HTML so it will be easier to send Jenkins Job Links
+        # description - We want to have some random text to describe lockable resource
 
     provider = models.CharField(max_length=256)
     name =  models.CharField(max_length=256, unique=True)
     is_locked = models.BooleanField(default=False)
     labels_string = models.CharField(max_length=2048)
     signoff = models.CharField(max_length=2048, null=True, default=None, blank=True)
+    description = models.CharField(max_length=2048, null=True, default=None, blank=True)
 
     @property
     def labels(self):
