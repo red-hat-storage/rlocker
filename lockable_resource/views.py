@@ -15,6 +15,7 @@ def lockable_resources_page(request):
         action = request.POST.get('action') # get action
         r_lock_id = int(request.POST.get('id'))  # get ID of lockable resource
         r_lock_obj = LockableResource.objects.get(id=r_lock_id) #get object of lockable resource
+
         if action == const.ACTION_LOCK:
             signoff = request.POST.get(f'signoff-{r_lock_id}') # get signoff
             #Create a queue for this lock request with priority 0
@@ -35,5 +36,18 @@ def lockable_resources_page(request):
             r_lock_obj.release()
             messages.info(request, message=f"{r_lock_obj.name} has been released successfully!")
 
+        if action == const.ACTION_MAINTENANCE_MODE_ENTER:
+            r_lock_obj.in_maintenance = True
+            r_lock_obj.save()
+            messages.info(request,
+                              message=f"{r_lock_obj.name} has been Entered to Maintenance Mode!"
+            )
+
+        if action == const.ACTION_MAINTENANCE_MODE_EXIT:
+            r_lock_obj.in_maintenance = False
+            r_lock_obj.save()
+            messages.info(request,
+                              message=f"{r_lock_obj.name} has been Exited from Maintenance Mode! Resources now could be locked/released as usual!"
+            )
 
         return redirect('lockable_resources_page')
