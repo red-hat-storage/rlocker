@@ -19,6 +19,10 @@ class LabelManager:
         self.all_free_resources = LockableResource.get_all_free_resources()
 
 
+    @property
+    def free_resources(self):
+        return self.get_free_resources()
+
     def get_free_resources(self):
         '''
         Instance Method

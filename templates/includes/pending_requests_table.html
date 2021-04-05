@@ -34,26 +34,30 @@
                     <td>{{ rqueue.id }}</td>
                     <td>{{ rqueue.time_requested }}</td>
                     <td>
-                        {% include 'includes/change_priority_modals.html' %}
-                        <div id="priority-options-{{ rqueue.id }}" class="btn-group">
-                            <a href="#Change-Priority-1-{{ rqueue.id }}" class="btn btn-danger" type="button" data-toggle="modal">1</a>
-                            <a href="#Change-Priority-2-{{ rqueue.id }}" class="btn btn-danger" type="button" data-toggle="modal">2</a>
-                            <a href="#Change-Priority-3-{{ rqueue.id }}" class="btn btn-danger" type="button" data-toggle="modal">3</a>
-                            <a href="#Change-Priority-4-{{ rqueue.id }}" class="btn btn-danger" type="button" data-toggle="modal">4</a>
-                        </div>
+                        {% if user.is_staff %}
+                            {% include 'includes/change_priority_modals.html' %}
+                            <div id="priority-options-{{ rqueue.id }}" class="btn-group">
+                                <a href="#Change-Priority-1-{{ rqueue.id }}" class="btn btn-danger" type="button" data-toggle="modal">1</a>
+                                <a href="#Change-Priority-2-{{ rqueue.id }}" class="btn btn-danger" type="button" data-toggle="modal">2</a>
+                                <a href="#Change-Priority-3-{{ rqueue.id }}" class="btn btn-danger" type="button" data-toggle="modal">3</a>
+                                <a href="#Change-Priority-4-{{ rqueue.id }}" class="btn btn-danger" type="button" data-toggle="modal">4</a>
+                            </div>
 
-                        <script>
-                            btnGroups = document.getElementById('priority-options-{{ rqueue.id }}').children;
-                            activePriority = "{{ rqueue.priority }}";
-                            for (var item of btnGroups)
-                            {
-                                if (item.innerHTML === activePriority)
+                            <script>
+                                btnGroups = document.getElementById('priority-options-{{ rqueue.id }}').children;
+                                activePriority = "{{ rqueue.priority }}";
+                                for (var item of btnGroups)
                                 {
-                                    item.className += ' active';
-                                    item.href = ""
+                                    if (item.innerHTML === activePriority)
+                                    {
+                                        item.className += ' active';
+                                        item.href = ""
+                                    }
                                 }
-                            }
-                        </script>
+                            </script>
+                        {% else %}
+                            {{ rqueue.priority }}
+                        {% endif %}
                     </td>
                     <td>
                         {% include 'includes/display_json_data_modal.html' %}

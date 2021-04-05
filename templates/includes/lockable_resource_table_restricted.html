@@ -1,0 +1,40 @@
+<section class="panel">
+	<header class="panel-heading">
+        {{ title }}
+    </header>
+	<table class="table table-striped table-advance table-hover center-block" style="text-align: center">
+		<tbody>
+			<tr>
+				<th style="text-align: center">
+					<i class="icon_profile"></i> ID
+				</th>
+				<th style="text-align: center">
+					<i class="icon_pencil"></i> Name
+				</th>
+				<th style="text-align: center">
+					<i class="icon_question"></i> Status
+				</th>
+			</tr>
+            {% for lockable_resource in lockable_resources %}
+
+			<tr id="row-{{ lockable_resource.id }}">
+				<td>{{ lockable_resource.id }}</td>
+				<td>{{ lockable_resource.name }}</td>
+				<td>
+                    {% if not lockable_resource.in_maintenance %}
+                        <span>
+                            <i class="{{ lockable_resource.status_properties.icon }}"></i>
+                            <strong>{{ lockable_resource.status_properties.status }}</strong>
+                        </span>
+                    {% else %}
+                        <span>
+                            <i class="icon_tools"></i>
+                            <strong>UNDER MAINTENANCE</strong>
+                        </span>
+                    {% endif %}
+				</td>
+			</tr>
+            {% endfor %}
+		</tbody>
+	</table>
+</section>
