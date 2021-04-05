@@ -2,4 +2,3 @@
 __pycache__
 .idea
 nginx/static/*
-db.sqlite3
