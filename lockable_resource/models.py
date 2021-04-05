@@ -38,6 +38,19 @@ class LockableResource(models.Model):
         return self.labels_string.split()
 
     @property
+    def free_and_not_in_maintenance(self):
+        '''
+        Instance Property
+        Returns if the lockable resource could be locked at all.
+             - Resource could be locked
+             - Resource could be under maintenance
+
+
+        :return: Bool True/False
+        '''
+        return not self.is_locked and not self.in_maintenance
+
+    @property
     def status_properties(self):
         '''
         Instance Property
@@ -174,7 +187,6 @@ class LockableResource(models.Model):
             obj_dict['signoff'] = kwargs.get('signoff')
 
         return json.dumps(obj_dict)
-
 
     # Meta Class
     class Meta:

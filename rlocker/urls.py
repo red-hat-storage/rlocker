@@ -18,8 +18,9 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('lockable_resource.urls')),
+    path('lockable_resource/', include('lockable_resource.urls')),
     path('api/', include('api.urls')),
     path('', include('account.urls')),
     path('', include('rqueue.urls')),
+    path('', include('dashboard.urls')),
 ]

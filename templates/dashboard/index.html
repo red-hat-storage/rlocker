@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block tab_title %}
+    RLocker - Dashboard
+{% endblock %}
+
+{% block pageheader_title %}
+    Dashboard
+{% endblock %}
+
+{% block page_description %}
+    Dashboard <br>
+{% endblock %}
+
+{% block content %}
+    <!-- General status of all Resources start -->
+    <div class="row">
+        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+            <div class="info-box green-bg">
+                <i class="icon_lock-open"></i>
+                <div class="count">{{ free_resources | length}}</div>
+                <div class="title">Available Resources</div>
+            </div>
+        </div>
+
+        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+            <div class="info-box red-bg">
+                <i class="icon_lock"></i>
+                <i class="icon_tools"></i>
+                <div class="count">{{ unavailable_resources | length }}</div>
+                <div class="title">Unavailable Resources</div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+	    <div class="col-lg-6 justify-content-center">
+            {% include 'includes/lockable_resource_table_restricted.html' with lockable_resources=free_resources title="Free Resources" %}
+        </div>
+        <div class="col-lg-6 justify-content-center">
+            {% include 'includes/lockable_resource_table_restricted.html' with lockable_resources=unavailable_resources title="Unavailable Resources" %}
+        </div>
+    </div>
+    <!-- General status of all Resources end -->
+
+    <!-- Resources that are free by label start -->
+    <ol class="breadcrumb">
+        Free Resource By Label
+    </ol>
+    <div class="row">
+        {% for label_manager in label_managers %}
+            <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12">
+                <div class="info-box blue-bg">
+                    <i class="fa fa-cloud"></i>
+                    <div>{{ label_manager.label }}</div>
+                    <div class="count">{{ label_manager.free_resources | length }}</div>
+                    <div class="title">
+                        {% for lockable_resource in label_manager.free_resources %}
+                           <br> {{ lockable_resource.name }} <br>
+                        {% endfor %}
+                    </div>
+                </div>
+                <!--/.info-box-->
+            </div>
+        {% endfor %}
+    </div>
+    <br>
+    <!-- Resources that are free by label end -->
+{% endblock %}

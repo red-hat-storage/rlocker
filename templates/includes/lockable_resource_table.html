@@ -26,7 +26,7 @@
 							<i class="icon_question"></i> Status
 						</th>
 						<th style="text-align: center">
-							<i class="icon_tools"></i> Actions
+							<i class="icon_folder-open"></i> Actions
 						</th>
 					</tr>
                     {% for lockable_resource in lockable_resources %}
@@ -46,20 +46,22 @@
 						<td>
                             <span id="actions-{{ lockable_resource.id }}">
                                 {% if not lockable_resource.in_maintenance %}
-                                    {% if lockable_resource.can_lock %}
-                                        {% include 'includes/lock_lockable_resources_modal.html' %}
+                                    {% if user.is_staff %}
+                                        {% if lockable_resource.can_lock %}
+                                            {% include 'includes/lock_lockable_resources_modal.html' %}
 
-                                        <a class="btn btn-danger" href="#Modal-Lock-{{ lockable_resource.id }}" data-toggle="modal">
-                                            <i class="icon_lock"></i>
-                                            <span>Lock</span>
-                                        </a>
-                                    {% else %}
-                                        {% include 'includes/release_lockable_resources_modal.html' %}
+                                            <a class="btn btn-danger" href="#Modal-Lock-{{ lockable_resource.id }}" data-toggle="modal">
+                                                <i class="icon_lock"></i>
+                                                <span>Lock</span>
+                                            </a>
+                                        {% else %}
+                                            {% include 'includes/release_lockable_resources_modal.html' %}
 
-                                        <a class="btn btn-success" href="#Modal-Release-{{ lockable_resource.id }}" data-toggle="modal">
-                                    	    <i class="icon_lock-open"></i>
-                                    	    <span>Release</span>
-                                        </a>
+                                            <a class="btn btn-success" href="#Modal-Release-{{ lockable_resource.id }}" data-toggle="modal">
+                                        	    <i class="icon_lock-open"></i>
+                                        	    <span>Release</span>
+                                            </a>
+                                        {% endif %}
                                     {% endif %}
                                 {% else %}
                                     <i class="icon_tools"></i>
