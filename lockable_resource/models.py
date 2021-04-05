@@ -16,6 +16,8 @@ class LockableResource(models.Model):
         #               that will describe who was in charge to change the status of it.
         # TODO: signoff should support HTML so it will be easier to send Jenkins Job Links
         # description - We want to have some random text to describe lockable resource
+        # in_maintenance - Describes whether if the resource is in maintenance or not, we will disable
+            # all functionalities to lock/release resource is it is.
 
     provider = models.CharField(max_length=256)
     name =  models.CharField(max_length=256, unique=True)
@@ -23,6 +25,7 @@ class LockableResource(models.Model):
     labels_string = models.CharField(max_length=2048)
     signoff = models.CharField(max_length=2048, null=True, default=None, blank=True)
     description = models.CharField(max_length=2048, null=True, default=None, blank=True)
+    in_maintenance = models.BooleanField(default=False)
 
     @property
     def labels(self):
@@ -116,8 +119,11 @@ class LockableResource(models.Model):
         return self.signoff is not None
 
     @staticmethod
-    def get_all_free_resources():
-        return LockableResource.objects.filter(is_locked=False)
+    def get_all_free_resources(ignore_maintenance=False):
+        if ignore_maintenance:
+            return LockableResource.objects.filter(is_locked=False)
+        else:
+            return LockableResource.objects.filter(is_locked=False, in_maintenance=False)
 
     def __str__(self):
         '''
@@ -158,7 +164,7 @@ class LockableResource(models.Model):
         Removals are in list: key_removals
         :return: JSON object
         '''
-        key_removals = ['_state']
+        key_removals = ['_state', 'in_maintenance', 'is_locked']
         obj_dict = self.__dict__
         for key_removal in key_removals:
             #Try to remove the key SILENTLY:

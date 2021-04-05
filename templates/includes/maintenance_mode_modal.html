@@ -1,0 +1,59 @@
+<div aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="Modal-Maintenance-Enter-{{ lockable_resource.id }}" class="modal fade">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <div class="modal-header">
+            <button aria-hidden="true" data-dismiss="modal" class="close" type="button">×</button>
+            <h4 class="modal-title">
+                <b>Put {{ lockable_resource.name }} to Maintenance Mode ?</b>
+            </h4>
+         </div>
+         <div class="modal-body">
+             <h5>By clicking Enter Maintenance, this resource will not be available to lock/release until you quit from maintenance mode.</h5>
+            <form class="form-inline" role="form" method="POST">
+               {% csrf_token %}
+
+               <br>
+               <br>
+               <br>
+
+               <input type="hidden" id='id' name="id" value="{{ lockable_resource.id }}"/>
+               <input type="hidden" id='action' name="action" value="maintenance_mode_enter"/>
+               <button type="submit" class="btn btn-primary">
+                   <i style="margin-right: 5px"  class="icon_tools"></i>
+                   <b>Enter Maintenance</b>
+               </button>
+            </form>
+         </div>
+      </div>
+   </div>
+</div>
+
+<div aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="Modal-Maintenance-Exit-{{ lockable_resource.id }}" class="modal fade">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <div class="modal-header">
+            <button aria-hidden="true" data-dismiss="modal" class="close" type="button">×</button>
+            <h4 class="modal-title">
+                <b>Put {{ lockable_resource.name }} to Maintenance Mode ?</b>
+            </h4>
+         </div>
+         <div class="modal-body">
+             <h5>By clicking Exit Maintenance, this resource will be available to lock/release as usual.</h5>
+            <form class="form-inline" role="form" method="POST">
+               {% csrf_token %}
+
+               <br>
+               <br>
+               <br>
+
+               <input type="hidden" id='id' name="id" value="{{ lockable_resource.id }}"/>
+               <input type="hidden" id='action' name="action" value="maintenance_mode_exit"/>
+               <button type="submit" class="btn btn-success">
+                   <i style="margin-right: 5px"  class="icon_check"></i>
+                   <b>Exit Maintenance</b>
+               </button>
+            </form>
+         </div>
+      </div>
+   </div>
+</div>
