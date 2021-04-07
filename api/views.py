@@ -130,6 +130,7 @@ def retrieve_resource_entrypoint(request, search_string):
     '''
     request_data = dict(request.data)
     request_signoff = request_data.get('signoff')
+    #TODO: Check if the signoff is unique before proceeding to retrieve a resource
     request_priority = int(request_data.get('priority'))
     additional_kwargs = {"priority": request_priority, "signoff": request_signoff}
     try:
