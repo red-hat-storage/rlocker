@@ -42,7 +42,7 @@ def fetch_for_available_lockable_resources(sender, instance, created, **kwargs):
             # If there is an ID in the data, it means that the request includes a specific
             # Lockable resource that needs to be locked and NOT search_string.
             lock_res_object = LockableResource.objects.get(id=data_id)
-            lock_res_object.lock(signoff=f"{data_signoff} - Lock Type:{instance.priority}")
+            lock_res_object.lock(signoff=data_signoff)
             instance.add_to_data_json(json_to_add=lock_res_object.json_parse())
             instance.report_finish()
             print(f'A queue has been changed to status FINISHED. \n'
@@ -71,7 +71,7 @@ def fetch_for_available_lockable_resources(sender, instance, created, **kwargs):
                         requested_resource = label_manager.retrieve_free_resource(not_exist_ok=True)
 
                     if requested_resource:
-                        requested_resource.lock(signoff=f"{data_signoff} - Lock Type:{instance.priority}")
+                        requested_resource.lock(signoff=data_signoff)
                         instance.add_to_data_json(json_to_add=requested_resource.json_parse())
                         instance.report_finish()
                         print(f'A queue has been changed to status FINISHED. \n'
