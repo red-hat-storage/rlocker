@@ -23,7 +23,7 @@ class LockableResource(models.Model):
     name =  models.CharField(max_length=256, unique=True)
     is_locked = models.BooleanField(default=False)
     labels_string = models.CharField(max_length=2048)
-    signoff = models.CharField(max_length=2048, null=True, default=None, blank=True)
+    signoff = models.CharField(max_length=2048, null=True, default=None, blank=True, unique=True)
     description = models.CharField(max_length=2048, null=True, default=None, blank=True)
     in_maintenance = models.BooleanField(default=False)
 
