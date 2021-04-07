@@ -25,6 +25,9 @@
 						<th style="text-align: center">
 							<i class="icon_question"></i> Status
 						</th>
+                        <th style="text-align: center">
+							<i class="icon_document"></i> Description
+						</th>
 						<th style="text-align: center">
 							<i class="icon_folder-open"></i> Actions
 						</th>
@@ -37,13 +40,28 @@
 						<td>{{ lockable_resource.name }}</td>
 						<td>{{ lockable_resource.labels }}</td>
 						<td>{{ lockable_resource.signoff }}</td>
+                        <!-- Row Status Start -->
 						<td style="color:{{ lockable_resource.status_properties.color }}">
 							<i class="{{ lockable_resource.status_properties.icon }}"></i>
 							<span>
 								<strong>{{ lockable_resource.status_properties.status }}</strong>
 							</span>
 						</td>
-						<td>
+						<!-- Row Status End -->
+                        <!-- Row Description Start -->
+                        <td>
+                            <a data-original-title="Description for {{ lockable_resource.name }}"
+                                    data-content="{{ lockable_resource.description }}"
+                                    data-placement="right" data-trigger="hover"
+                                    class="btn btn-info popovers">
+                                <i class="icon_document"></i>
+                                <span></span> <!-- Could write some text here in the future if we want -->
+                            </a>
+                        </td>
+                        <!-- Row Description End -->
+
+                        <!-- Row Actions Start -->
+                        <td>
                             <span id="actions-{{ lockable_resource.id }}">
                                 {% if not lockable_resource.in_maintenance %}
                                     {% if user.is_staff %}
@@ -93,7 +111,8 @@
                             {% endif %}
 
 						</td>
-					</tr>
+					    <!-- Row Actions End -->
+                    </tr>
                     {% endfor %}
 
 				</tbody>

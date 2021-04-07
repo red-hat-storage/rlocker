@@ -18,6 +18,9 @@
           <tr>
             <th style="text-align: center"><i class="icon_loading"></i> ID</th>
             <th style="text-align: center"><i class="icon_datareport"></i> JSON Data</th>
+            <th style="text-align: center">
+                <i class="icon_document"></i> Description
+            </th>
             <th style="text-align: center"><i class="icon_clock"></i> Time Waited</th>
           </tr>
             {% for finishedqueue in finishedqueues %}
@@ -32,6 +35,17 @@
                             <span>Show JSON</span>
                         </a>
                     </td>
+                    <!-- Row Description Start -->
+                    <td>
+                        <a data-original-title="Description for Rqueue with ID {{ finishedqueue.id }}"
+                                data-content="{{ finishedqueue.description }}"
+                                data-placement="right" data-trigger="hover"
+                                class="btn btn-info popovers">
+                            <i class="icon_document"></i>
+                            <span></span> <!-- Could write some text here in the future if we want -->
+                        </a>
+                    </td>
+                    <!-- Row Description End -->
                     <td>
                         <span class="center-block" id="pended-time-{{ finishedqueue.id }}">
                             {{ finishedqueue.pended_time_descriptive }}
