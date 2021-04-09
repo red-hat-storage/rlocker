@@ -6,3 +6,4 @@ django-jsonfield
 django-filter
 markdown
 pyyaml
+channels

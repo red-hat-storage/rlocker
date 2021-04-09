@@ -35,6 +35,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'channels',
     'rqueue.apps.RqueueConfig',
     'api.apps.ApiConfig',
     'rest_framework',
@@ -81,6 +82,8 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'rlocker.wsgi.application'
+
+ASGI_APPLICATION = 'rlocker.asgi.application'
 
 
 # Database

@@ -21,6 +21,7 @@ def run():
             lr_obj.save()
             print(f"{lr_obj.name} added!")
         else:
-            print(f'{lr_name} exists! Continuing...')
+            print(f'{lr_name} exists! Editing the fields if needed!')
+            LockableResource.objects.filter(name=lr_name).update(**lr)
             continue
 
