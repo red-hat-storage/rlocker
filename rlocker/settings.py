@@ -21,13 +21,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 # Could add here for debugging only: os.environ['DJANGO_SECRET'] = $YOUR_SECRET
-os.environ['DJANGO_SECRET'] = '487$7pk@#2cn-1)cf)4_9gg#*b_6_-#yw$5_)-i)78w_^+v*op'
-os.environ['DEBUG'] = "True"
 SECRET_KEY = os.environ.get('DJANGO_SECRET')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # We use string by purpose since its env var
-DEBUG = os.environ.get('DEBUG') == "True"
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -104,7 +102,7 @@ DEV_DB = {
 }
 
 
-DATABASES = PROD_DB if not DEBUG else DEV_DB
+DATABASES = PROD_DB
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
