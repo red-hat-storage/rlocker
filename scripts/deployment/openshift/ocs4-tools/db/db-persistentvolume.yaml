@@ -1,0 +1,72 @@
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: pvc-00082548-468c-49e7-aa78-f1c91fa24435
+  selfLink: /api/v1/persistentvolumes/pvc-00082548-468c-49e7-aa78-f1c91fa24435
+  uid: 8abef63d-9075-4843-90cd-0f976cda0ed5
+  resourceVersion: '413998'
+  creationTimestamp: '2021-04-09T08:11:28Z'
+  annotations:
+    kubernetes.io/createdby: vsphere-volume-dynamic-provisioner
+    pv.kubernetes.io/bound-by-controller: 'yes'
+    pv.kubernetes.io/provisioned-by: kubernetes.io/vsphere-volume
+  finalizers:
+    - kubernetes.io/pv-protection
+  managedFields:
+    - manager: kube-controller-manager
+      operation: Update
+      apiVersion: v1
+      time: '2021-04-09T08:11:28Z'
+      fieldsType: FieldsV1
+      fieldsV1:
+        'f:metadata':
+          'f:annotations':
+            .: {}
+            'f:kubernetes.io/createdby': {}
+            'f:pv.kubernetes.io/bound-by-controller': {}
+            'f:pv.kubernetes.io/provisioned-by': {}
+        'f:spec':
+          'f:accessModes': {}
+          'f:capacity':
+            .: {}
+            'f:storage': {}
+          'f:claimRef':
+            .: {}
+            'f:apiVersion': {}
+            'f:kind': {}
+            'f:name': {}
+            'f:namespace': {}
+            'f:resourceVersion': {}
+            'f:uid': {}
+          'f:persistentVolumeReclaimPolicy': {}
+          'f:storageClassName': {}
+          'f:volumeMode': {}
+          'f:vsphereVolume':
+            .: {}
+            'f:fsType': {}
+            'f:volumePath': {}
+        'f:status':
+          'f:phase': {}
+spec:
+  capacity:
+    storage: 15Gi
+  vsphereVolume:
+    volumePath: >-
+      [vsanDatastore]
+      66242d5f-cafa-91c3-8164-e4434bd7df48/cerginba-rlocker-tlwlh-dynamic-pvc-00082548-468c-49e7-aa78-f1c91fa24435.vmdk
+    fsType: ext4
+  accessModes:
+    - ReadWriteOnce
+  claimRef:
+    kind: PersistentVolumeClaim
+    namespace: db
+    name: postgresql
+    uid: 00082548-468c-49e7-aa78-f1c91fa24435
+    apiVersion: v1
+    resourceVersion: '413837'
+  persistentVolumeReclaimPolicy: Delete
+  storageClassName: thin
+  volumeMode: Filesystem
+status:
+  phase: Bound
+
