@@ -91,8 +91,8 @@ PROD_DB = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'rlocker',
         'USER': 'admin',
-        'PASSWORD': 'admin',
-        'HOST': 'postgresql.db'
+        'PASSWORD': 'ocs4-jenkins',
+        'HOST': 'postgresql.ocs4-tools'
     }
 }
 

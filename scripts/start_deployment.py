@@ -3,9 +3,7 @@ from scripts.utils import parse_args
 from django.conf import settings
 
 
-DJANGO_NS = "web"
-NGINX_NS = "web"
-DB_NS = "db"
+PROJECT_NS = "ocs4-tools"
 
 class OpenshiftDeployment:
     def __init__(self, api_url=None, token=None):
@@ -16,9 +14,9 @@ class OpenshiftDeployment:
         '''
         self.api_url = api_url
         self.token = token
-        self.django_location = os.path.join(settings.BASE_DIR, "scripts", "deployment", "openshift", DJANGO_NS, 'django')
-        self.nginx_location = os.path.join(settings.BASE_DIR, "scripts", "deployment", "openshift", NGINX_NS, 'nginx')
-        self.db_location = os.path.join(settings.BASE_DIR, "scripts", "deployment", "openshift", DB_NS)
+        self.django_location = os.path.join(settings.BASE_DIR, "scripts", "deployment", "openshift", PROJECT_NS, 'django')
+        self.nginx_location = os.path.join(settings.BASE_DIR, "scripts", "deployment", "openshift", PROJECT_NS, 'nginx')
+        self.db_location = os.path.join(settings.BASE_DIR, "scripts", "deployment", "openshift", PROJECT_NS)
 
         self.login()
 
@@ -35,23 +33,23 @@ class OpenshiftDeployment:
         os.system(f"oc apply -f {path}")
 
     def deploy_django(self):
-        self.create_namespace(DJANGO_NS)
+        self.create_namespace(PROJECT_NS)
         for yaml_file in os.listdir(self.django_location):
             deployment_file = os.path.join(self.django_location, yaml_file)
             self.apply(deployment_file)
 
     def deploy_nginx(self):
-        self.create_namespace(NGINX_NS)
+        self.create_namespace(PROJECT_NS)
         for yaml_file in os.listdir(self.nginx_location):
             deployment_file = os.path.join(self.nginx_location, yaml_file)
             self.apply(deployment_file)
 
     def instantiate_db_template(self):
-        template_envs_file_location = os.path.join(self.db_location, "instantiate-template.env")
-        os.system(f"oc process postgresql-persistent -n openshift --param-file={template_envs_file_location} | oc create -f - -n {DB_NS}")
+        template_envs_file_location = os.path.join(self.db_location, "init-db.env")
+        os.system(f"oc process postgresql-persistent -n openshift --param-file={template_envs_file_location} | oc create -f - -n {PROJECT_NS}")
 
     def deploy_db(self):
-        self.create_namespace(DB_NS)
+        self.create_namespace(PROJECT_NS)
         self.instantiate_db_template()
 
 

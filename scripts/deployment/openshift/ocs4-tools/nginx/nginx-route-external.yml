@@ -2,7 +2,7 @@ kind: Route
 apiVersion: route.openshift.io/v1
 metadata:
   name: resourcelocker #This is also the prefix for the generated URL
-  namespace: web
+  namespace: ocs4-tools
   labels:
     app: nginx
 spec:

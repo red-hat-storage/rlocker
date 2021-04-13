@@ -2,10 +2,9 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: django-config
-  namespace: web
+  namespace: ocs4-tools
   labels:
     app: django
 data:
-
   DJANGO_SECRET:
   DEBUG: "False"
