@@ -26,20 +26,15 @@ class OpenshiftDeployment:
         else:
             print("Skipping Login...")
 
-    def create_namespace(self, name):
-        os.system(f"oc create namespace {name}")
-
     def apply(self, path):
         os.system(f"oc apply -f {path}")
 
     def deploy_django(self):
-        self.create_namespace(PROJECT_NS)
         for yaml_file in os.listdir(self.django_location):
             deployment_file = os.path.join(self.django_location, yaml_file)
             self.apply(deployment_file)
 
     def deploy_nginx(self):
-        self.create_namespace(PROJECT_NS)
         for yaml_file in os.listdir(self.nginx_location):
             deployment_file = os.path.join(self.nginx_location, yaml_file)
             self.apply(deployment_file)
@@ -49,7 +44,6 @@ class OpenshiftDeployment:
         os.system(f"oc process postgresql-persistent -n openshift --param-file={template_envs_file_location} | oc create -f - -n {PROJECT_NS}")
 
     def deploy_db(self):
-        self.create_namespace(PROJECT_NS)
         self.instantiate_db_template()
 
 
