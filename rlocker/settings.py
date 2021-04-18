@@ -21,8 +21,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 # Could add here for debugging only: os.environ['DJANGO_SECRET'] = $YOUR_SECRET
-os.environ['DJANGO_SECRET'] = ''
-os.environ['DEBUG'] = "True"
 SECRET_KEY = os.environ.get('DJANGO_SECRET')
 
 # SECURITY WARNING: don't run with debug turned on in production!
