@@ -87,10 +87,10 @@ WSGI_APPLICATION = 'rlocker.wsgi.application'
 PROD_DB = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'rlocker',
-        'USER': 'admin',
-        'PASSWORD': 'admin',
-        'HOST': 'postgresql.db'
+        'NAME': os.environ.get('POSTGRESQL_DATABASE'),
+        'USER': os.environ.get('POSTGRESQL_USER'),
+        'PASSWORD': os.environ.get('POSTGRESQL_PASSWORD'),
+        'HOST': os.environ.get('DATABASE_SERVICE_NAME'),
     }
 }
 
