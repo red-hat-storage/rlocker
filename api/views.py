@@ -1,6 +1,6 @@
 from rest_framework import status
 from rest_framework.response import Response
-from api.custom_permissions import HasValidToken
+from api.custom_permissions import HasValidTokenOrIsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
 from lockable_resource.models import LockableResource
 from rqueue.models import Rqueue
@@ -8,8 +8,10 @@ from rqueue.constants import Status
 from django.shortcuts import  redirect, reverse
 from lockable_resource.exceptions import LockWithoutSignoffException
 from api.serializers import LockableResourceSerializer, RqueueSerializer
-from api.utils import get_user_object_by_token
+from api.utils import get_user_object_by_token_or_auth
 import json
+
+
 def redirect_to_prior_location(request):
     '''
     We use this only if there is a entry to /api and redirect to somewhere
@@ -19,7 +21,7 @@ def redirect_to_prior_location(request):
     return redirect('resources_view')
 
 @api_view(['GET', 'POST'])
-@permission_classes([HasValidToken])
+@permission_classes([HasValidTokenOrIsAuthenticated])
 def resources_view(request):
     '''
     :param request:
@@ -61,7 +63,7 @@ def resources_view(request):
             return Response(extended_data, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET', 'PUT'])
-@permission_classes([HasValidToken])
+@permission_classes([HasValidTokenOrIsAuthenticated])
 def resource_view(request, slug):
     '''
     :param request:
@@ -112,7 +114,7 @@ def resource_view(request, slug):
 
 
 @api_view(['PUT'])
-@permission_classes([HasValidToken])
+@permission_classes([HasValidTokenOrIsAuthenticated])
 def retrieve_resource_entrypoint(request, search_string):
     '''
     This view designed to decide where the request should be sent
@@ -168,13 +170,13 @@ def retrieve_resource_entrypoint(request, search_string):
             }, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
-@permission_classes([HasValidToken])
+@permission_classes([HasValidTokenOrIsAuthenticated])
 def retrieve_resource_by_name(request, name, priority, signoff):
     resource = LockableResource.objects.get(name=name)
 
     #We want to add some more fields to our data before sending it as Request Queue
     custom_data = json.loads(resource.json_parse(override_signoff=True, signoff=signoff))
-    custom_data['username'] = get_user_object_by_token(request).username
+    custom_data['username'] = get_user_object_by_token_or_auth(request).username
     #Creating the Rqueue and saving it
     put_in_queue = Rqueue(data=json.dumps(custom_data), priority=int(priority))
     put_in_queue.save()
@@ -197,14 +199,14 @@ def retrieve_resource_by_name(request, name, priority, signoff):
 
 
 @api_view(['GET'])
-@permission_classes([HasValidToken])
+@permission_classes([HasValidTokenOrIsAuthenticated])
 def retrieve_resource_by_label(request, label, priority, signoff):
     # The data will be sent to Rqueue without knowing which resource is going to be locked yet.
         # This will be handled by the signals
     custom_data = {
         "label" : label,
         "signoff" : signoff,
-        "username" : get_user_object_by_token(request).username
+        "username" : get_user_object_by_token_or_auth(request).username
     }
 
     put_in_queue = Rqueue(data=json.dumps(custom_data), priority=int(priority))
