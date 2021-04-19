@@ -30,3 +30,17 @@ def get_user_object_by_token(request):
     token = token_string.replace('Token ', '')
     user_obj = User.objects.get(auth_token=token)
     return user_obj
+
+
+def get_user_object_by_token_or_auth(request):
+    '''
+    We'd like to have a function that will check try to return the user object
+        by auth or by a token.
+    Currently, not handling the API request cases without a token and without and auth
+    :param request:
+    :return:
+    '''
+    try:
+        return get_user_object_by_token(request)
+    except:
+        return request.user
