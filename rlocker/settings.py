@@ -102,7 +102,7 @@ DEV_DB = {
 }
 
 
-DATABASES = PROD_DB if not DEBUG else DEV_DB
+DATABASES = PROD_DB if not os.environ.get('USE_DEV_DB') else DEV_DB
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
