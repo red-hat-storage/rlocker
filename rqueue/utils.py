@@ -1,4 +1,5 @@
 import time
+import json
 import rqueue.constants as const
 from lockable_resource.label_manager import LabelManager
 
@@ -38,17 +39,24 @@ def get_time_descriptive(total_seconds):
         return f"Less than a minute"
 
 
-def check_resource_released_by_label(label):
-    counter = 0
-    resource_by_label = LabelManager(label)
+def json_load_twice(json_string):
+    '''
+    WORKAROUND:
+        Currently we don't know how to handle json.loads()
+            Because in PostgresDB the json.loads() still remains the object as string
+            So Sometimes the json.loads should be tried twice()
+    :param json_string:
+    :return:
+    '''
+    loaded_json = json.loads(json_string)
+    if type(loaded_json) == str:
+        loaded_json_second_attempt = json.loads(json_string)
+        # This should be a dictionary now, so let's test this out by executing the built-in convertion to it:
+        dict(loaded_json_second_attempt)  # Should fail if it is still not a dict
+        return loaded_json_second_attempt
 
-    while counter <= const.REQUEST_TIMEOUT // const.INTERVAL:
-        resource = resource_by_label.retrieve_free_resource()
-        if resource:
-            return resource
-        else:
-            time.sleep(const.INTERVAL)
-            print(f"Someone wants a resource with label {label}"
-                  f"but all of them are currently locked!"
-                  f"Trying in {const.INTERVAL} seconds ...")
-            counter += 1
+    elif type(loaded_json) == dict:
+        return loaded_json
+
+    else:
+        raise TypeError
