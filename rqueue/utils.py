@@ -50,7 +50,7 @@ def json_load_twice(json_string):
     '''
     loaded_json = json.loads(json_string)
     if type(loaded_json) == str:
-        loaded_json_second_attempt = json.loads(json_string)
+        loaded_json_second_attempt = json.loads(loaded_json)
         # This should be a dictionary now, so let's test this out by executing the built-in convertion to it:
         dict(loaded_json_second_attempt)  # Should fail if it is still not a dict
         return loaded_json_second_attempt
