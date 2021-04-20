@@ -91,7 +91,10 @@ class Rqueue(models.Model):
         '''
         filter_matches = []
         for rqueue in Rqueue.objects.filter(status=Status.PENDING):
-            if json.loads(rqueue.data).get(key) == value:
+            rqueue_data = rqueue.data  # DEBUG LINE
+            rqueue_dict = json.loads(rqueue_data)
+
+            if rqueue_dict.get(key) == value:
                 filter_matches.append(rqueue)
 
         if filter_matches != []:
