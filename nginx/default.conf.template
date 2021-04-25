@@ -7,11 +7,13 @@ server {
 
     location / {
         proxy_pass ${NGINX_PROXY_PASS};
-        proxy_read_timeout 86400;
-        proxy_connect_timeout 86400;
-        proxy_send_timeout 86400;
-        send_timeout 86400;
     }
+
+    proxy_read_timeout 86400s;
+    proxy_connect_timeout 86400s;
+    proxy_send_timeout 86400s;
+    send_timeout 86400s;
+
     listen ${NGINX_LISTEN_PORT};
     server_name ${NGINX_SERVER_NAME};
 }
