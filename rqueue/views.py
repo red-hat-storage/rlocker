@@ -29,7 +29,7 @@ def pending_requests_page(request):
         return redirect('pending_requests_page')
 
 def finished_requests_page(request):
-    finished_requests =Rqueue.objects.filter(status=Status.FINISHED).order_by('-id')
+    finished_requests =Rqueue.objects.exclude(status=Status.PENDING).order_by('-id')
     return render(request,
                   template_name='rqueue/finished_requests.html',
                   context={'finishedqueues':finished_requests})
