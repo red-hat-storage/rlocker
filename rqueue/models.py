@@ -38,7 +38,7 @@ class Rqueue(models.Model):
         choices=Status.CHOICES,
         default=Status.PENDING,
     )
-    pended_time_descriptive = models.CharField(max_length=1024, null=True, default=None)
+    pended_time_descriptive = models.CharField(max_length=1024, null=True, default=None, blank=True)
     description = models.CharField(max_length=2048, null=True, default=None, blank=True)
 
     @property
@@ -72,6 +72,7 @@ class Rqueue(models.Model):
             the queue finished to wait and a lockable resource is locked
         :return: None
         '''
+        #TODO: remove changing the pended time descriptive, as the signal does this already!
         self.status = Status.FINISHED
         self.pended_time_descriptive = self.pending_time_descriptive
         self.save()

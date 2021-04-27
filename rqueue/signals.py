@@ -1,13 +1,10 @@
-import json
-from collections import deque
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from rqueue.models import Rqueue
 from rqueue.constants import Priority, Interval
-import time
 from lockable_resource.models import LockableResource
 from rqueue.utils import *
-
+from crequest.middleware import CrequestMiddleware
 
 @receiver(post_save, sender=Rqueue)
 def fetch_for_available_lockable_resources(sender, instance, created, **kwargs):
@@ -63,6 +60,10 @@ def fetch_for_available_lockable_resources(sender, instance, created, **kwargs):
 
                 if requests_in_queue[0] == instance:
                     print(f"The Request with ID {instance.id} is next in turn!")
+                    print('WE DEBUG HERE \n')
+                    current_request = CrequestMiddleware.get_request()
+                    print(current_request.__dict__.get('REMOTE_ADDR'))
+                    print('WE DEBUG HERE \n')
                     #If this is the first queue that waits, let's try to understand for what it waits
                     if has_associated_resource:
                         requested_resource = LockableResource.objects.filter(name=data_name, is_locked=False, in_maintenance=False).first()
@@ -91,3 +92,24 @@ def fetch_for_available_lockable_resources(sender, instance, created, **kwargs):
 
     if not created:
         pass
+
+@receiver(pre_save, sender=Rqueue)
+def give_pended_time_value_after_status_change(sender, instance, **kwargs):
+    '''
+    A signal that will allow to edit the pended time descriptive as soon as
+        the status of a queue is being changed to something that is NOT Pending
+    That is important, because it describes the time that the queue waited, before it got
+    Finished, Aborted or Failed
+    :param sender:
+    :param instance:
+    :param kwargs:
+    :return:
+    '''
+    try:
+        rqueue=sender.objects.get(pk=instance.pk)
+    except sender.DoesNotExist:
+        pass
+
+    else:
+        if not instance.status == 'PENDING' and rqueue.status == 'PENDING':   #If Rqueue is being NOT EQUAL TO PENDING
+            instance.pended_time_descriptive = instance.pending_time_descriptive

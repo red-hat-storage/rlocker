@@ -229,7 +229,7 @@ def retrieve_resource_by_label(request, label, priority, signoff):
 
     }, status=status.HTTP_200_OK)
 
-@api_view(['GET'])
+@api_view(['GET', 'PUT'])
 def rqueue_view(request, slug):
     '''
     :param request:
@@ -238,12 +238,21 @@ def rqueue_view(request, slug):
         Return Response with the requested Rqueue in a JSON Object
 
     '''
-    try:
-        rqueue = Rqueue.objects.get(id=slug)
+    rqueue = Rqueue.objects.get(id=slug)
+    if request.method == 'GET':
         serializer = RqueueSerializer(rqueue)
         return Response(serializer.data)
-    except:
-        return Response(None)
+
+    if request.method == 'PUT':
+        request_data = dict(request.data)
+        serializer = RqueueSerializer(rqueue, data=request_data)
+        if serializer.is_valid():
+            serializer.save()
+            #If no problem with the save(), prepare the response
+            return Response(serializer.data)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 @api_view(['GET'])
 def rqueues_view(request):
@@ -252,7 +261,7 @@ def rqueues_view(request):
     GET:
         Return Response with all the Rqueues in a JSON Object
     '''
-    rqueue = Rqueue.objects.all()
+    rqueue = Rqueue.objects.order_by('-id')
 
     if request.method == 'GET':
         serializer = RqueueSerializer(rqueue, many=True)
