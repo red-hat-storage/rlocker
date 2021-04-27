@@ -4,7 +4,6 @@ from rqueue.models import Rqueue
 from rqueue.constants import Priority, Interval
 from lockable_resource.models import LockableResource
 from rqueue.utils import *
-from crequest.middleware import CrequestMiddleware
 
 @receiver(post_save, sender=Rqueue)
 def fetch_for_available_lockable_resources(sender, instance, created, **kwargs):
@@ -60,10 +59,6 @@ def fetch_for_available_lockable_resources(sender, instance, created, **kwargs):
 
                 if requests_in_queue[0] == instance:
                     print(f"The Request with ID {instance.id} is next in turn!")
-                    print('WE DEBUG HERE \n')
-                    current_request = CrequestMiddleware.get_request()
-                    print(current_request.__dict__.get('REMOTE_ADDR'))
-                    print('WE DEBUG HERE \n')
                     #If this is the first queue that waits, let's try to understand for what it waits
                     if has_associated_resource:
                         requested_resource = LockableResource.objects.filter(name=data_name, is_locked=False, in_maintenance=False).first()
