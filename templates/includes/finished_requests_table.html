@@ -1,6 +1,12 @@
 <style>
-  .loader {
+  .loader-finished {
   border: 6px solid #5cb85c; /* Green */
+  border-radius: 50%;
+  width: 45px;
+  height: 45px;
+}
+  .loader-aborted {
+  border: 6px solid #ff2d55; /* Red */
   border-radius: 50%;
   width: 45px;
   height: 45px;
@@ -19,6 +25,9 @@
             <th style="text-align: center"><i class="icon_loading"></i> ID</th>
             <th style="text-align: center"><i class="icon_datareport"></i> JSON Data</th>
             <th style="text-align: center">
+                <i class="icon_search"></i> Status
+            </th>
+            <th style="text-align: center">
                 <i class="icon_document"></i> Description
             </th>
             <th style="text-align: center"><i class="icon_clock"></i> Time Waited</th>
@@ -30,10 +39,13 @@
                     </td>
                     <td>
                         {% include 'includes/display_json_data_modal.html' %}
-                        <a class="btn btn-success" href="#DisplayFinishedQueue-Data-{{ finishedqueue.id }}" data-toggle="modal">
+                        <a class="btn {{ finishedqueue.bootstrap_classes.btn }}" href="#DisplayFinishedQueue-Data-{{ finishedqueue.id }}" data-toggle="modal">
                             <i class="icon_pencil"></i>
                             <span>Show JSON</span>
                         </a>
+                    </td>
+                    <td>
+                        {{ finishedqueue.status }}
                     </td>
                     <!-- Row Description Start -->
                     <td>
@@ -50,7 +62,7 @@
                         <span class="center-block" id="pended-time-{{ finishedqueue.id }}">
                             {{ finishedqueue.pended_time_descriptive }}
                         </span>
-                        <div class="loader pull-right"></div>
+                        <div class="{{ finishedqueue.bootstrap_classes.loader }} pull-right"></div>
                     </td>
                 </tr>
             {% endfor %}

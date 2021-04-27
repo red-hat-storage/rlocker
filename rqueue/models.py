@@ -42,6 +42,21 @@ class Rqueue(models.Model):
     description = models.CharField(max_length=2048, null=True, default=None, blank=True)
 
     @property
+    def bootstrap_classes(self):
+        '''
+        Instance Property
+        Includes additional key&values about the status of the Rqueue obj
+        Depending on the status, we want to include different styling for the HTML template
+        This approach is similar to lockable_resources status_properties property
+
+        :returns: Dictionary
+        '''
+        if self.status == Status.ABORTED:
+            return {'loader' : 'loader-aborted', 'btn' : 'btn-danger'}
+
+        elif self.status == Status.FINISHED:
+            return {'loader' : 'loader-finished', 'btn' : 'btn-success'}
+    @property
     def pending_time(self):
         '''
         Instance property to create a nicer message about time displaying
