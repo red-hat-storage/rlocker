@@ -1,7 +1,5 @@
-import time
 import json
-import rqueue.constants as const
-from lockable_resource.label_manager import LabelManager
+import sys
 
 def get_time_descriptive(total_seconds):
     '''
@@ -39,24 +37,32 @@ def get_time_descriptive(total_seconds):
         return f"Less than a minute"
 
 
-def json_load_twice(json_string):
+def json_continuously_loader(json_string, attempts=10):
     '''
     WORKAROUND:
         Currently we don't know how to handle json.loads()
-            Because in PostgresDB the json.loads() still remains the object as string
-            So Sometimes the json.loads should be tried twice()
+            Because in PostgresDB the json.loads() still might remain as string although we try to use it as dictionary
+            So Sometimes the json.loads should be tried more than once.
     :param json_string:
     :return:
     '''
-    loaded_json = json.loads(json_string)
-    if type(loaded_json) == str:
-        loaded_json_second_attempt = json.loads(loaded_json)
-        # This should be a dictionary now, so let's test this out by executing the built-in convertion to it:
-        dict(loaded_json_second_attempt)  # Should fail if it is still not a dict
-        return loaded_json_second_attempt
+    loaded_json = None
+    attempts = list(range(1, attempts + 1, 1))
+    for attempt in attempts:
+        try:
+            loaded_json = json.loads(json_string)
+            dict(loaded_json) # Should fail with value error if this is still NOT a dictionary
+            #DEBUG LINE AND COULD BE DELETED:
+            print(f"Succeeded to parse json at attempt number {attempt}")
+            return loaded_json # If it is a python dictionary, lets return it
+        except ValueError:
+            if attempt != attempts[-1]:
+                print('The loaded json is still not a dictionary, trying to parse again the same json ... \n')
+                json_string = loaded_json
+                print(loaded_json)
+            else:
+                # If after 10 tries, we we're not able to return loaded_json, something went wrong.
+                # Let's RAISE the original error
+                print("Unexpected error:", sys.exc_info()[0])
+                raise
 
-    elif type(loaded_json) == dict:
-        return loaded_json
-
-    else:
-        raise TypeError
