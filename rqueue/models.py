@@ -2,7 +2,7 @@ from django.db import models
 from jsonfield import JSONField
 from django.utils import timezone
 from django.utils.timezone import utc
-from rqueue.utils import get_time_descriptive, json_load_twice
+from rqueue.utils import get_time_descriptive, json_continuously_loader
 from django.core.validators import MinValueValidator, MaxValueValidator
 from rqueue.constants import Status
 import datetime
@@ -107,7 +107,7 @@ class Rqueue(models.Model):
         '''
         filter_matches = []
         for rqueue in Rqueue.objects.filter(status=Status.PENDING):
-            if json_load_twice(rqueue.data).get(key) == value:
+            if json_continuously_loader(rqueue.data).get(key) == value:
                 filter_matches.append(rqueue)
 
         if filter_matches != []:
