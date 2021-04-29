@@ -25,6 +25,7 @@ class LockableResource(models.Model):
     labels_string = models.CharField(max_length=2048)
     signoff = models.CharField(max_length=2048, null=True, default=None, blank=True, unique=True)
     description = models.CharField(max_length=2048, null=True, default=None, blank=True)
+    link = models.CharField(max_length=2048, null=True, default=None, blank=True)
     in_maintenance = models.BooleanField(default=False)
 
     @property

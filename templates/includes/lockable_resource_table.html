@@ -39,7 +39,15 @@
 						<td>{{ lockable_resource.provider }}</td>
 						<td>{{ lockable_resource.name }}</td>
 						<td>{{ lockable_resource.labels }}</td>
-						<td>{{ lockable_resource.signoff }}</td>
+						<td>
+                            {% if lockable_resource.link %}
+                                <a href="{{ lockable_resource.link }}">
+                                     <b>{{ lockable_resource.signoff }}</b>
+                                </a>
+                            {% else %}
+                                <b>{{ lockable_resource.signoff }}</b>
+                            {% endif %}
+                        </td>
                         <!-- Row Status Start -->
 						<td style="color:{{ lockable_resource.status_properties.color }}">
 							<i class="{{ lockable_resource.status_properties.icon }}"></i>
