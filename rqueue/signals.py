@@ -34,6 +34,7 @@ def fetch_for_available_lockable_resources(sender, instance, created, **kwargs):
         data_signoff = data.get('signoff')
         data_name = data.get('name')
         data_label = data.get('label')
+        data_link = data.get('link')
         # We should use this as an indication to check if the Rqueue is with an associated lockable resource.
         # If ID is not None, it means that it has an associated lockable resource. Otherwise it's not.
         has_associated_resource = data_id is not None
@@ -42,6 +43,7 @@ def fetch_for_available_lockable_resources(sender, instance, created, **kwargs):
             # If there is an ID in the data, it means that the request includes a specific
             # Lockable resource that needs to be locked and NOT search_string.
             lock_res_object = LockableResource.objects.get(id=data_id)
+            # We don't have to send data_link here, since it is locked manually, not from a CI/CD tool
             lock_res_object.lock(signoff=data_signoff)
             instance.add_to_data_json(json_to_add=lock_res_object.json_parse())
             instance.report_finish()
@@ -71,7 +73,7 @@ def fetch_for_available_lockable_resources(sender, instance, created, **kwargs):
                         requested_resource = label_manager.retrieve_free_resource(not_exist_ok=True)
 
                     if requested_resource:
-                        requested_resource.lock(signoff=data_signoff)
+                        requested_resource.lock(signoff=data_signoff, link=data_link)
                         instance.add_to_data_json(json_to_add=requested_resource.json_parse())
                         instance.report_finish()
                         print(f'A queue has been changed to status FINISHED. \n'

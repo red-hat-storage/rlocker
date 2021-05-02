@@ -40,7 +40,8 @@
 						<td>{{ lockable_resource.name }}</td>
 						<td>{{ lockable_resource.labels }}</td>
 						<td>
-                            {% if lockable_resource.link %}
+                            <!-- Sometimes the string None is passd when in the API we don't want to use None, so checking this as well -->
+                            {% if lockable_resource.link and lockable_resource.link != 'None' %}
                                 <a href="{{ lockable_resource.link }}">
                                      <b>{{ lockable_resource.signoff }}</b>
                                 </a>

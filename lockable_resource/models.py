@@ -84,7 +84,7 @@ class LockableResource(models.Model):
         '''
         return self.is_locked
 
-    def lock(self, signoff):
+    def lock(self, signoff, link=None):
         '''
         Instance Method
 
@@ -98,6 +98,7 @@ class LockableResource(models.Model):
         if self.can_lock:
             self.is_locked = True
             self.signoff = signoff
+            self.link = link
             self.save()
         else:
             raise AlreadyLockedException()
@@ -186,6 +187,10 @@ class LockableResource(models.Model):
 
         if kwargs.get('override_signoff'):
             obj_dict['signoff'] = kwargs.get('signoff')
+
+        link = kwargs.get('link')
+        if link is not None:
+            obj_dict['link'] = link
 
         return json.dumps(obj_dict)
 

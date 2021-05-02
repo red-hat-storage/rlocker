@@ -2,7 +2,7 @@ from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from lockable_resource.models import LockableResource
 from lockable_resource.exceptions import LockWithoutSignoffException
-
+from urllib.parse import unquote
 
 @receiver(pre_save, sender=LockableResource)
 def locking_releasing_verifications_and_actions(sender, instance, **kwargs):
@@ -37,9 +37,14 @@ def locking_releasing_verifications_and_actions(sender, instance, **kwargs):
         if instance.is_locked and not resource.is_locked: #If resource is locking
             if instance.has_signoff():
                 print(f"{instance.name} is locking and signoff specified. Saving changes to DB...")
+                print(f"In addition, parsing the given link if specified with urllib")
+                if instance.link:
+                    parsed_link = unquote(instance.link)
+                    instance.link = parsed_link
             else:
                 raise LockWithoutSignoffException(instance)
 
         if not instance.is_locked and resource.is_locked: #If resource is releasing
-            print(f"{instance.name} is releasing, setting signoff to None before saving changes to DB...")
+            print(f"{instance.name} is releasing, setting signoff and link to None before saving changes to DB...")
             instance.signoff = None
+            instance.link = None
