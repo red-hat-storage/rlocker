@@ -33,6 +33,8 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'health.apps.HealthConfig',
+    'dashboard.apps.DashboardConfig',
     'rqueue.apps.RqueueConfig',
     'api.apps.ApiConfig',
     'rest_framework',
