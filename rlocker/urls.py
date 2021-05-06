@@ -23,4 +23,5 @@ urlpatterns = [
     path('', include('account.urls')),
     path('', include('rqueue.urls')),
     path('', include('dashboard.urls')),
+    path('', include('health.urls')),
 ]
