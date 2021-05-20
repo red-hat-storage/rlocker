@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect, reverse
+from django.shortcuts import render, redirect, reverse, resolve_url
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -25,32 +25,37 @@ def logout_page(request):
     messages.info(request, f'You have been logged out!')
     return redirect('dashboard_page')
 
-@login_required(login_url=reverse('login_page'))
+@login_required(login_url='login_page')
 def change_password_page(request):
-    password1 = request.POST['password1']
-    password2 = request.POST['password2']
-    if password1 == password2:
-        # We could use both password1 or 2 here:
-        current_user = request.user
-        current_user.set_password(password1)
-        current_user.save()
-        logout(request)
-        messages.success(
-            request,
-            "Password has been changed! \n"
-            "Be sure to use the updated password in your next login! \n"
-            "NOTE: Changing your password DOES NOT affect your API token"
-        )
-        return redirect('login_page')
+    if request.method == 'GET':
+        return render(request, template_name='account/change_password.html')
+
+    if request.method == 'POST':
+        password1 = request.POST['password1']
+        password2 = request.POST['password2']
+        if password1 == password2:
+            # We could use both password1 or 2 here:
+            current_user = request.user
+            current_user.set_password(password1)
+            current_user.save()
+            logout(request)
+            messages.success(
+                request,
+                "Password has been changed! \n"
+                "Be sure to use the updated password in your next login! \n"
+                "NOTE: Changing your password DOES NOT affect your API token"
+            )
+            return redirect('login_page')
 
 
-    else:
-        messages.error(
-            request,
-            "Passwords are not match, or it is not matching our password policies \n"
-            "Be sure to: \n"
-            " - Contain atleast 8 characters \n"
-            " - Your password must include both characters and digits \n"
-            " - Your password can't be too similar to your other personal information"
-        )
-        return redirect('change_password_page')
+        else:
+            messages.error(
+                request,
+                extra_tags='danger',
+                message="Passwords are not match, or it is not matching our password policies \n"
+                "Be sure to: \n"
+                " Contain atleast 8 characters. \n"
+                " Your password must include both characters and digits. \n"
+                " Your password can't be too similar to your other personal information."
+            )
+            return redirect('change_password_page')
