@@ -17,7 +17,7 @@ def login_page(request):
             messages.info(request, f"You are logged in as {user.username}")
             return redirect('dashboard_page')
         else:
-            messages.error(request, 'The combination of the user name and the password is wrong!')
+            messages.error(request, extra_tags='danger', message='The combination of the user name and the password is wrong!')
             return redirect('login_page')
 
 def logout_page(request):
