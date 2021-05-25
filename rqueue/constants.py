@@ -6,16 +6,16 @@ class Priority(Enum):
         If a resource is requested to lock from the UI, it means
             that it is ready to be locked immediately.
         But if a resource is requested to retrieve from search_string,
-            then it should include the priority level from 1-3
-         - UI
-         - LIVE_TESTING
-         - PRODUCTION_RUN
-         - DEVELOPMENT_RUN
+            then it should include the priority level from 1 to any integer you decide
+        For Example, a group could decide to priority their queues that are pending for a request
+            in the following way:
+
+        UI - 0
+        PRODUCTION TESTING - 1
+        LOAD TESTING - 2
+        DEVELOPMENT TESTING - 3
     '''
     UI = 0
-    LIVE_TESTING = 1
-    PRODUCTION_RUN = 2
-    DEVELOPMENT_RUN = 3
 
 class Interval:
     RESOURCE_FREE_WAIT = 10
@@ -29,6 +29,7 @@ class Status:
     FINISHED = 'FINISHED' # describes that it locked a lockable resource successfully
     FAILED = 'FAILED' # describes that it attempted to lock a resource but failed
     ABORTED = 'ABORTED' # describes a failure to lock a resource because of manual interruption
+    INITIALIZING = 'INITIALIZING' #  describes a situation that the queue is not handled yet by any svc
 
 
     # We also need to customize all the options in a way that is supportive in Django dropdown field:
@@ -37,6 +38,7 @@ class Status:
         (PENDING, 'PENDING'),
         (FINISHED, 'FINISHED'),
         (FAILED, 'FAILED'),
-        (ABORTED, 'ABORTED')
+        (ABORTED, 'ABORTED'),
+        (INITIALIZING, 'INITIALIZING'),
     ]
 

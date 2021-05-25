@@ -180,33 +180,23 @@ def retrieve_resource_entrypoint(request, search_string):
 
             }, status=status.HTTP_400_BAD_REQUEST)
 
+
 @api_view(['GET'])
 @permission_classes([HasValidTokenOrIsAuthenticated])
 def retrieve_resource_by_name(request, name, priority, signoff):
     resource = LockableResource.objects.get(name=name)
 
-    #We want to add some more fields to our data before sending it as Request Queue
+    # We want to add some more fields to our data before sending it as Request Queue
     custom_data = json.loads(resource.json_parse(override_signoff=True, signoff=signoff))
     custom_data['username'] = get_user_object_by_token_or_auth(request).username
-    #Creating the Rqueue and saving it
+    # Creating the Rqueue and saving it
     put_in_queue = Rqueue(data=json.dumps(custom_data), priority=int(priority))
     put_in_queue.save()
 
-    #Additional logs about which specific resource really locked will the throwen by the signal itself
-
-    #Since the signal should add some more data to json that we can access, we can read it:
-    data_post_save = dict(put_in_queue.data)
-
-    return Response({
-        #We'd like to return response that the request has been completed and chaned to
-            # status FINISHED.
-        'message': f"{name} has been locked!",
-        'waited_time' : put_in_queue.pended_time_descriptive,
-        'id': data_post_save.get('id'),
-        'name': data_post_save.get('name'),
-        'labels_string': data_post_save.get('labels_string'),
-
-    }, status=status.HTTP_200_OK)
+    # After the queue has been created, we'd like to return the response to the svc
+        # That handles the queue
+    serializer = RqueueSerializer(put_in_queue)
+    return Response(serializer.data)
 
 
 @api_view(['GET'])
@@ -223,22 +213,10 @@ def retrieve_resource_by_label(request, label, priority, signoff):
     put_in_queue = Rqueue(data=json.dumps(custom_data), priority=int(priority))
     put_in_queue.save()
 
-    #Additional logs about which specific resource really locked will the throwen by the signal itself
-
-    #Since the signal should add some more data to json that we can access, we can read it:
-    data_post_save = dict(put_in_queue.data)
-
-
-    return Response({
-        #We'd like to return response that the request has been completed and chaned to
-            # status FINISHED.
-        'message': f"Resource with label {label} has been locked!",
-        'waited_time' : put_in_queue.pended_time_descriptive,
-        'id' : data_post_save.get('id'),
-        'name' : data_post_save.get('name'),
-        'labels_string' : data_post_save.get('labels_string'),
-
-    }, status=status.HTTP_200_OK)
+    # After the queue has been created, we'd like to return the response to the svc
+        # That handles the queue
+    serializer = RqueueSerializer(put_in_queue)
+    return Response(serializer.data)
 
 
 @api_view(['GET', 'PUT'])
@@ -272,16 +250,29 @@ def rqueues_view(request):
     :param request:
     GET:
         Return Response with all the Rqueues in a JSON Object
+        Query Params support:
+        status - if request includes `?status=my_status`,
+            then it will return a list of the queues,
+                that it's status is my_status
     '''
-    rqueue = Rqueue.objects.order_by('-id')
+    queryset = Rqueue.objects.order_by('-id')
 
     if request.method == 'GET':
-        serializer = RqueueSerializer(rqueue, many=True)
+        # Check if status is specified to filter by
+        status_matches = request.query_params.get('status')
+        if status_matches is not None:
+            # Override the queryset and the serializer to return
+            # We call upper, the queues status are defined in upper case in: rqueue/constants
+            queryset = Rqueue.objects.filter(status=status_matches.upper()).order_by('-id')
+
+
+        serializer = RqueueSerializer(queryset, many=True)
         return Response(serializer.data)
 
 
 @api_view(['GET'])
 def rqueues_status_pending_view(request):
+    #TODO: Remove this endpoint after making sure that https://www.github.com/jimdevops19/rlockertools.git does not use this endpoint, reason: We can use the rqueues_view with query_param matching
     '''
     :param request:
     GET:
