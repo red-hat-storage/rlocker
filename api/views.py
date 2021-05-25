@@ -28,6 +28,10 @@ def resources_view(request):
     GET:
         Return Response with all LockableResources in a JSON Object,
             instantiating the Serializer class.
+        Query Params support:
+        label_matches - if request includes `?label_matches=my_label`,
+            then it will return a list of the lockable resources,
+                that has my_label in its labels_string
 
     POST:
         Instantiate a LockableResource class and save to the DB.
@@ -35,10 +39,16 @@ def resources_view(request):
         We create a new dictionary to add more pieces of info to our Response
         Return Response status depending if the request was successful or not.
     '''
-    all = LockableResource.objects.all()
+    queryset = LockableResource.objects.all()
 
     if request.method == 'GET':
-        serializer = LockableResourceSerializer(all, many=True)
+        #Check if there is label_matches query param
+        label_matches = request.query_params.get('label_matches')
+        if label_matches is not None:
+            #Override the queryset and the serializer to return
+            queryset = LockableResource.objects.filter(labels_string__contains=label_matches)
+
+        serializer = LockableResourceSerializer(queryset, many=True)
         return Response(serializer.data)
 
     if request.method == 'POST':
@@ -61,6 +71,7 @@ def resources_view(request):
             extended_data['status'] =  'FAILURE'
             extended_data.update(serializer.errors)
             return Response(extended_data, status=status.HTTP_400_BAD_REQUEST)
+
 
 @api_view(['GET', 'PUT'])
 @permission_classes([HasValidTokenOrIsAuthenticated])
@@ -228,6 +239,7 @@ def retrieve_resource_by_label(request, label, priority, signoff):
         'labels_string' : data_post_save.get('labels_string'),
 
     }, status=status.HTTP_200_OK)
+
 
 @api_view(['GET', 'PUT'])
 def rqueue_view(request, slug):
