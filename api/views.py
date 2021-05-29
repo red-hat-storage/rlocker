@@ -2,8 +2,8 @@ from rest_framework import status
 from rest_framework.response import Response
 from api.custom_permissions import HasValidTokenOrIsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.exceptions import APIException
 from lockable_resource.models import LockableResource
+from django.db.models.functions import Length
 from rqueue.models import Rqueue
 from rqueue.constants import Status
 from django.shortcuts import  redirect, reverse
@@ -55,18 +55,19 @@ def resources_view(request):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        if label_matches is not None:
-            #Override the queryset and the serializer to return
-            queryset = LockableResource.objects.filter(labels_string__contains=label_matches)
-
-        if name is not None:
-            # Override the queryset and the serializer to return
-            queryset = LockableResource.objects.filter(name=name)
-
         # We do not want to convert with bool() here, as it will raise an exception
             # If the value strings are not 'true' or 'false'
         if free_only and free_only.lower() == 'true':
             queryset = queryset.filter(is_locked=False)
+
+        if name is not None:
+            # Override the queryset and the serializer to return
+            queryset = queryset.filter(name=name)
+
+        if label_matches is not None:
+            #Override the queryset and the serializer to return
+            queryset = queryset.filter(labels_string__contains=label_matches)
+            queryset = sorted(queryset, key=lambda x: len(x.labels))
 
         serializer = LockableResourceSerializer(queryset, many=True)
         return Response(serializer.data)
