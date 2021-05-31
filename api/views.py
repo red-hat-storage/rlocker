@@ -65,8 +65,10 @@ def resources_view(request):
             queryset = queryset.filter(name=name)
 
         if label_matches is not None:
-            #Override the queryset and the serializer to return
-            queryset = queryset.filter(labels_string__contains=label_matches)
+            # Override the queryset and the serializer to return
+            # We cant use the built in label_string__contains, as it will retrieve substring
+            # For the entire label string, we want to check specific WORDS in label string
+            queryset = (x for x in queryset.all() if label_matches in x.labels)
             queryset = sorted(queryset, key=lambda x: len(x.labels))
 
         serializer = LockableResourceSerializer(queryset, many=True)
