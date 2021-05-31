@@ -51,8 +51,11 @@ class Rqueue(models.Model):
 
         :returns: Dictionary
         '''
-        if self.status == Status.ABORTED:
+        if self.status == Status.FAILED:
             return {'loader' : 'loader-aborted', 'btn' : 'btn-danger'}
+
+        if self.status == Status.ABORTED:
+            return {'loader' : 'loader-aborted', 'btn' : ''}
 
         elif self.status == Status.FINISHED:
             return {'loader' : 'loader-finished', 'btn' : 'btn-success'}
