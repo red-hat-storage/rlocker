@@ -47,6 +47,16 @@ def resources_view(request):
         name = request.query_params.get('name')
         label_matches = request.query_params.get('label_matches')
         free_only = request.query_params.get('free_only')
+        signoff = request.query_params.get('signoff')
+
+
+        if signoff:
+            # Here we would like to return immediately, signoff should be unique.
+            # And if signoff is not none, then it means it is locked
+            # So we should not go over other filtration methods anyway.
+            queryset = LockableResource.objects.filter(signoff=signoff)
+            serializer = LockableResourceSerializer(queryset, many=True)
+            return Response(serializer.data)
 
         if name and label_matches:
             # Verification that both label and name are not passed in as query param
