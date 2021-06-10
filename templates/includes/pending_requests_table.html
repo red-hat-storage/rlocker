@@ -1,11 +1,20 @@
 <style>
-  .loader {
-  border: 6px solid #f3f3f3; /* Light grey */
+  .loader-pending {
+  border: 6px solid #f3f3f3; /* Light Gray */
   border-top: 6px solid #007aff; /* Blue */
   border-radius: 50%;
   width: 45px;
   height: 45px;
   animation: spin 1s linear infinite;
+}
+
+  .loader-initializing {
+  border: 6px solid #f3f3f3; /* Light Gray */
+  border-top: 6px solid #aaaaaa; /* Bold Gray */
+  border-radius: 50%;
+  width: 45px;
+  height: 45px;
+  animation: spin 3s linear infinite;
 }
 
 @keyframes spin {
@@ -29,6 +38,9 @@
             <th style="text-align: center"><i class="icon_datareport"></i> JSON Data</th>
             <th style="text-align: center">
                 <i class="icon_document"></i> Description
+            </th>
+            <th style="text-align: center">
+                <i class="icon_search"></i> Status
             </th>
             <th style="text-align: center"><i class="icon_clock"></i> Time Waiting</th>
           </tr>
@@ -81,10 +93,13 @@
                     </td>
                     <!-- Row Description End -->
                     <td>
+                        {{ rqueue.status }}
+                    </td>
+                    <td>
                         <span id="pending-time-{{ rqueue.id }}">
                             {{ rqueue.pending_time_descriptive }}
                         </span>
-                        <div class="loader pull-right"></div>
+                        <div class="{{ rqueue.bootstrap_classes.loader }} pull-right"></div>
                         <!-- To keep the pending time updated every second, we will run this script -->
                         <script>
                             setInterval(function() {
@@ -112,7 +127,7 @@
     total_rqueues = null;
     setInterval(function(){
         if (keep_fetching) {
-            fetch("{% url 'rqueues_status_pending_view' %}")
+            fetch("{% url 'rqueues_status_present_view' %}")
                 .then(response => response.json())
                 .then(data => total_rqueues = data.length)
         }

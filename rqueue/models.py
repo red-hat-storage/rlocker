@@ -52,13 +52,19 @@ class Rqueue(models.Model):
         :returns: Dictionary
         '''
         if self.status == Status.FAILED:
-            return {'loader' : 'loader-aborted', 'btn' : 'btn-danger'}
+            return {'loader' : 'loader-failed', 'btn' : 'btn-primary'}
 
         if self.status == Status.ABORTED:
-            return {'loader' : 'loader-aborted', 'btn' : ''}
+            return {'loader' : 'loader-aborted', 'btn' : 'btn-primary'}
 
         elif self.status == Status.FINISHED:
-            return {'loader' : 'loader-finished', 'btn' : 'btn-success'}
+            return {'loader' : 'loader-finished', 'btn' : 'btn-primary'}
+
+        if self.status == Status.INITIALIZING:
+            return {'loader' : 'loader-initializing', 'btn' : 'btn-primary'}
+
+        if self.status == Status.PENDING:
+            return {'loader' : 'loader-pending', 'btn' : 'btn-primary'}
     @property
     def pending_time(self):
         '''

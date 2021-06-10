@@ -6,6 +6,6 @@ from rqueue.models import Rqueue
 from rqueue.constants import Status
 def rqueue_context_processors(request):
     return {
-        'pending_requests' : len(Rqueue.objects.filter(status=Status.PENDING)) > 0,
-        'pending_requests_amount' : len(Rqueue.objects.filter(status=Status.PENDING)),
+        'pending_requests' : len(Rqueue.objects.filter(status__in=Status.PRESENT_STATUS_OPTIONS)) > 0,
+        'pending_requests_amount' : len(Rqueue.objects.filter(status__in=Status.PRESENT_STATUS_OPTIONS)),
     }

@@ -5,7 +5,7 @@ from rqueue.constants import Status
 
 def pending_requests_page(request):
     if request.method == 'GET':
-        rqueues = Rqueue.objects.filter(status=Status.PENDING).order_by('priority')
+        rqueues = Rqueue.objects.filter(status__in=Status.PRESENT_STATUS_OPTIONS).order_by('priority')
         return render(request,
                       template_name='rqueue/pending_requests.html',
                       context={'rqueues':rqueues})
@@ -29,11 +29,10 @@ def pending_requests_page(request):
         return redirect('pending_requests_page')
 
 def finished_requests_page(request):
-    finished_requests =Rqueue.objects.exclude(
-        status=Status.PENDING
-    ).exclude(
-        status=Status.INITIALIZING
+    finished_requests =Rqueue.objects.filter(
+        status__in=Status.PAST_STATUS_OPTIONS
     ).order_by('-id')
+
     return render(request,
                   template_name='rqueue/finished_requests.html',
                   context={'finishedqueues':finished_requests})

@@ -12,7 +12,7 @@
   height: 45px;
 }
   .loader-aborted {
-  border: 6px solid #aaaaaa; /* Gray */
+  border: 6px solid #000000; /* Black */
   border-radius: 50%;
   width: 45px;
   height: 45px;
@@ -29,12 +29,14 @@
         <tbody>
           <tr>
             <th style="text-align: center"><i class="icon_loading"></i> ID</th>
+            <th style="text-align: center"><i class="icon_clock"></i> Time Requested</th>
+              <th style="text-align: center"><i class="arrow_up"></i> Priority Level</th>
             <th style="text-align: center"><i class="icon_datareport"></i> JSON Data</th>
             <th style="text-align: center">
-                <i class="icon_search"></i> Status
+                <i class="icon_document"></i> Description
             </th>
             <th style="text-align: center">
-                <i class="icon_document"></i> Description
+                <i class="icon_search"></i> Status
             </th>
             <th style="text-align: center"><i class="icon_clock"></i> Time Waited</th>
           </tr>
@@ -44,14 +46,17 @@
                         {{ finishedqueue.id }}
                     </td>
                     <td>
+                        {{ finishedqueue.time_requested }}
+                    </td>
+                    <td>
+                        {{ finishedqueue.priority }}
+                    </td>
+                    <td>
                         {% include 'includes/display_json_data_modal.html' %}
                         <a class="btn {{ finishedqueue.bootstrap_classes.btn }}" href="#DisplayFinishedQueue-Data-{{ finishedqueue.id }}" data-toggle="modal">
                             <i class="icon_pencil"></i>
                             <span>Show JSON</span>
                         </a>
-                    </td>
-                    <td>
-                        {{ finishedqueue.status }}
                     </td>
                     <!-- Row Description Start -->
                     <td>
@@ -64,6 +69,9 @@
                         </a>
                     </td>
                     <!-- Row Description End -->
+                    <td>
+                        {{ finishedqueue.status }}
+                    </td>
                     <td>
                         <span class="center-block" id="pended-time-{{ finishedqueue.id }}">
                             {{ finishedqueue.pended_time_descriptive }}

@@ -305,7 +305,7 @@ def rqueues_view(request):
 
 @api_view(['GET'])
 def rqueues_status_pending_view(request):
-    #TODO: Remove this endpoint after making sure that https://www.github.com/jimdevops19/rlockertools.git does not use this endpoint, reason: We can use the rqueues_view with query_param matching
+    #TODO: Remove this endpoint after rlockertools.git  AND the pending requests template (AJAX CALLS) does not use this endpoint, reason: We can use the rqueues_view with query_param matching
     '''
     :param request:
     GET:
@@ -313,6 +313,22 @@ def rqueues_status_pending_view(request):
             in a JSON Object
     '''
     rqueue = Rqueue.objects.filter(status=Status.PENDING)
+
+    if request.method == 'GET':
+        serializer = RqueueSerializer(rqueue, many=True)
+        return Response(serializer.data)
+
+
+@api_view(['GET'])
+def rqueues_status_present_view(request):
+    '''
+    :param request:
+    GET:
+        Return Response with all the Rqueues that are in present status
+            Present status - stands for all the status options that are not completed yet.
+            For Example: pendING, initializING, etc
+    '''
+    rqueue = Rqueue.objects.filter(status__in=Status.PRESENT_STATUS_OPTIONS)
 
     if request.method == 'GET':
         serializer = RqueueSerializer(rqueue, many=True)

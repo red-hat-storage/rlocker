@@ -15,4 +15,5 @@ urlpatterns = [
     path('rqueue/<slug>', views.rqueue_view, name='rqueue_view'),
     path('rqueues', views.rqueues_view, name='rqueues_view'),
     path('pendingrequests', views.rqueues_status_pending_view, name='rqueues_status_pending_view'),
+    path('present_requests', views.rqueues_status_present_view, name='rqueues_status_present_view'),
 ]
