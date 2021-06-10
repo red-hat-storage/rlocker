@@ -36,7 +36,7 @@ class Rqueue(models.Model):
     status = models.CharField(
         max_length=32,
         choices=Status.CHOICES,
-        default=Status.PENDING,
+        default=Status.INITIALIZING,
     )
     pended_time_descriptive = models.CharField(max_length=1024, null=True, default=None, blank=True)
     description = models.CharField(max_length=2048, null=True, default=None, blank=True)
@@ -51,8 +51,11 @@ class Rqueue(models.Model):
 
         :returns: Dictionary
         '''
-        if self.status == Status.ABORTED:
+        if self.status == Status.FAILED:
             return {'loader' : 'loader-aborted', 'btn' : 'btn-danger'}
+
+        if self.status == Status.ABORTED:
+            return {'loader' : 'loader-aborted', 'btn' : ''}
 
         elif self.status == Status.FINISHED:
             return {'loader' : 'loader-finished', 'btn' : 'btn-success'}
@@ -91,29 +94,6 @@ class Rqueue(models.Model):
         self.status = Status.FINISHED
         self.pended_time_descriptive = self.pending_time_descriptive
         self.save()
-
-
-    @staticmethod
-    def pending_queues_by_jsondata(key, value, sort_field='priority'):
-        '''
-        Static method to filter Rqueue objects from the given key
-            from the JSONFIELD
-        It is a great idea to return this sorted by priority ascending
-            by default
-        :param key:
-        :param value:
-        :param sort_field:
-        :return: Rqueue object/s
-        '''
-        filter_matches = []
-        for rqueue in Rqueue.objects.filter(status=Status.PENDING):
-            if json_continuously_loader(rqueue.data).get(key) == value:
-                filter_matches.append(rqueue)
-
-        if filter_matches != []:
-            return sorted(filter_matches, key=lambda x: (int(getattr(x, sort_field)),x.time_requested))
-        else:
-            return None
 
     def add_to_data_json(self, json_to_add=None, **kwargs):
         '''
