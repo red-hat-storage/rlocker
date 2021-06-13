@@ -31,7 +31,7 @@
             <th style="text-align: center"><i class="icon_loading"></i> ID</th>
             <th style="text-align: center"><i class="icon_clock"></i> Time Requested</th>
               <th style="text-align: center"><i class="arrow_up"></i> Priority Level</th>
-            <th style="text-align: center"><i class="icon_datareport"></i> JSON Data</th>
+            <th style="text-align: center"><i class="icon_datareport"></i> Options</th>
             <th style="text-align: center">
                 <i class="icon_document"></i> Description
             </th>
@@ -53,10 +53,16 @@
                     </td>
                     <td>
                         {% include 'includes/display_json_data_modal.html' %}
-                        <a class="btn {{ finishedqueue.bootstrap_classes.btn }}" href="#DisplayFinishedQueue-Data-{{ finishedqueue.id }}" data-toggle="modal">
-                            <i class="icon_pencil"></i>
-                            <span>Show JSON</span>
-                        </a>
+                        <div class="btn-group">
+                            <a class="btn btn-info" href="#DisplayFinishedQueue-Data-{{ finishedqueue.id }}" data-toggle="modal">
+                                <i class="icon_pencil"></i>
+                                <span>Show JSON</span>
+                            </a>
+                            <a class="btn btn-info dropdown-toggle" data-toggle="dropdown" href="" title="Bootstrap 3 themes generator"><span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="{% url 'rqueue_more_info' finishedqueue.id %}" title="See more info on this queue">Show Queue</a></li>
+                            </ul>
+                        </div>
                     </td>
                     <!-- Row Description Start -->
                     <td>

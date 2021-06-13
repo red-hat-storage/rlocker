@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block tab_title %}
+    RLocker - Request in Queue ID - {{ rqueue.id }}
+{% endblock %}
+
+{% block pageheader_title %}
+    Rqueues
+{% endblock %}
+
+{% block page_description %}
+    More info on Rqueue {{ rqueue.id }}
+{% endblock %}
+
+{% block content %}
+    <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+        <div class="info-box blue-bg">
+            <i class="fa fa-cloud-download"></i>
+            <div class="count">6.674</div>
+            <div class="title">Download</div>
+        </div>
+    </div>
+{% endblock %}
