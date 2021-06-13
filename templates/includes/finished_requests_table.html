@@ -34,13 +34,17 @@
                     <td>
                         {% include 'includes/display_json_data_modal.html' %}
                         <div class="btn-group">
-                            <a class="btn btn-info" href="{% url 'rqueue_more_info' finishedqueue.id %}" data-toggle="modal">
+                            <a class="btn btn-info" href="{% url 'rqueue_more_info' finishedqueue.id %}">
                                 <i class="icon_pencil"></i>
                                 <span>Show Queue</span>
                             </a>
-                            <a class="btn btn-info dropdown-toggle" data-toggle="dropdown" href="#DisplayFinishedQueue-Data-{{ finishedqueue.id }}" title="Bootstrap 3 themes generator"><span class="caret"></span></a>
+                            <a class="btn btn-info dropdown-toggle" data-toggle="dropdown" href="" title="Bootstrap 3 themes generator"><span class="caret"></span></a>
                             <ul class="dropdown-menu">
-                                <li><a href="" title="See more info on this queue">Show JSON</a></li>
+                                <li>
+                                    <a data-toggle="modal" href="#DisplayFinishedQueue-Data-{{ finishedqueue.id }}" title="See more info on this queue">
+                                        Show JSON
+                                    </a>
+                                </li>
                             </ul>
                         </div>
                     </td>
