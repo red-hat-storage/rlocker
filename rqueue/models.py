@@ -89,6 +89,15 @@ class Rqueue(models.Model):
         #Here we override each object definition
         return f'Rqueue{self.id}:P-{self.priority}'
 
+    @property
+    def data_as_json(self):
+        try:
+            parsed_dict = json_continuously_loader(self.data)
+            parsed_dict = dict(parsed_dict)
+            return parsed_dict.items()
+        except Exception as e:
+            return str(e)
+
     def report_finish(self):
         '''
         Instance Method

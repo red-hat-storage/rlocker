@@ -1,23 +1,3 @@
-<style>
-  .loader-finished {
-  border: 6px solid #5cb85c; /* Green */
-  border-radius: 50%;
-  width: 45px;
-  height: 45px;
-}
-  .loader-failed {
-  border: 6px solid #ff2d55; /* Red */
-  border-radius: 50%;
-  width: 45px;
-  height: 45px;
-}
-  .loader-aborted {
-  border: 6px solid #000000; /* Black */
-  border-radius: 50%;
-  width: 45px;
-  height: 45px;
-}
-</style>
 <div class="row">
   <div class="col-lg-9 justify-content-center">
     <section class="panel">
@@ -54,13 +34,13 @@
                     <td>
                         {% include 'includes/display_json_data_modal.html' %}
                         <div class="btn-group">
-                            <a class="btn btn-info" href="#DisplayFinishedQueue-Data-{{ finishedqueue.id }}" data-toggle="modal">
+                            <a class="btn btn-info" href="{% url 'rqueue_more_info' finishedqueue.id %}" data-toggle="modal">
                                 <i class="icon_pencil"></i>
-                                <span>Show JSON</span>
+                                <span>Show Queue</span>
                             </a>
-                            <a class="btn btn-info dropdown-toggle" data-toggle="dropdown" href="" title="Bootstrap 3 themes generator"><span class="caret"></span></a>
+                            <a class="btn btn-info dropdown-toggle" data-toggle="dropdown" href="#DisplayFinishedQueue-Data-{{ finishedqueue.id }}" title="Bootstrap 3 themes generator"><span class="caret"></span></a>
                             <ul class="dropdown-menu">
-                                <li><a href="{% url 'rqueue_more_info' finishedqueue.id %}" title="See more info on this queue">Show Queue</a></li>
+                                <li><a href="" title="See more info on this queue">Show JSON</a></li>
                             </ul>
                         </div>
                     </td>

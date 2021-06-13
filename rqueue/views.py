@@ -43,5 +43,5 @@ def rqueue_more_info(request, slug):
     return render(
         request,
         template_name='rqueue/rqueue_more_info.html',
-        context={'rqueue':rqueue}
+        context={'rqueue': rqueue}
     )
