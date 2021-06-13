@@ -24,7 +24,14 @@
         <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
             <div class="info-box dark-bg">
                 <i class="fa fa-clock-o"></i>
-                <div class="count">{{ rqueue.pending_time_descriptive }}</div>
+                <div class="count">
+                    <!-- Check first if pended time is not null, if it is, it means that the queue is still pending/initializing -->
+                    {% if rqueue.pended_time_descriptive %}
+                        {{ rqueue.pended_time_descriptive }}
+                    {% else %}
+                        {{ rqueue.pending_time_descriptive }}
+                    {% endif %}
+                </div>
                 <div class="title">TIME FINISHED / IN PROGRESS</div>
             </div>
         </div>
