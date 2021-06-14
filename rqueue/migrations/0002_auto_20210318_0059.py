@@ -7,17 +7,17 @@ import django.utils.timezone
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('rqueue', '0001_initial'),
+        ("rqueue", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='rqueue',
-            options={'verbose_name_plural': 'Requests in Queue'},
+            name="rqueue",
+            options={"verbose_name_plural": "Requests in Queue"},
         ),
         migrations.AlterField(
-            model_name='rqueue',
-            name='time_requested',
+            model_name="rqueue",
+            name="time_requested",
             field=models.DateTimeField(default=django.utils.timezone.now),
         ),
     ]

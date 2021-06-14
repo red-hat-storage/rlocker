@@ -8,17 +8,24 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Rqueue',
+            name="Rqueue",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('data', jsonfield.fields.JSONField(default=dict)),
-                ('priority', models.IntegerField()),
-                ('time_requested', models.DateTimeField(auto_now=True)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("data", jsonfield.fields.JSONField(default=dict)),
+                ("priority", models.IntegerField()),
+                ("time_requested", models.DateTimeField(auto_now=True)),
             ],
         ),
     ]

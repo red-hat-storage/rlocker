@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('lockable_resource', '0003_lockableresource_description'),
+        ("lockable_resource", "0003_lockableresource_description"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='lockableresource',
-            name='in_maintenance',
+            model_name="lockableresource",
+            name="in_maintenance",
             field=models.BooleanField(default=False),
         ),
     ]

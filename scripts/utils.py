@@ -1,5 +1,5 @@
 def parse_args(args):
-    '''
+    """
     Function takes the args that is passed in through the
         --script-args from the manage.py runscript and parses
             it in the following method:
@@ -8,18 +8,15 @@ def parse_args(args):
         - Dictionary with keys and values specified (Splitting with =)
     :param args:
     :return:
-    '''
+    """
     t = []
     key_values = {}
     for arg in args:
         if "=" in arg:
-            k = arg.split('=')[0]
-            v = arg.split('=')[1]
+            k = arg.split("=")[0]
+            v = arg.split("=")[1]
             key_values[k] = v
         else:
             t.append(arg)
 
-
     return t, key_values
-
-

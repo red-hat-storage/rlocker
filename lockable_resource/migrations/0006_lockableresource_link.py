@@ -6,13 +6,15 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('lockable_resource', '0005_auto_20210406_1732'),
+        ("lockable_resource", "0005_auto_20210406_1732"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='lockableresource',
-            name='link',
-            field=models.CharField(blank=True, default=None, max_length=2048, null=True),
+            model_name="lockableresource",
+            name="link",
+            field=models.CharField(
+                blank=True, default=None, max_length=2048, null=True
+            ),
         ),
     ]

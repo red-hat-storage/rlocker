@@ -6,7 +6,7 @@ from lockable_resource.exceptions import LockWithoutSignoffException
 
 @receiver(pre_save, sender=LockableResource)
 def locking_releasing_verifications_and_actions(sender, instance, **kwargs):
-    '''
+    """
     A signal that runs before saving an object of Lockable Resource
     This signal is to verify whenever user tries to change is_locked=True,
         then there is also a not None value for signoff.
@@ -27,19 +27,23 @@ def locking_releasing_verifications_and_actions(sender, instance, **kwargs):
         The area we will enter if try block runs successfully,
             and we will take some actions when object tries to be
                 locked or released
-    '''
+    """
     try:
         resource = sender.objects.get(pk=instance.pk)
     except sender.DoesNotExist:
         pass
 
     else:
-        if instance.is_locked and not resource.is_locked: #If resource is locking
+        if instance.is_locked and not resource.is_locked:  # If resource is locking
             if instance.has_signoff():
-                print(f"{instance.name} is locking and signoff specified. Saving changes to DB...")
+                print(
+                    f"{instance.name} is locking and signoff specified. Saving changes to DB..."
+                )
             else:
                 raise LockWithoutSignoffException(instance)
 
-        if not instance.is_locked and resource.is_locked: #If resource is releasing
-            print(f"{instance.name} is releasing, setting signoff to None before saving changes to DB...")
+        if not instance.is_locked and resource.is_locked:  # If resource is releasing
+            print(
+                f"{instance.name} is releasing, setting signoff to None before saving changes to DB..."
+            )
             instance.signoff = None

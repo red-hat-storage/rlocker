@@ -7,13 +7,19 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('rqueue', '0003_auto_20210318_2246'),
+        ("rqueue", "0003_auto_20210318_2246"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='rqueue',
-            name='priority',
-            field=models.IntegerField(default=3, validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(3)]),
+            model_name="rqueue",
+            name="priority",
+            field=models.IntegerField(
+                default=3,
+                validators=[
+                    django.core.validators.MinValueValidator(0),
+                    django.core.validators.MaxValueValidator(3),
+                ],
+            ),
         ),
     ]

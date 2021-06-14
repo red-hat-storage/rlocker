@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('rqueue', '0008_rqueue_status'),
+        ("rqueue", "0008_rqueue_status"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='rqueue',
-            name='pended_time_descriptive',
+            model_name="rqueue",
+            name="pended_time_descriptive",
             field=models.CharField(default=None, max_length=1024, null=True),
         ),
     ]

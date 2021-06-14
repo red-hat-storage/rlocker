@@ -6,13 +6,15 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('lockable_resource', '0004_lockableresource_in_maintenance'),
+        ("lockable_resource", "0004_lockableresource_in_maintenance"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='lockableresource',
-            name='signoff',
-            field=models.CharField(blank=True, default=None, max_length=2048, null=True, unique=True),
+            model_name="lockableresource",
+            name="signoff",
+            field=models.CharField(
+                blank=True, default=None, max_length=2048, null=True, unique=True
+            ),
         ),
     ]

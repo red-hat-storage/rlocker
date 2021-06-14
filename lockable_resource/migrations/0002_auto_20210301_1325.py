@@ -6,17 +6,19 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('lockable_resource', '0001_initial'),
+        ("lockable_resource", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='lockableresource',
-            options={'verbose_name_plural': 'Lockable Resources'},
+            name="lockableresource",
+            options={"verbose_name_plural": "Lockable Resources"},
         ),
         migrations.AlterField(
-            model_name='lockableresource',
-            name='signoff',
-            field=models.CharField(blank=True, default=None, max_length=2048, null=True),
+            model_name="lockableresource",
+            name="signoff",
+            field=models.CharField(
+                blank=True, default=None, max_length=2048, null=True
+            ),
         ),
     ]

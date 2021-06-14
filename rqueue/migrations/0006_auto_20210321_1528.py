@@ -7,17 +7,17 @@ import jsonfield.fields
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('rqueue', '0005_finishedqueue'),
+        ("rqueue", "0005_finishedqueue"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='finishedqueue',
-            name='rqueue',
+            model_name="finishedqueue",
+            name="rqueue",
         ),
         migrations.AddField(
-            model_name='finishedqueue',
-            name='rqueue_data',
+            model_name="finishedqueue",
+            name="rqueue_data",
             field=jsonfield.fields.JSONField(default=dict),
         ),
     ]

@@ -6,13 +6,15 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('rqueue', '0011_auto_20210405_0922'),
+        ("rqueue", "0011_auto_20210405_0922"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='rqueue',
-            name='pended_time_descriptive',
-            field=models.CharField(blank=True, default=None, max_length=1024, null=True),
+            model_name="rqueue",
+            name="pended_time_descriptive",
+            field=models.CharField(
+                blank=True, default=None, max_length=1024, null=True
+            ),
         ),
     ]

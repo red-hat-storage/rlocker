@@ -6,13 +6,22 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('rqueue', '0007_auto_20210324_0938'),
+        ("rqueue", "0007_auto_20210324_0938"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='rqueue',
-            name='status',
-            field=models.CharField(choices=[('pending', 'pending'), ('finished', 'finished'), ('failed', 'failed'), ('aborted', 'aborted')], default='pending', max_length=32),
+            model_name="rqueue",
+            name="status",
+            field=models.CharField(
+                choices=[
+                    ("pending", "pending"),
+                    ("finished", "finished"),
+                    ("failed", "failed"),
+                    ("aborted", "aborted"),
+                ],
+                default="pending",
+                max_length=32,
+            ),
         ),
     ]

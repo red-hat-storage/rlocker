@@ -7,19 +7,26 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='LockableResource',
+            name="LockableResource",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('provider', models.CharField(max_length=256)),
-                ('name', models.CharField(max_length=256, unique=True)),
-                ('is_locked', models.BooleanField(default=False)),
-                ('labels_string', models.CharField(max_length=2048)),
-                ('signoff', models.CharField(max_length=2048)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("provider", models.CharField(max_length=256)),
+                ("name", models.CharField(max_length=256, unique=True)),
+                ("is_locked", models.BooleanField(default=False)),
+                ("labels_string", models.CharField(max_length=2048)),
+                ("signoff", models.CharField(max_length=2048)),
             ],
         ),
     ]

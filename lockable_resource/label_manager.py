@@ -1,11 +1,14 @@
-#This file will include filtration functionalities based on resource labels
+# This file will include filtration functionalities based on resource labels
 from lockable_resource.models import LockableResource
-from lockable_resource.exceptions import FreeResourceNotAvailableException, InvalidLabelException
+from lockable_resource.exceptions import (
+    FreeResourceNotAvailableException,
+    InvalidLabelException,
+)
 
 
 class LabelManager:
     def __init__(self, label):
-        '''
+        """
         constructor
         :param label: for the filtration, we receive one param as the
             wanted label
@@ -13,23 +16,22 @@ class LabelManager:
             could be locked (Not filtered by a label)
         We should raise an exception if the given label does NOT MATCH ALL the
             existing labels in the entire platform
-        '''
+        """
         self.label = label
         self.validate_label()
         self.all_free_resources = LockableResource.get_all_free_resources()
-
 
     @property
     def free_resources(self):
         return self.get_free_resources()
 
     def get_free_resources(self):
-        '''
+        """
         Instance Method
         Filtration to receive all free resources that are matching the
             given label when the class is instantiated
         :return: List of all free resources that matches the label
-        '''
+        """
         matching_resources = []
         for resource in self.all_free_resources:
             if resource.has_label(self.label):
@@ -38,21 +40,21 @@ class LabelManager:
         return matching_resources
 
     def prioritize_resources(self):
-        '''
+        """
         Instance Method
         Sorting to have the free resources sorted by the amount of labels
         We know that the more labels a resource has, the more rare the cases
             that we'd like to lock it.
         Hence, we sort by the length of the labels list
         :return: List (Sorted)
-        '''
+        """
         lambda_prioritize = lambda x: len(x.labels)
         resources_prioritized = self.get_free_resources()
         resources_prioritized.sort(key=lambda_prioritize)
         return resources_prioritized
 
     def retrieve_free_resource(self, not_exist_ok=True):
-        '''
+        """
         Attempts to retrieve free resource with the instantiated label
         :param: not_exist_ok(default: True) - Not always we'd like to throw exception,
             If no free resource could be retrieved
@@ -66,7 +68,7 @@ class LabelManager:
                 when we attempt to index zero, it means the prioritize was
                     empty from the beginning.
             Therefore, we raise this exception
-        '''
+        """
         try:
             retrieved_resource = self.prioritize_resources()[0]
             return retrieved_resource
@@ -78,10 +80,10 @@ class LabelManager:
                 raise FreeResourceNotAvailableException(self.label)
 
     def validate_label(self):
-        '''
+        """
         Instance Method
         We check here if the given label is a label that exists in the entire platform
         :return:
-        '''
+        """
         if self.label not in LockableResource.get_all_labels():
             raise InvalidLabelException(self.label)
