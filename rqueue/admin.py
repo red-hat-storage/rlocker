@@ -12,5 +12,6 @@ class RqueueAdmin(ModelAdmin):
         "time_requested",
         "data",
         "status",
+        "last_beat",
         "pended_time_descriptive",
     ]

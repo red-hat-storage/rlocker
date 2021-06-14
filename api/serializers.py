@@ -26,4 +26,5 @@ class RqueueSerializer(serializers.ModelSerializer):
             "pended_time_descriptive",
             "description",
             "data",
+            "last_beat",
         )

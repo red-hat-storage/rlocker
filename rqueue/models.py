@@ -23,6 +23,9 @@ class Rqueue(models.Model):
     # It is enough to receive this only descriptive and store in the DB
     # We will always store None by default till there will be an automatic update by the queue when it's done
     # description - We want to have some random text to describe each queue after it's creation
+    # last_beat - We want to be sure that there is a connection opened from a client, and so, every time a client checks
+    # the status of the queue, we should write down at what time it's happened. So it will prevent from orphan queues,
+    # being existing in pending or initializing without a client waiting for them.
 
     data = JSONField()
     priority = models.IntegerField(
@@ -38,6 +41,7 @@ class Rqueue(models.Model):
         max_length=1024, null=True, default=None, blank=True
     )
     description = models.CharField(max_length=2048, null=True, default=None, blank=True)
+    last_beat = models.DateTimeField(blank=True, null=True, default=None)
 
     @property
     def bootstrap_classes(self):
