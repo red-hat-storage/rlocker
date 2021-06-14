@@ -1,23 +1,3 @@
-<style>
-  .loader-finished {
-  border: 6px solid #5cb85c; /* Green */
-  border-radius: 50%;
-  width: 45px;
-  height: 45px;
-}
-  .loader-failed {
-  border: 6px solid #ff2d55; /* Red */
-  border-radius: 50%;
-  width: 45px;
-  height: 45px;
-}
-  .loader-aborted {
-  border: 6px solid #000000; /* Black */
-  border-radius: 50%;
-  width: 45px;
-  height: 45px;
-}
-</style>
 <div class="row">
   <div class="col-lg-9 justify-content-center">
     <section class="panel">
@@ -31,7 +11,7 @@
             <th style="text-align: center"><i class="icon_loading"></i> ID</th>
             <th style="text-align: center"><i class="icon_clock"></i> Time Requested</th>
               <th style="text-align: center"><i class="arrow_up"></i> Priority Level</th>
-            <th style="text-align: center"><i class="icon_datareport"></i> JSON Data</th>
+            <th style="text-align: center"><i class="icon_datareport"></i> Options</th>
             <th style="text-align: center">
                 <i class="icon_document"></i> Description
             </th>
@@ -53,10 +33,20 @@
                     </td>
                     <td>
                         {% include 'includes/display_json_data_modal.html' %}
-                        <a class="btn {{ finishedqueue.bootstrap_classes.btn }}" href="#DisplayFinishedQueue-Data-{{ finishedqueue.id }}" data-toggle="modal">
-                            <i class="icon_pencil"></i>
-                            <span>Show JSON</span>
-                        </a>
+                        <div class="btn-group">
+                            <a class="btn btn-info" href="{% url 'rqueue_more_info' finishedqueue.id %}">
+                                <i class="icon_pencil"></i>
+                                <span>Show Queue</span>
+                            </a>
+                            <a class="btn btn-info dropdown-toggle" data-toggle="dropdown" href="" title="Bootstrap 3 themes generator"><span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a data-toggle="modal" href="#DisplayFinishedQueue-Data-{{ finishedqueue.id }}" title="See more info on this queue">
+                                        Show JSON
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
                     </td>
                     <!-- Row Description Start -->
                     <td>

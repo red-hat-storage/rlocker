@@ -1,5 +1,4 @@
 server {
-
     location /static/ {
         autoindex on;
         alias /static/;
@@ -7,10 +6,6 @@ server {
 
     location / {
         proxy_pass ${NGINX_PROXY_PASS};
-        proxy_read_timeout ${NGINX_PROXY_TIMEOUT};
-        proxy_connect_timeout ${NGINX_PROXY_TIMEOUT};
-        proxy_send_timeout ${NGINX_PROXY_TIMEOUT};
-        send_timeout ${NGINX_PROXY_TIMEOUT};
     }
     listen ${NGINX_LISTEN_PORT};
     server_name ${NGINX_SERVER_NAME};

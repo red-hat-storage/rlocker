@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+
+{% block tab_title %}
+    RLocker - Request in Queue ID - {{ rqueue.id }}
+{% endblock %}
+
+{% block pageheader_title %}
+    Rqueues
+{% endblock %}
+
+{% block page_description %}
+    More info on Rqueue {{ rqueue.id }}
+{% endblock %}
+
+{% block content %}
+    <div id="time-statistics" class="row">
+        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+            <div class="info-box dark-bg">
+                <i class="fa fa-clock-o"></i>
+                <div class="count">{{ rqueue.time_requested }}</div>
+                <div class="title">TIME REQUESTED</div>
+            </div>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+            <div class="info-box dark-bg">
+                <i class="fa fa-clock-o"></i>
+                <div class="count">
+                    <!-- Check first if pended time is not null, if it is, it means that the queue is still pending/initializing -->
+                    {% if rqueue.pended_time_descriptive %}
+                        {{ rqueue.pended_time_descriptive }}
+                    {% else %}
+                        {{ rqueue.pending_time_descriptive }}
+                    {% endif %}
+                </div>
+                <div class="title">TIME FINISHED / IN PROGRESS</div>
+            </div>
+        </div>
+    </div>
+    <div id="attributes" class="row">
+        <div class="col-lg-3 col-md-2 col-sm-12 col-xs-12">
+            <div class="info-box dark-bg">
+                <i class="icon_loading"></i>
+                <div class="count">{{ rqueue.id }}</div>
+                <div class="title">ID</div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-2 col-sm-12 col-xs-12">
+            <div class="info-box dark-bg">
+                <i class="fa fa-arrow-up"></i>
+                <div class="count">{{ rqueue.priority }}</div>
+                <div class="title">PRIORITY</div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+            <div class="info-box dark-bg">
+                <i class="fa fa-question"></i>
+                <div class="count">{{ rqueue.status }}</div>
+                <div class="title">STATUS</div>
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12">
+            <div
+                    class="{{ rqueue.bootstrap_classes.loader }} pull-right"
+                    style="width:150px; height:150px">
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+            <div class="panel-group m-bot20" id="accordion-one">
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h4 class="panel-title">
+                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion-one" href="#collapseOne">
+                        JSON DATA
+                    </a>
+                  </h4>
+                </div>
+                <div id="collapseOne" class="panel-collapse collapse in">
+                  <div class="panel-body">
+                      <div class="row">
+                        {% if rqueue.data_as_json %}
+                            {% for key, value in rqueue.data_as_json %}
+                                <div class="col-lg-6">
+                                    <p class="text-left" style="font-size:24px">
+                                        <span class="label blue-bg">{{ key }}:</span>
+                                        <span class="label dark-bg">{{ value }}</span>
+                                    </p>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                        WARNING, JSON string could not be parsed as a dictionary: \n
+                        <h5>
+                            {{ rqueue.data }}
+                        </h5>
+                      {% endif %}
+                      </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+            <div class="panel-group m-bot20" id="accordion-two">
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h4 class="panel-title">
+                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion-two" href="#collapseTwo">
+                        DESCRIPTION
+                    </a>
+                  </h4>
+                </div>
+                <div id="collapseTwo" class="panel-collapse collapse in">
+                  <div class="panel-body">
+                        {% if rqueue.description %}
+                          {{ rqueue.description }}
+                        {% else %}
+                        <h5 style="color:black">
+                            <b>Description not provided to this queue</b>
+                        </h5>
+                      {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,27 +1,3 @@
-<style>
-  .loader-pending {
-  border: 6px solid #f3f3f3; /* Light Gray */
-  border-top: 6px solid #007aff; /* Blue */
-  border-radius: 50%;
-  width: 45px;
-  height: 45px;
-  animation: spin 1s linear infinite;
-}
-
-  .loader-initializing {
-  border: 6px solid #f3f3f3; /* Light Gray */
-  border-top: 6px solid #aaaaaa; /* Bold Gray */
-  border-radius: 50%;
-  width: 45px;
-  height: 45px;
-  animation: spin 3s linear infinite;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-</style>
 <div class="row">
   <div class="col-lg-9 justify-content-center">
     <section class="panel">
@@ -35,7 +11,7 @@
             <th style="text-align: center"><i class="icon_loading"></i> ID</th>
             <th style="text-align: center"><i class="icon_clock"></i> Time Requested</th>
             <th style="text-align: center"><i class="arrow_up"></i> Priority Level</th>
-            <th style="text-align: center"><i class="icon_datareport"></i> JSON Data</th>
+            <th style="text-align: center"><i class="icon_datareport"></i> Options</th>
             <th style="text-align: center">
                 <i class="icon_document"></i> Description
             </th>
@@ -76,10 +52,20 @@
                     </td>
                     <td>
                         {% include 'includes/display_json_data_modal.html' %}
-                        <a class="btn btn-primary" href="#Display-Data-{{ rqueue.id }}" data-toggle="modal">
-                            <i class="icon_pencil"></i>
-                            <span>Show JSON</span>
-                        </a>
+                        <div class="btn-group">
+                            <a class="btn btn-info" href="{% url 'rqueue_more_info' slug=rqueue.id %}">
+                                <i class="icon_pencil"></i>
+                                <span>Show Queue</span>
+                            </a>
+                            <a class="btn btn-info dropdown-toggle" data-toggle="dropdown" href="" title="Bootstrap 3 themes generator"><span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a data-toggle="modal" href="#Display-Data-{{ rqueue.id }}" title="See more info on this queue">
+                                        Show JSON
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
                     </td>
                     <!-- Row Description Start -->
                     <td>

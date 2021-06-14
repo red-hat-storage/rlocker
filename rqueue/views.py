@@ -36,3 +36,12 @@ def finished_requests_page(request):
     return render(request,
                   template_name='rqueue/finished_requests.html',
                   context={'finishedqueues':finished_requests})
+
+
+def rqueue_more_info(request, slug):
+    rqueue = Rqueue.objects.get(id=slug)
+    return render(
+        request,
+        template_name='rqueue/rqueue_more_info.html',
+        context={'rqueue': rqueue}
+    )
