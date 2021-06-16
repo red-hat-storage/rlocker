@@ -46,6 +46,9 @@ def json_continuously_loader(json_string, attempts=10):
     :param json_string:
     :return:
     """
+    if type(json_string) == dict:
+        return json_string
+
     loaded_json = None
     attempts = list(range(1, attempts + 1, 1))
     for attempt in attempts:
