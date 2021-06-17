@@ -33,7 +33,7 @@ def get_time_descriptive(total_seconds):
     if minutes > 0:
         return f"{minutes:.0f} minutes"
 
-    if seconds > 0:
+    if seconds >= 0:
         return f"Less than a minute"
 
 

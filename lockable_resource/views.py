@@ -1,4 +1,5 @@
 import lockable_resource.constants as const
+import rqueue.constants as const_rqueue
 from django.contrib import messages
 from django.shortcuts import render, redirect
 from lockable_resource.models import *
@@ -33,6 +34,7 @@ def lockable_resources_page(request):
                     override_signoff=True,
                     signoff=signoff,
                 ),
+                status=const_rqueue.Status.INITIALIZING
             )
             new_queue.save()
             messages.info(
