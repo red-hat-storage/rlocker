@@ -14,7 +14,7 @@
                <div class="form-group">
                   <label for="signoff-{{ lockable_resource.id }}">Please include a sign off that will describe who locks the resource</label>
                   <input type="text" class="form-control center-block" id="signoff-{{ lockable_resource.id }}"
-                          placeholder="Sign off" required="true" name="signoff-{{ lockable_resource.id }}">
+                          placeholder="Sign off" required="true" name="signoff-{{ lockable_resource.id }}" value="{{ user.username }}-{{ lockable_resource.id }}">
                </div>
 
                <br>
