@@ -26,7 +26,7 @@ def fetch_for_available_lockable_resources(sender, instance, created, **kwargs):
     """
 
     if created:
-        data = json.loads(instance.data)
+        data = json_continuously_loader(instance.data)
         data_id = data.get("id")
         data_signoff = data.get("signoff")
 

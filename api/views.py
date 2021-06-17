@@ -4,6 +4,7 @@ from api.custom_permissions import HasValidTokenOrIsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
 from lockable_resource.models import LockableResource
 from django.db.models.functions import Length
+from rqueue.utils import json_continuously_loader
 from rqueue.models import Rqueue
 from rqueue.constants import Status
 from django.shortcuts import redirect, reverse
@@ -228,7 +229,7 @@ def retrieve_resource_by_name(request, name, priority, signoff):
     resource = LockableResource.objects.get(name=name)
 
     # We want to add some more fields to our data before sending it as Request Queue
-    custom_data = json.loads(
+    custom_data = json_continuously_loader(
         resource.json_parse(override_signoff=True, signoff=signoff)
     )
     custom_data["username"] = get_user_object_by_token_or_auth(request).username
