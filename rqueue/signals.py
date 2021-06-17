@@ -53,17 +53,25 @@ def fetch_for_available_lockable_resources(sender, instance, created, **kwargs):
 
 
 @receiver(pre_save, sender=Rqueue)
-def give_pended_time_value_after_status_change(sender, instance, **kwargs):
+def execute_pre_save_actions_for_rqueue(sender, instance, **kwargs):
     """
+    For any changes prior saving a Rqueue obj, do it here!
+
+    1)
     A signal that will allow to edit the pended time descriptive as soon as
         the status of a queue is being changed to something that is NOT Pending
     That is important, because it describes the time that the queue waited, before it got
     Finished, Aborted or Failed
+
+    2)
+    Another Action would be to load the json in the data continuously and save it properly in the DB
     :param sender:
     :param instance:
     :param kwargs:
     :return:
     """
+
+    # 1)
     try:
         rqueue = sender.objects.get(pk=instance.pk)
     except sender.DoesNotExist:
@@ -74,3 +82,7 @@ def give_pended_time_value_after_status_change(sender, instance, **kwargs):
         on_going_status = ["PENDING", "INITIALIZING"]
         if not instance.status in on_going_status and rqueue.status in on_going_status:
             instance.pended_time_descriptive = instance.pending_time_descriptive
+
+
+    # 2)
+    instance.data = json_continuously_loader(instance.data)
