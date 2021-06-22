@@ -123,9 +123,9 @@ class Rqueue(models.Model):
         :param kwargs: key value pairs to add
         :return:
         """
-        data = json.loads(self.data)
+        data = json_continuously_loader(self.data)
         if json_to_add:
-            json_to_dict = json.loads(json_to_add)
+            json_to_dict = json_continuously_loader(json_to_add)
             # Merge dicts:
             data.update(json_to_dict)
             self.data = data
