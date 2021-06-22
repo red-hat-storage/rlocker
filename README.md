@@ -1,11 +1,15 @@
 # Resource Locker project
 ## This project is a Back-end service with API endpoints and web UI, for monitoring the resources created in different cloud providers, define their usage availability by locking/unlocking a resource.
 
-### Quick Start Video will be added soon:
+### Project Dependencies:
+ - [rlockerservices](https://github.com/jimdevops19/rlockerservices) - Services repository that the rlocker uses
+ - [rlockertools](https://github.com/jimdevops19/rlockertools) -  A Python based client interface to interact with the platform
+
+### Quick Start Video will be added soon
 
 Project Architecture:
 
-Django website with applications, `account`, `api`, `dashboard`, `lockable_resource`, `rqueue`
+Django website with applications, `account`, `api`, `dashboard`, `health`, `lockable_resource`, `rqueue`
  - __account:__ Designed to add more functionalities to the built-in user app
    - [__ init __](account/__init__.py): Packaging this account directory (Django App) 
    - [apps](account/apps.py): Application configurations 
@@ -18,7 +22,8 @@ Django website with applications, `account`, `api`, `dashboard`, `lockable_resou
    - [apps](api/apps.py): Application configurations 
    - [custom_permissions](api/custom_permissions.py): For enabling only access for non anonymous users, a permission mechanism should be written in api application 
    - [serializers](api/serializers.py): Serializers Object for the api, to prepare JSON responses.
-   - [urls](api/__urls__.py): Endpoints that are enabled after the api prefix
+   - [urls](api/urls.py): Endpoints that are enabled after the api prefix
+   - [utils](api/utils.py): Useful functions for the api application
    - [views](api/views.py): Views where we will take actions in each endpoint, depending on the request method. 
  
  - __dashboard:__ Designed to display a read-only dashboard for more centralized view of the lockable resources with more details
@@ -26,6 +31,12 @@ Django website with applications, `account`, `api`, `dashboard`, `lockable_resou
    - [apps](dashboard/apps.py): Application configurations 
    - [urls](dashboard/__urls__.py): Endpoints that are enabled for this application
    - [views](dashboard/views.py): Views where we will manipulate the data we'd like to display in the dashboard
+
+ - __health:__ Designed to have a health check URL that returns a raw string, so it will be easier to check health of the entire platform
+   - [__ init __](dashboard/__init__.py): Packaging this account directory (Django App) 
+   - [apps](dashboard/apps.py): Application configurations 
+   - [urls](dashboard/__urls__.py): URL endpoints of this specific application
+   - [views](dashboard/views.py): Views of this specific application
 
  - __lockable_resource:__ Application Programming Interface in order to automate resource locking releasing via endpoints.
    - [__ init __](lockable_resource/__init__.py): Packaging this account directory (Django App) 
@@ -46,7 +57,7 @@ Django website with applications, `account`, `api`, `dashboard`, `lockable_resou
    - [constants](rqueue/constants.py): Constants of the rqueue app, we define there priority enumerations, time intervals for resource availability check
    - [context_processors](rqueue/context_processors.py): Since we want some data to be accessible from each HTML template, we have to define it as a global context that is available (from settings.py)
    - [models](rqueue/models.py): Modelize a schema of the table for different requests in queue
-   - [signals](rqueue/signals.py): Signals to be triggered once a rqueue object is being created, there we handle the queue mechanism.
+   - [signals](rqueue/signals.py): Signals to be triggered once a rqueue object is being created.
    - [urls](rqueue/urls.py): Available URL's from the Web UI to manage the requests in queue
    - [utils](rqueue/urls.py): Helper functions for the rqueue applications. for i.e - displaying nicer string for the pended time of a queue
    - [views](rqueue/views.py): Design of the views and actions to take in GET/POST requests.
