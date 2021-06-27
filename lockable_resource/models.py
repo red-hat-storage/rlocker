@@ -140,6 +140,9 @@ class LockableResource(models.Model):
     def has_label(self, label):
         return label in self.labels
 
+    def has_link(self):
+        return self.link is not None
+
     def has_signoff(self):
         return self.signoff is not None
 

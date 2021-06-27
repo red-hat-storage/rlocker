@@ -182,6 +182,9 @@ def retrieve_resource_entrypoint(request, search_string):
     # TODO: Check if the signoff is unique before proceeding to retrieve a resource
     request_priority = int(request_data.get("priority"))
     additional_kwargs = {"priority": request_priority, "signoff": request_signoff}
+    request_link = request_data.get("link")
+    if request_link:
+        additional_kwargs["link"] = request_link
     try:
         # get() - Throws exception when the filtration does not match
         # Hence, everything has to be wrapped around try catch:
@@ -225,12 +228,15 @@ def retrieve_resource_entrypoint(request, search_string):
 
 @api_view(["GET"])
 @permission_classes([HasValidTokenOrIsAuthenticated])
-def retrieve_resource_by_name(request, name, priority, signoff):
+def retrieve_resource_by_name(request, name, priority, signoff, link=None):
     resource = LockableResource.objects.get(name=name)
 
     # We want to add some more fields to our data before sending it as Request Queue
     custom_data = json_continuously_loader(
-        resource.json_parse(override_signoff=True, signoff=signoff)
+        resource.json_parse(
+            override_signoff=True, signoff=signoff,
+
+        )
     )
     custom_data["username"] = get_user_object_by_token_or_auth(request).username
     # Creating the Rqueue and saving it
@@ -245,13 +251,14 @@ def retrieve_resource_by_name(request, name, priority, signoff):
 
 @api_view(["GET"])
 @permission_classes([HasValidTokenOrIsAuthenticated])
-def retrieve_resource_by_label(request, label, priority, signoff):
+def retrieve_resource_by_label(request, label, priority, signoff, link=None):
     # The data will be sent to Rqueue without knowing which resource is going to be locked yet.
     # This will be handled by the signals
     custom_data = {
         "label": label,
         "signoff": signoff,
         "username": get_user_object_by_token_or_auth(request).username,
+        "link" : link
     }
 
     put_in_queue = Rqueue(data=json.dumps(custom_data), priority=int(priority))
