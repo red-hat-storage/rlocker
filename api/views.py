@@ -181,7 +181,16 @@ def retrieve_resource_entrypoint(request, search_string):
     request_signoff = request_data.get("signoff")
     # TODO: Check if the signoff is unique before proceeding to retrieve a resource
     request_priority = int(request_data.get("priority"))
-    additional_kwargs = {"priority": request_priority, "signoff": request_signoff}
+    # Workaround
+    # https: // stackoverflow.com / questions / 14351048 / django - optional - url - parameters
+    # Default url parameters is not supported as excepted, it is better to use None as String instead.
+    request_link = request_data.get("link", 'None')
+    additional_kwargs = {
+        "priority": request_priority,
+        "signoff": request_signoff,
+        "link": request_link,
+
+    }
     try:
         # get() - Throws exception when the filtration does not match
         # Hence, everything has to be wrapped around try catch:
@@ -225,12 +234,16 @@ def retrieve_resource_entrypoint(request, search_string):
 
 @api_view(["GET"])
 @permission_classes([HasValidTokenOrIsAuthenticated])
-def retrieve_resource_by_name(request, name, priority, signoff):
+def retrieve_resource_by_name(request, name, priority, signoff, link):
     resource = LockableResource.objects.get(name=name)
 
     # We want to add some more fields to our data before sending it as Request Queue
     custom_data = json_continuously_loader(
-        resource.json_parse(override_signoff=True, signoff=signoff)
+        resource.json_parse(
+            override_signoff=True, signoff=signoff,
+            override_link=True, link=link,
+
+        )
     )
     custom_data["username"] = get_user_object_by_token_or_auth(request).username
     # Creating the Rqueue and saving it
@@ -245,13 +258,14 @@ def retrieve_resource_by_name(request, name, priority, signoff):
 
 @api_view(["GET"])
 @permission_classes([HasValidTokenOrIsAuthenticated])
-def retrieve_resource_by_label(request, label, priority, signoff):
+def retrieve_resource_by_label(request, label, priority, signoff, link):
     # The data will be sent to Rqueue without knowing which resource is going to be locked yet.
     # This will be handled by the signals
     custom_data = {
         "label": label,
         "signoff": signoff,
         "username": get_user_object_by_token_or_auth(request).username,
+        "link" : link
     }
 
     put_in_queue = Rqueue(data=json.dumps(custom_data), priority=int(priority))

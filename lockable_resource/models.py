@@ -140,6 +140,11 @@ class LockableResource(models.Model):
     def has_label(self, label):
         return label in self.labels
 
+    def has_link(self):
+        # Sometimes the link might be stringed none.
+        # We want to ensure that it is not the case as well
+        return self.link not in [None, "None"]
+
     def has_signoff(self):
         return self.signoff is not None
 
@@ -198,6 +203,9 @@ class LockableResource(models.Model):
 
         if kwargs.get("override_signoff"):
             obj_dict["signoff"] = kwargs.get("signoff")
+
+        if kwargs.get("override_link"):
+            obj_dict["link"] = kwargs.get("link")
 
         return json.dumps(obj_dict)
 

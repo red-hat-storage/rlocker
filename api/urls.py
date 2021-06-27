@@ -12,12 +12,12 @@ urlpatterns = [
     # Example from web browser UI:
     # http://127.0.0.1:8000/api/resource/retrieve_name/aws-resource-3%3Fpriority=1%3Fsignoff=cerginba-cluster66666
     path(
-        "resource/retrieve_name/<name>?priority=<priority>?signoff=<signoff>",
+        "resource/retrieve_name/<name>?priority=<priority>?signoff=<signoff>?link=<link>",
         views.retrieve_resource_by_name,
         name="retrieve_resource_by_name",
     ),
     path(
-        "resource/retrieve_label/<label>?priority=<priority>?signoff=<signoff>",
+        "resource/retrieve_label/<label>?priority=<priority>?signoff=<signoff>?link=<link>",
         views.retrieve_resource_by_label,
         name="retrieve_resource_by_label",
     ),
