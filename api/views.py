@@ -241,6 +241,7 @@ def retrieve_resource_by_name(request, name, priority, signoff, link):
     custom_data = json_continuously_loader(
         resource.json_parse(
             override_signoff=True, signoff=signoff,
+            override_link=True, link=link,
 
         )
     )

@@ -204,6 +204,9 @@ class LockableResource(models.Model):
         if kwargs.get("override_signoff"):
             obj_dict["signoff"] = kwargs.get("signoff")
 
+        if kwargs.get("override_link"):
+            obj_dict["link"] = kwargs.get("link")
+
         return json.dumps(obj_dict)
 
     # Meta Class
