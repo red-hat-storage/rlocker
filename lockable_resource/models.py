@@ -141,7 +141,9 @@ class LockableResource(models.Model):
         return label in self.labels
 
     def has_link(self):
-        return self.link is not None
+        # Sometimes the link might be stringed none.
+        # We want to ensure that it is not the case as well
+        return self.link not in [None, "None"]
 
     def has_signoff(self):
         return self.signoff is not None

@@ -41,9 +41,13 @@
 						<td>{{ lockable_resource.labels }}</td>
 						<td>
                             {% if lockable_resource.link %}
-                                <a href="{{ lockable_resource.link }}">
+                                {% if lockable_resource.link != "None" %}
+                                    <a href="{{ lockable_resource.link }}">
+                                        <b>{{ lockable_resource.signoff }}</b>
+                                    </a>
+                                {% else %}
                                      <b>{{ lockable_resource.signoff }}</b>
-                                </a>
+                                {% endif %}
                             {% else %}
                                 <b>{{ lockable_resource.signoff }}</b>
                             {% endif %}
