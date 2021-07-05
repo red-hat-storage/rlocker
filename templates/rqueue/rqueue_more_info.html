@@ -85,7 +85,7 @@
                                     <p class="text-left" style="font-size:24px">
                                         <span class="label blue-bg">{{ key }}:</span>
                                         <!-- For each value, we can use validation to check what type the value is, and decide how to display it  -->
-                                        {% if value|first in 'https'  %} <!-- if value is link -->
+                                        {% if value|first in 'http'  %} <!-- if value is link -->
                                             <a class="label dark-bg" style="color:#0091FF" href="{{ value }}">Visit link here</a>
                                         {% else %}
                                             <span class="label dark-bg">{{ value }}</span>
