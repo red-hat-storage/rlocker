@@ -4,6 +4,7 @@ from rqueue.models import Rqueue
 from rqueue.constants import Priority, Interval
 from lockable_resource.models import LockableResource
 from rqueue.utils import *
+from urllib.parse import unquote
 
 
 @receiver(post_save, sender=Rqueue)
@@ -64,11 +65,12 @@ def execute_pre_save_actions_for_rqueue(sender, instance, **kwargs):
     Finished, Aborted or Failed
 
     2)
-    Another Action would be to load the json in the data continuously and save it properly in the DB
-    :param sender:
-    :param instance:
-    :param kwargs:
-    :return:
+    Loading the json in the data continuously and save it properly in the DB
+
+    3)
+    Unquote the values of all the keys from data/json that are links.
+    Example: Client might send a link that is quoted, we'd like to change that so it will be clickable
+        if it is used somewhere in the templates
     """
 
     # 1)
@@ -86,3 +88,12 @@ def execute_pre_save_actions_for_rqueue(sender, instance, **kwargs):
 
     # 2)
     instance.data = json_continuously_loader(instance.data)
+
+
+    # 3)
+    # Start Customization of this signal, only if instance.data is a dictionary
+    if isinstance(instance.data, dict):
+        for k, v in instance.data.items():
+            if isinstance(v, str) and v.startswith('http'):
+                instance.data[k] = unquote(v)
+
