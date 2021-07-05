@@ -76,7 +76,7 @@
                         <td>
                             <span id="actions-{{ lockable_resource.id }}">
                                 {% if not lockable_resource.in_maintenance %}
-                                    {% if user.is_staff %}
+                                    {% if perms.lockable_resource.change_lockableresource %}
                                         {% if lockable_resource.can_lock %}
                                             {% include 'includes/lock_lockable_resources_modal.html' %}
 
