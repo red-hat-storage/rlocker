@@ -51,16 +51,16 @@ def resources_view(request):
         free_only = request.query_params.get("free_only")
         signoff = request.query_params.get("signoff")
 
+        # Here we would like to return immediately, signoff should be unique.
+        # And if signoff is not none, then it means it is locked
+        # So we should not go over other filtration methods anyway.
         if signoff:
-            # Here we would like to return immediately, signoff should be unique.
-            # And if signoff is not none, then it means it is locked
-            # So we should not go over other filtration methods anyway.
             queryset = LockableResource.objects.filter(signoff=signoff)
             serializer = LockableResourceSerializer(queryset, many=True)
             return Response(serializer.data)
 
+        # Verification that both label and name are not passed in as query param
         if name and label_matches:
-            # Verification that both label and name are not passed in as query param
             return Response(
                 "Bad Request! You can not filter both by name and label",
                 status=status.HTTP_400_BAD_REQUEST,
@@ -70,6 +70,7 @@ def resources_view(request):
         # If the value strings are not 'true' or 'false'
         if free_only and free_only.lower() == "true":
             queryset = queryset.filter(is_locked=False)
+            queryset = queryset.filter(in_maintenance=False)
 
         if name is not None:
             # Override the queryset and the serializer to return
