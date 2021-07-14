@@ -5,6 +5,17 @@ from django.contrib.auth.models import User, Group
 class Command(BaseCommand):
     help = "Command for creating accounts that are not existing on the platform"
 
+    def add_user_to_groups(self, user, list_of_groups):
+        '''
+        :param user: User Object
+        :param list_of_groups: List of Group Names
+        :return: None
+        '''
+        for group in list_of_groups:
+            group = Group.objects.get(name=group)
+            group.user_set.add(user)
+            print(f"User added to group -> {group}")
+
     def add_arguments(self, parser):
         pass
 
@@ -27,21 +38,13 @@ class Command(BaseCommand):
             try:
                 existing_user = User.objects.get(username=user)
                 print(f"{user} exists! skipping ...")
-                if len(list_of_groups) > 0:
-                    for group in list_of_groups:
-                        group = Group.objects.get(name=group)
-                        group.user_set.add(existing_user)
-                        print(f"User added to group -> {group}")
+                self.add_user_to_groups(existing_user, list_of_groups)
 
             except User.DoesNotExist:
                 # If we are here, it means that the User objects does not exist, let's create it
-                create_attempt = User.objects.create_user(
+                new_user = User.objects.create_user(
                     user, password=initial_password
                 )
-                if len(list_of_groups) > 0:
-                    for group in list_of_groups:
-                        group = Group.objects.get(name=group)
-                        group.user_set.add(create_attempt)
-                        print(f"User added to group -> {group}")
-                create_attempt.save()
+                self.add_user_to_groups(new_user, list_of_groups)
+                new_user.save()
                 print(f"User {user} created successfully!")
