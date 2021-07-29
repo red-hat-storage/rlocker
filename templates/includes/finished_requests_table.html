@@ -72,6 +72,28 @@
             {% endfor %}
         </tbody>
       </table>
+      <!-- Pagination Start -->
+      <div class="text-center" style="background-color: #EEEEEE">
+          <ul class="pagination pagination-lg">
+            {% if finishedqueues.has_previous %}
+                <li><a href="?page=1">&laquo; First</a></li>
+                <li><a href="?page={{ finishedqueues.previous_page_number }}">Previous</a></li>
+            {% endif %}
+            {% for num in finishedqueues.paginator.page_range %}
+                {% if finishedqueues.number == num %}
+                    <li class="active"><a href="?page={{ num }}">{{ num }}</a></li>
+                <!-- Otherwise, display 5 page options, it's not cool to display too much -->
+                {% elif num > finishedqueues.number|add:'-5' and num < finishedqueues.number|add:'5' %}
+                    <li><a href="?page={{ num }}">{{ num }}</a></li>
+                {% endif %}
+            {% endfor %}
+            {% if finishedqueues.has_next %}
+                <li><a href="?page={{ finishedqueues.next_page_number }}">Next</a></li>
+                <li><a href="?page={{ finishedqueues.paginator.num_pages }}">Last &raquo;</a></li>
+            {% endif %}
+          </ul>
+      </div>
+      <!-- Pagination End -->
     </section>
   </div>
   <div id="messages-area" class="col-lg-3">

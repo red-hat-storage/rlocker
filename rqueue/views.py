@@ -1,7 +1,9 @@
+import rqueue.constants as const
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from rqueue.models import Rqueue
 from rqueue.constants import Status
+from django.core.paginator import Paginator
 
 
 def pending_requests_page(request):
@@ -39,11 +41,15 @@ def finished_requests_page(request):
     finished_requests = Rqueue.objects.filter(
         status__in=Status.PAST_STATUS_OPTIONS
     ).order_by("-id")
-
+    # Initialize the paginator object, which will split the given objects:
+    paginator = Paginator(finished_requests, const.DISPLAY_COUNT_PER_PAGE)
+    # Current page number:
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
     return render(
         request,
         template_name="rqueue/finished_requests.html",
-        context={"finishedqueues": finished_requests},
+        context={"finishedqueues": page_obj},
     )
 
 
