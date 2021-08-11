@@ -10,7 +10,7 @@ def dashboard_page(request):
     label_managers = [
         LabelManager(label) for label in LockableResource.get_all_labels()
     ]
-    label_managers.sort(key=lambda x: len(x.free_resources), reverse=True)
+    label_managers.sort(key=lambda x: x.label)
     return render(
         request,
         template_name="dashboard/index.html",

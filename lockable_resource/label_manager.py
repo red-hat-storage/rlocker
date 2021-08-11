@@ -20,6 +20,19 @@ class LabelManager:
         self.label = label
         self.validate_label()
         self.all_free_resources = LockableResource.get_all_free_resources()
+        self.all_resources = LockableResource.objects.all()
+
+    @property
+    def resources(self):
+        return self.get_resources()
+
+    def get_resources(self):
+        matching_resources = []
+        for resource in self.all_resources:
+            if resource.has_label(self.label):
+                matching_resources.append(resource)
+
+        return matching_resources
 
     @property
     def free_resources(self):
