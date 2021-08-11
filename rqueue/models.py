@@ -86,7 +86,7 @@ class Rqueue(models.Model):
             For i.e: instead of showing 2700, we could display 45 minutes
         :return str  Descriptive output of time by knowing the total seconds
         """
-        return get_time_descriptive(self.pending_time.seconds)
+        return get_time_descriptive(self.pending_time.total_seconds())
 
     def __str__(self):
         # Here we override each object definition
