@@ -9,7 +9,7 @@ from rqueue.constants import Priority
 
 def lockable_resources_page(request):
     if request.method == "GET":
-        lockable_resources = LockableResource.objects.all().order_by("id")
+        lockable_resources = LockableResource.objects.all().order_by("name")
         return render(
             request,
             template_name="lockable_resource/all.html",
