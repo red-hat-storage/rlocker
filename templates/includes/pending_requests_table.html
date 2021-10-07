@@ -50,8 +50,11 @@
                             {{ rqueue.priority }}
                         {% endif %}
                     </td>
+                    <!-- Row Options Start -->
                     <td>
                         {% include 'includes/display_json_data_modal.html' %}
+                        {% include 'includes/action_queue_modal.html' %}
+
                         <div class="btn-group">
                             <a class="btn btn-info" href="{% url 'rqueue_more_info' slug=rqueue.id %}">
                                 <i class="icon_pencil"></i>
@@ -64,9 +67,15 @@
                                         Show JSON
                                     </a>
                                 </li>
+                                <li>
+                                    <a data-toggle="modal" href="#Abort-Rqueue-{{ rqueue.id }}" title="Click to abort this queue">
+                                        Abort Queue
+                                    </a>
+                                </li>
                             </ul>
                         </div>
                     </td>
+                    <!-- Row Options End -->
                     <!-- Row Description Start -->
                     <td>
                         <a data-original-title="Description for Rqueue with ID {{ rqueue.id }}"

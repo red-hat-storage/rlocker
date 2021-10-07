@@ -1,0 +1,31 @@
+<!--
+    This template includes actions to do with the rqueues
+    Supports: Abort
+-->
+<div aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="Abort-Rqueue-{{ rqueue.id }}" class="modal fade">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <div class="modal-header">
+            <button aria-hidden="true" data-dismiss="modal" class="close" type="button">×</button>
+            <h4 class="modal-title">
+                <b>Are you sure to abort {{ rqueue.id }} ?</b>
+            </h4>
+         </div>
+         <div class="modal-body" style="">
+            <h5>By clicking Confirm Abort, this queue will be in ABORTED state.</h5>
+            <form class="form-inline" role="form" method="POST">
+                {% csrf_token %}
+                <br>
+                <br>
+                <br>
+                <input type="hidden" id='rqueue_id' name="rqueue_id" value="{{ rqueue.id }}"/>
+                <input type="hidden" id='action' name="action" value="aborted"/>
+                <button type="submit" class="btn btn-success">
+                   <i style="margin-right: 5px"></i>
+                   <b>Confirm Abort</b>
+                </button>
+            </form>
+         </div>
+      </div>
+   </div>
+</div>
