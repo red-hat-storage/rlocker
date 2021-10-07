@@ -53,7 +53,9 @@
                     <!-- Row Options Start -->
                     <td>
                         {% include 'includes/display_json_data_modal.html' %}
-                        {% include 'includes/action_queue_modal.html' %}
+                        {% if user.is_staff %}
+                            {% include 'includes/action_queue_modal.html' %}
+                        {% endif %}
 
                         <div class="btn-group">
                             <a class="btn btn-info" href="{% url 'rqueue_more_info' slug=rqueue.id %}">
@@ -67,11 +69,13 @@
                                         Show JSON
                                     </a>
                                 </li>
-                                <li>
-                                    <a data-toggle="modal" href="#Abort-Rqueue-{{ rqueue.id }}" title="Click to abort this queue">
-                                        Abort Queue
-                                    </a>
-                                </li>
+                                {% if user.is_staff %}
+                                    <li>
+                                        <a data-toggle="modal" href="#Abort-Rqueue-{{ rqueue.id }}" title="Click to abort this queue">
+                                            Abort Queue
+                                        </a>
+                                    </li>
+                                {% endif %}
                             </ul>
                         </div>
                     </td>
