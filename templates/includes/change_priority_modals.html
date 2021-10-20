@@ -14,10 +14,11 @@
             </h5>
             <form class="form-inline" role="form" method="POST">
                {% csrf_token %}
-               <input type="hidden" id='id' name="id" value="{{ rqueue.id }}"/>
-               <input type="hidden" id='priority' name="priority" value="{{ i }}"/>
+               <input type="hidden" id="action" name="action" value="change_priority">
+               <input type="hidden" id='rqueue_id' name="rqueue_id" value="{{ rqueue.id }}"/>
+               <input type="hidden" id='priority_value' name="priority_value" value="{{ i }}"/>
 
-                <button type="submit" class="btn btn-large btn-danger">
+               <button type="submit" class="btn btn-large btn-danger">
                    <i style="margin-right: 5px"  class="arrow_up"></i>
                    Confirm Change of Priority to <b>{{ i }}</b>
                </button>
