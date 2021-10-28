@@ -1,14 +1,25 @@
 import lockable_resource.constants as const
 import rqueue.constants as const_rqueue
 from django.contrib import messages
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, HttpResponse
 from lockable_resource.models import *
 from rqueue.models import Rqueue
 from rqueue.constants import Priority
+from lockable_resource.query_param_manager import QueryParamManager
 
 
 def lockable_resources_page(request):
     if request.method == "GET":
+        query_params = request.GET
+        if query_params:
+            qp_key = list(dict(query_params).keys())[0]
+            qp_val = list(dict(query_params).values())[0][0]
+            q_manager = QueryParamManager(qp_key, qp_val)
+            data = q_manager.handle_key()
+
+            return HttpResponse(data, content_type="text/plain")
+
+        # Display regularly the page if no query_params added
         lockable_resources = LockableResource.objects.all().order_by("name")
         return render(
             request,
