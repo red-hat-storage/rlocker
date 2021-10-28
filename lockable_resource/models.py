@@ -2,7 +2,7 @@ from django.db import models
 from lockable_resource.exceptions import AlreadyFreeException, AlreadyLockedException
 import lockable_resource.constants as const
 import json
-
+import yaml
 
 class LockableResource(models.Model):
     # Fields:
@@ -208,6 +208,37 @@ class LockableResource(models.Model):
             obj_dict["link"] = kwargs.get("link")
 
         return json.dumps(obj_dict)
+
+    def yaml_parse(self):
+        """
+        Instance Method
+        Method prepares the object in parsed json.
+        We want to omit several key values from the
+        built-in __dict__ attribute, to have cleaner data
+        Removals are in list: key_removals
+        :return: JSON object
+        """
+        key_removals = ["_state"]
+        obj_dict = self.__dict__
+        for key_removal in key_removals:
+            # Try to remove the key SILENTLY:
+            obj_dict.pop(key_removal, None)
+
+        return yaml.safe_dump(obj_dict)
+
+    @classmethod
+    def get_objects_as_yaml(cls):
+        indent = ' ' * 2
+        raw_yaml = ''
+        raw_yaml += '---\n'
+        raw_yaml += 'lockable_resources:\n'
+        for obj in cls.objects.all():
+            raw_yaml += f"{indent}-\n"
+            for line in obj.yaml_parse().split('\n'):
+                raw_yaml += f"{indent}{indent}{line}\n"
+
+        return raw_yaml
+
 
     # Meta Class
     class Meta:
