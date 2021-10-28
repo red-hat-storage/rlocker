@@ -34,6 +34,7 @@ ALLOWED_HOSTS = ["*"]
 # Application definition
 
 INSTALLED_APPS = [
+    "administrative_tools.apps.AdministrativeToolsConfig",
     "health.apps.HealthConfig",
     "dashboard.apps.DashboardConfig",
     "rqueue.apps.RqueueConfig",

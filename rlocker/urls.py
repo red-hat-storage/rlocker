@@ -24,4 +24,5 @@ urlpatterns = [
     path("", include("rqueue.urls")),
     path("", include("dashboard.urls")),
     path("", include("health.urls")),
+    path("administrative_tools/", include("administrative_tools.urls", namespace='administrative_tools')),
 ]
