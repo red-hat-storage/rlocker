@@ -1,0 +1,16 @@
+{% if user_locked_resources %}
+    {% include 'includes/lockable_resource_table.html' with lockable_resources=user_locked_resources %}
+{% else %}
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="alert alert-info fade in">
+                <button data-dismiss="alert" class="ml-2 mb-1 close" type="button">
+                    <span aria-hidden="true"></span>
+                </button>
+                <strong>
+                    Great! You don't have any locked resources
+                </strong>
+            </div>
+        </div>
+    </div>
+{% endif %}

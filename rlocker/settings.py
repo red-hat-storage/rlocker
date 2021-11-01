@@ -34,6 +34,8 @@ ALLOWED_HOSTS = ["*"]
 # Application definition
 
 INSTALLED_APPS = [
+    "patch_notifier.apps.PatchNotifierConfig",
+    "admin_tools.apps.AdminToolsConfig",
     "health.apps.HealthConfig",
     "dashboard.apps.DashboardConfig",
     "rqueue.apps.RqueueConfig",
@@ -59,6 +61,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "patch_notifier.middleware.CheckFirstVisitMiddleware",
 ]
 
 ROOT_URLCONF = "rlocker.urls"

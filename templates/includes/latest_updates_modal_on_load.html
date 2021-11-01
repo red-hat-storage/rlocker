@@ -1,0 +1,40 @@
+<div aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="LatestUpdates" class="modal fade">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <div class="modal-header">
+            <button aria-hidden="true" data-dismiss="modal" class="close" type="button">×</button>
+            <h4 class="modal-title">
+                <b>Welcome back, {{ user.username }}!</b>
+            </h4>
+         </div>
+         <div class="modal-body">
+            <h3><b>Thanks for using the Resource Locker! Here are the latest feature updates:</b></h3>
+            <!-- Updates Start -->
+                <p style="line-height: 30px">
+                In the Dashboard page, each logged in user will see it's own lockable resources.<br>
+                    This means, you can visit the home/dashboard page and simply check the section of <b>My Locked Resources</b>
+                    and release your locks from there. If a user does not have locked resources, a text like the following should be appearing:
+                    <br>
+                    <b>Great! You do not have any locked resources!</b>
+                </p>
+            <!-- Updates Finish-->
+            <form action="{% url 'patch_notifier:update_first_visit' %}" class="form-inline" role="form" method="POST">
+               {% csrf_token %}
+               <button type="submit" class="btn btn-danger">
+                   <i style="margin-right: 5px"  class="icon_close"></i>
+                   <b>Close, and do not show this message anymore</b>
+               </button>
+            </form>
+         </div>
+      </div>
+   </div>
+</div>
+
+<!-- Using jQuery, so need to load this static file here separately -->
+{% load static %}
+<script src="{% static 'js/jquery.js' %}"></script>
+<script type="text/javascript">
+    $(window).on('load', function() {
+        $('#LatestUpdates').modal('show');
+    });
+</script>

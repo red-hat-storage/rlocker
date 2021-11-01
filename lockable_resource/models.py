@@ -219,7 +219,7 @@ class LockableResource(models.Model):
         Removals are in list: key_removals
         :return: YAML object
         """
-        key_removals = ["_state"]
+        key_removals = ["_state", "id"]
         obj_dict = self.__dict__
         for key_removal in key_removals:
             # Try to remove the key SILENTLY:
