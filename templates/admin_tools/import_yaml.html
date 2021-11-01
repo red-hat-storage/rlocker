@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block tab_title %}
+    RLocker - Administrative Tools
+{% endblock %}
+
+{% block pageheader_title %}
+    Administrative Tools
+{% endblock %}
+
+{% block page_description %}
+    Import Lockable Resources from YAML
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="alert alert-danger fade in">
+            <button class="ml-2 mb-1 close" type="button">
+            </button>
+            <strong>
+                WARNING! By Clicking Confirm you enforce to override the entire Lockable Resources table.
+                If name of some object already exists, their attributes will be overrided! Otherwise, it will create a new Lockable Resource
+            </strong>
+        </div>
+        <form class="form-inline" role="form"  method="POST">
+            {% csrf_token %}
+            <div class="form-group ">
+                <label for="lockable_resources_yaml" class="control-label"></label>
+                <div class="col-lg-12">
+                    <textarea class="form-control" id="lockable_resources_yaml" 
+                              name="lockable_resources_yaml"
+                             rows="20" cols="100" required>
+                    </textarea>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-success">
+                <i style="margin-right: 5px"  class="icon_check"></i>
+                <b>Confirm</b>
+            </button>
+        </form>
+    </div>
+{% endblock %}
