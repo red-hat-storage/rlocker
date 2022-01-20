@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block tab_title %}
+    RLocker - Administrative Tools
+{% endblock %}
+
+{% block pageheader_title %}
+    Administrative Tools
+{% endblock %}
+
+{% block page_description %}
+    Administrative Tools
+{% endblock %}
+
+{% block content %}
+    {% for index, tool in enum_tools %}
+        {% if not index|divisibleby:2 %}
+            <div class="row">
+                {% include 'includes/toolbox.html' with tool=tool %}
+
+        {% else %}
+                {% include 'includes/toolbox.html' with tool=tool %}
+            </div>
+        {% endif %}
+    {% endfor %}
+{% endblock %}
