@@ -9,11 +9,25 @@
 {% endblock %}
 
 {% block page_description %}
-    Dashboard <br>
+    My Resources <!-- Writing here My resources, to present the next section that starts in this page --> <br>
 {% endblock %}
 
 {% block content %}
+    <!-- Generally, show all the resources that belongs to a user, if authenticated. start -->
+    {% if user.is_authenticated %}
+        {% include 'includes/my_locked_resources.html' %}
+        {% if display_patch_notes %}
+            {% include 'includes/latest_updates_modal_on_load.html' %}
+        {% endif %}
+    {% endif %}
+    <!-- Generally, show all the resources that belongs to a user, if authenticated. end -->
+    <br>
+    <br>
+    <br>
     <!-- General status of all Resources start -->
+    <ol class="breadcrumb">
+        Available Resources and Unavailable Resources
+    </ol>
     <div class="row">
         <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
             <div class="info-box green-bg">
