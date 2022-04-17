@@ -93,7 +93,10 @@ def execute_pre_save_actions_for_rqueue(sender, instance, **kwargs):
 
         # 1. b)
         if instance.status == Status.FINISHED:
-            final_resource = instance.data.get("final_resource")
+            # TODO: TEST THE PLATFORM WITH CALLING JSON CONTINUOUSLY LOADER ONE TIME ONCE THERE IS A SIGNAL FOR THIS ENTIRE FUNCTION
+            final_resource = json_continuously_loader(instance.data).get(
+                "final_resource"
+            )
             if final_resource:
                 # Get the resource object:
                 final_resource_obj = LockableResource.objects.get(name=final_resource)
