@@ -47,7 +47,8 @@ def locking_releasing_verifications_and_actions(sender, instance, **kwargs):
 
         if not instance.is_locked and resource.is_locked:  # If resource is releasing
             print(
-                f"{instance.name} is releasing, setting signoff&link to None before saving changes to DB..."
+                f"{instance.name} is releasing, setting signoff&link&associated_queue to None before saving changes to DB..."
             )
             instance.signoff = None
             instance.link = None
+            instance.associated_queue = None

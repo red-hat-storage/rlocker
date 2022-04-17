@@ -1,5 +1,6 @@
 from django.db import models
 from lockable_resource.exceptions import AlreadyFreeException, AlreadyLockedException
+from rqueue.models import Rqueue
 import lockable_resource.constants as const
 import json
 import yaml
@@ -19,6 +20,7 @@ class LockableResource(models.Model):
     # TODO: signoff should support HTML so it will be easier to send Jenkins Job Links
     # description - We want to have some random text to describe lockable resource
     # in_maintenance - Describes whether if the resource is in maintenance or not, we will disable
+    # associated_queue - The queue object that locked the resource
     # all functionalities to lock/release resource is it is.
 
     provider = models.CharField(max_length=256)
@@ -31,6 +33,14 @@ class LockableResource(models.Model):
     description = models.CharField(max_length=2048, null=True, default=None, blank=True)
     link = models.CharField(max_length=2048, null=True, default=None, blank=True)
     in_maintenance = models.BooleanField(default=False)
+    associated_queue = models.OneToOneField(
+        Rqueue,
+        default=None,
+        blank=True,
+        null=True,
+        on_delete=models.PROTECT,
+        to_field="id",
+    )
 
     @property
     def labels(self):
@@ -96,6 +106,20 @@ class LockableResource(models.Model):
         """
         return self.is_locked
 
+    @property
+    def lock_method(self):
+        """
+        Return the method string of the way how resource
+            has been locked
+        :return str:
+        """
+        if self.associated_queue:
+            return (
+                const.LockMethod.AUTO
+                if self.associated_queue.priority > 0
+                else const.LockMethod.MANUAL
+            )
+
     def lock(self, signoff):
         """
         Instance Method
@@ -127,9 +151,19 @@ class LockableResource(models.Model):
         if self.can_release:
             self.is_locked = False
             self.delete_signoff()
+            self.delete_associated_queue()
             self.save()
         else:
             raise AlreadyFreeException()
+
+    def delete_associated_queue(self):
+        """
+        Instance Method
+
+        This method will set the associated_queue field to None
+        :returns: None
+        """
+        self.associated_queue = None
 
     def delete_signoff(self):
         """
@@ -229,22 +263,20 @@ class LockableResource(models.Model):
 
     @classmethod
     def get_objects_as_yaml(cls):
-        '''
+        """
         Returns all the objects as YAML
         :return:
-        '''
-        indent = ' ' * 2
-        raw_yaml = ''
-        raw_yaml += '---\n'
-        raw_yaml += 'lockable_resources:\n'
+        """
+        indent = " " * 2
+        raw_yaml = ""
+        raw_yaml += "---\n"
+        raw_yaml += "lockable_resources:\n"
         for obj in cls.objects.all():
             raw_yaml += f"{indent}-\n"
-            for line in obj.yaml_parse().split('\n'):
+            for line in obj.yaml_parse().split("\n"):
                 raw_yaml += f"{indent}{indent}{line}\n"
 
         return raw_yaml
-
-
 
     # Meta Class
     class Meta:

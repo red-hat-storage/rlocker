@@ -1,7 +1,7 @@
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from rqueue.models import Rqueue
-from rqueue.constants import Priority, Interval
+from rqueue.constants import Priority, Interval, Status
 from lockable_resource.models import LockableResource
 from rqueue.utils import *
 from urllib.parse import unquote
@@ -34,6 +34,8 @@ def fetch_for_available_lockable_resources(sender, instance, created, **kwargs):
         if instance.priority == Priority.UI.value:
             lock_res_object = LockableResource.objects.get(id=data_id)
             lock_res_object.lock(signoff=data_signoff)
+            lock_res_object.associated_queue = instance
+            lock_res_object.save()
             instance.add_to_data_json(json_to_add=lock_res_object.json_parse())
             instance.report_finish()
             print(
@@ -59,10 +61,15 @@ def execute_pre_save_actions_for_rqueue(sender, instance, **kwargs):
     For any changes prior saving a Rqueue obj, do it here!
 
     1)
+
+    a)
     A signal that will allow to edit the pended time descriptive as soon as
         the status of a queue is being changed to something that is NOT Pending
     That is important, because it describes the time that the queue waited, before it got
     Finished, Aborted or Failed
+
+    b)
+    Check if the status is changing to finish to put associated queue with a locked resource
 
     2)
     Loading the json in the data continuously and save it properly in the DB
@@ -72,8 +79,8 @@ def execute_pre_save_actions_for_rqueue(sender, instance, **kwargs):
     Example: Client might send a link that is quoted, we'd like to change that so it will be clickable
         if it is used somewhere in the templates
     """
-
-    # 1)
+    on_going_status = ["PENDING", "INITIALIZING"]
+    # 1. a)
     try:
         rqueue = sender.objects.get(pk=instance.pk)
     except sender.DoesNotExist:
@@ -81,19 +88,24 @@ def execute_pre_save_actions_for_rqueue(sender, instance, **kwargs):
 
     else:
         # Check if the status of the queue is changing to past tense status.
-        on_going_status = ["PENDING", "INITIALIZING"]
         if not instance.status in on_going_status and rqueue.status in on_going_status:
             instance.pended_time_descriptive = instance.pending_time_descriptive
 
+        # 1. b)
+        if instance.status == Status.FINISHED:
+            final_resource = instance.data.get("final_resource")
+            if final_resource:
+                # Get the resource object:
+                final_resource_obj = LockableResource.objects.get(name=final_resource)
+                final_resource_obj.associated_queue = instance
+                final_resource_obj.save()
 
     # 2)
     instance.data = json_continuously_loader(instance.data)
-
 
     # 3)
     # Start Customization of this signal, only if instance.data is a dictionary
     if isinstance(instance.data, dict):
         for k, v in instance.data.items():
-            if isinstance(v, str) and v.startswith('http'):
+            if isinstance(v, str) and v.startswith("http"):
                 instance.data[k] = unquote(v)
-
