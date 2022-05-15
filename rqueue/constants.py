@@ -32,6 +32,9 @@ class Status:
     PENDING = (
         "PENDING"  # describes that it still waits to be assigned to a lockable resource
     )
+    ALMOST_FINISHED = (
+        "ALMOST_FINISHED"  # describes that it is close to lock the desired resource
+    )
     FINISHED = "FINISHED"  # describes that it locked a lockable resource successfully
     FAILED = "FAILED"  # describes that it attempted to lock a resource but failed
     ABORTED = "ABORTED"  # describes a failure to lock a resource because of manual interruption
@@ -41,13 +44,14 @@ class Status:
     # TODO: Create a generic list of tuples depending on the values above!
     CHOICES = [
         (PENDING, "PENDING"),
+        (ALMOST_FINISHED, "ALMOST_FINISHED"),
         (FINISHED, "FINISHED"),
         (FAILED, "FAILED"),
         (ABORTED, "ABORTED"),
         (INITIALIZING, "INITIALIZING"),
     ]
 
-    PRESENT_STATUS_OPTIONS = [PENDING, INITIALIZING]
+    PRESENT_STATUS_OPTIONS = [PENDING, INITIALIZING, ALMOST_FINISHED]
     PAST_STATUS_OPTIONS = [FAILED, ABORTED, FINISHED]
 
 

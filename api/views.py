@@ -185,12 +185,11 @@ def retrieve_resource_entrypoint(request, search_string):
     # Workaround
     # https: // stackoverflow.com / questions / 14351048 / django - optional - url - parameters
     # Default url parameters is not supported as excepted, it is better to use None as String instead.
-    request_link = request_data.get("link", 'None')
+    request_link = request_data.get("link", "None")
     additional_kwargs = {
         "priority": request_priority,
         "signoff": request_signoff,
         "link": request_link,
-
     }
     try:
         # get() - Throws exception when the filtration does not match
@@ -241,9 +240,10 @@ def retrieve_resource_by_name(request, name, priority, signoff, link):
     # We want to add some more fields to our data before sending it as Request Queue
     custom_data = json_continuously_loader(
         resource.json_parse(
-            override_signoff=True, signoff=signoff,
-            override_link=True, link=link,
-
+            override_signoff=True,
+            signoff=signoff,
+            override_link=True,
+            link=link,
         )
     )
     custom_data["username"] = get_user_object_by_token_or_auth(request).username
@@ -266,7 +266,7 @@ def retrieve_resource_by_label(request, label, priority, signoff, link):
         "label": label,
         "signoff": signoff,
         "username": get_user_object_by_token_or_auth(request).username,
-        "link" : link
+        "link": link,
     }
 
     put_in_queue = Rqueue(data=json.dumps(custom_data), priority=int(priority))
