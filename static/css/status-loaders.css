@@ -1,3 +1,12 @@
+  .loader-almost-finished {
+  border: 6px solid #f3f3f3; /* Green */
+  border-top: 6px solid #5cb85c; /* Bold Gray */
+  border-radius: 50%;
+  width: 45px;
+  height: 45px;
+  animation: spin 3s linear infinite;
+}
+
   .loader-finished {
   border: 6px solid #5cb85c; /* Green */
   border-radius: 50%;

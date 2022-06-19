@@ -53,20 +53,21 @@ class Rqueue(models.Model):
 
         :returns: Dictionary
         """
-        if self.status == Status.FAILED:
-            return {"loader": "loader-failed", "btn": "btn-primary"}
-
-        if self.status == Status.ABORTED:
-            return {"loader": "loader-aborted", "btn": "btn-primary"}
-
-        elif self.status == Status.FINISHED:
-            return {"loader": "loader-finished", "btn": "btn-primary"}
-
-        if self.status == Status.INITIALIZING:
-            return {"loader": "loader-initializing", "btn": "btn-primary"}
-
-        if self.status == Status.PENDING:
-            return {"loader": "loader-pending", "btn": "btn-primary"}
+        bts_classes = {
+            Status.FAILED: {"loader": "loader-failed", "btn": "btn-primary"},
+            Status.ABORTED: {"loader": "loader-aborted", "btn": "btn-primary"},
+            Status.ALMOST_FINISHED: {
+                "loader": "loader-almost-finished",
+                "btn": "btn-primary",
+            },
+            Status.FINISHED: {"loader": "loader-finished", "btn": "btn-primary"},
+            Status.INITIALIZING: {
+                "loader": "loader-initializing",
+                "btn": "btn-primary",
+            },
+            Status.PENDING: {"loader": "loader-pending", "btn": "btn-primary"},
+        }
+        return bts_classes.get(self.status)
 
     @property
     def pending_time(self):
