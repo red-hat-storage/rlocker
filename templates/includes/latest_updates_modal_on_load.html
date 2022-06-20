@@ -11,11 +11,20 @@
             <h3><b>Thanks for using the Resource Locker! Here are the latest feature updates:</b></h3>
             <!-- Updates Start -->
                 <p style="line-height: 30px">
-                In the Dashboard page, each logged in user will see it's own lockable resources.<br>
-                    This means, you can visit the home/dashboard page and simply check the section of <b>My Locked Resources</b>
-                    and release your locks from there. If a user does not have locked resources, a text like the following should be appearing:
+                    In the Lockable Resources page, in the table, now each resource name is also a clickable link that will display more metadata about the resource.
+                    This metadata page displays the time that the resource has been locked, also calculates the total time and displays the total amount in a descriptive text.
+                    The dates are NOT going to be displayed for already locked resources.
                     <br>
-                    <b>Great! You do not have any locked resources!</b>
+
+                    In the Dashboard, in the section <b>Available Resource and Unavailable Resources,</b> inside the secondary section of unavailable resources, the table of locked or in maintenance mode will
+                    be SORTED by locked time. This means, that the older the resource is being locked (used), the higher it will be located in this table.
+                    If a resource is unavailable because it is in maintenance mode, it is likely to be located in the bottom section of this table (since it's probably not going to have a lock time).
+                    The Available resources however, will remain to be sorted by their ID (ascending).
+
+                    In addition to mentioned above, the table will also display the total time that the resource is locked.
+                    <br>
+
+                    Happy Resource Locking!
                 </p>
             <!-- Updates Finish-->
             <form action="{% url 'patch_notifier:update_first_visit' %}" class="form-inline" role="form" method="POST">

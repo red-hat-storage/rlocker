@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.db.models import Q
 from lockable_resource.models import LockableResource
 from rqueue.models import Rqueue
+from itertools import chain
 from lockable_resource.label_manager import LabelManager
 from patch_notifier.models import FirstVisit
 
@@ -15,6 +16,15 @@ def dashboard_page(request):
         ]
         label_managers.sort(key=lambda x: x.label)
         display_patch_notes = len(FirstVisit.objects.filter(user=request.user)) == 0 if request.user.is_authenticated else False
+
+
+        locked_sorted = LockableResource.objects.filter(is_locked=True).order_by("locked_time")
+        maintenance = LockableResource.objects.filter(in_maintenance=True)
+        unavailable_resources = [ls for ls in locked_sorted]
+        for o in maintenance:
+            if o not in unavailable_resources:
+                unavailable_resources.append(o)
+
         return render(
             request,
             template_name="dashboard/index.html",
@@ -23,9 +33,7 @@ def dashboard_page(request):
                 "free_resources": LockableResource.objects.filter(
                     is_locked=False, in_maintenance=False
                 ),
-                "unavailable_resources": LockableResource.objects.filter(
-                    Q(is_locked=True) | Q(in_maintenance=True)
-                ),
+                "unavailable_resources": unavailable_resources,
                 "user_locked_resources" : LockableResource.objects.filter(
                     Q(is_locked=True) & Q(signoff__startswith=request.user.username)
                 ),

@@ -37,7 +37,11 @@
 					<tr id="row-{{ lockable_resource.id }}">
 						<td>{{ lockable_resource.id }}</td>
 						<td>{{ lockable_resource.provider }}</td>
-						<td>{{ lockable_resource.name }}</td>
+						<td>
+							<a href="{% url 'lockable_resource_more_info' lockable_resource.id %}">
+								{{ lockable_resource.name }}
+							</a>
+						</td>
 						<td>{{ lockable_resource.labels }}</td>
 						<td>
                             {% if lockable_resource.link %}
