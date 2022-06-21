@@ -45,7 +45,7 @@ def lockable_resources_page(request):
                     override_signoff=True,
                     signoff=signoff,
                 ),
-                status=const_rqueue.Status.INITIALIZING
+                status=const_rqueue.Status.INITIALIZING,
             )
             new_queue.save()
             messages.info(
@@ -77,6 +77,7 @@ def lockable_resources_page(request):
             )
 
         return redirect("lockable_resources_page")
+
 
 def lockable_resource_more_info(request, slug):
     lr = LockableResource.objects.get(id=slug)

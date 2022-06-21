@@ -15,7 +15,7 @@ class Command(BaseCommand):
         :return: None
         """
         try:
-            existing_user = User.objects.get(username=options.get('user'))
+            existing_user = User.objects.get(username=options.get("user"))
             token = Token.objects.get(user=existing_user).key
             print(token)
         except User.DoesNotExist:

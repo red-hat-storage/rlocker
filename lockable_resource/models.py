@@ -124,7 +124,6 @@ class LockableResource(models.Model):
             timediff = now - self.locked_time
             return get_time_descriptive(timediff.total_seconds())
 
-
     def next_obj(self):
         """
         Instance method
@@ -132,11 +131,13 @@ class LockableResource(models.Model):
         Return the first object in the list if last is reached
 
         """
-        next_object = LockableResource.objects.filter(pk__gt=self.pk).order_by('pk').first() # Do not use the variable name next, it's a built in keyword
+        next_object = (
+            LockableResource.objects.filter(pk__gt=self.pk).order_by("pk").first()
+        )  # Do not use the variable name next, it's a built in keyword
         if next_object:
             return next_object
         else:
-            return LockableResource.objects.all().order_by('pk').first()
+            return LockableResource.objects.all().order_by("pk").first()
 
     def previous_obj(self):
         """
@@ -145,11 +146,13 @@ class LockableResource(models.Model):
         Return the first object in the list if last is reached
 
         """
-        previous = LockableResource.objects.filter(pk__lt=self.pk).order_by('-pk').first()
+        previous = (
+            LockableResource.objects.filter(pk__lt=self.pk).order_by("-pk").first()
+        )
         if previous:
             return previous
         else:
-            return LockableResource.objects.all().order_by('-pk').first()
+            return LockableResource.objects.all().order_by("-pk").first()
 
     @property
     def lock_method(self):

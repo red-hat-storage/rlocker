@@ -15,5 +15,3 @@ def run():
             if not lr.locked_time:
                 lr.locked_time = lr.associated_queue.time_requested
                 lr.save()
-
-
