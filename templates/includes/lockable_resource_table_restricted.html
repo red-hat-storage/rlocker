@@ -15,7 +15,7 @@
 					<i class="icon_question"></i> Status
 				</th>
 				<th style="text-align: center">
-					<i class="icon_clock"></i> Locked Since
+					<i class="icon_clock"></i> Locked Period
 				</th>
 			</tr>
             {% for lockable_resource in lockable_resources %}
@@ -41,7 +41,7 @@
                     {% endif %}
 				</td>
 				<td>
-					{{ lockable_resource.locked_since }}
+					{{ lockable_resource.locked_period_descriptive }}
 				</td>
 			</tr>
             {% endfor %}

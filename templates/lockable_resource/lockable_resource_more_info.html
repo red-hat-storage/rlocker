@@ -25,7 +25,7 @@
             <div class="info-box dark-bg">
                 <i class="fa fa-clock-o"></i>
                 <div class="count">
-                    <!-- Get the field that the resource is locked since -->
+                    <!-- Get the exact locked time field -->
                     {% if lockable_resource.is_locked %}
                         {{ lockable_resource.locked_time }}
                     {% else %}
@@ -54,8 +54,8 @@
         <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
             <div class="info-box dark-bg">
                 <i class="fa fa-clock-o"></i>
-                <div class="count">{{ lockable_resource.locked_since }}</div>
-                <div class="title">LOCKED SINCE</div>
+                <div class="count">{{ lockable_resource.locked_period_descriptive }}</div>
+                <div class="title">LOCKED PERIOD</div>
             </div>
         </div>
     </div>

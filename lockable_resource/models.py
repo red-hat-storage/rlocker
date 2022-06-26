@@ -1,7 +1,7 @@
 from django.db import models
 from lockable_resource.exceptions import AlreadyFreeException, AlreadyLockedException
 from rqueue.models import Rqueue
-from rqueue.utils import get_time_descriptive
+from rqueue.utils import DescriptiveTime
 import lockable_resource.constants as const
 import json
 import yaml
@@ -86,12 +86,14 @@ class LockableResource(models.Model):
                 "status": const.STATUS_LOCKED,
                 "color": "#D6212E",
                 "icon": "icon_lock",
+                "more_info": DescriptiveTime(self.locked_period.total_seconds()).short_descriptive,
             }
         else:
             return {
                 "status": const.STATUS_FREE,
                 "color": "#00C100",
                 "icon": "icon_lock-open",
+                "more_info": "",
             }
 
     @property
@@ -111,18 +113,27 @@ class LockableResource(models.Model):
         return self.is_locked
 
     @property
-    def locked_since(self):
+    def locked_period(self):
         """
         Instance Property
         This property added way after the application initialized.
         So it is required to check if the field is not none,
-            before returning a str version of it
-        :returns str: formatted string of datetime object in HH:MM:SS
+            before returning the timediff
+        :returns timedelta: The kind of object when subtracting datetime objects
         """
         if self.locked_time:
             now = datetime.datetime.utcnow().replace(tzinfo=utc)
             timediff = now - self.locked_time
-            return get_time_descriptive(timediff.total_seconds())
+            return timediff
+
+    @property
+    def locked_period_descriptive(self):
+        """
+        Instance Property
+        :returns str: Descriptive time of the time object
+        """
+        if self.locked_period:
+            return DescriptiveTime(self.locked_period.total_seconds()).long_descriptive
 
     def next_obj(self):
         """

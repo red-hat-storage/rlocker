@@ -2,39 +2,52 @@ import json
 import sys
 
 
-def get_time_descriptive(total_seconds):
+class DescriptiveTime:
     """
     We receive the total seconds and decide a descriptive way that makes sense
         to display, depending on the total seconds amount.
     For i.e: We don't want to display 24 hours when the seconds is 86400, instead,
     it could have been nice to display 1 Day
-    :param total_seconds:
-    :return:
     """
-    seconds_in_day = 86400
-    seconds_in_hour = 3600
-    seconds_in_minute = 60
+    DAY = 86400
+    HOUR = 3600
+    MINUTE = 60
 
-    days = total_seconds // seconds_in_day
-    seconds = total_seconds - (days * seconds_in_day)
+    def __init__(self, total_seconds):
+        self.total_seconds = total_seconds
 
-    hours = seconds // seconds_in_hour
-    seconds = seconds - (hours * seconds_in_hour)
+        # Get the integer value for days hours and minutes
+        self.days = self.total_seconds // self.DAY
+        self.seconds = self.total_seconds - (self.days * self.DAY)
 
-    minutes = seconds // seconds_in_minute
-    seconds = seconds - (minutes * seconds_in_minute)
+        self.hours = self.seconds // self.HOUR
+        self.seconds = self.seconds - (self.hours * self.HOUR)
 
-    if days > 0:
-        return f"{days:.0f} days, {hours:.0f} hours, {minutes:.0f} minutes"
+        self.minutes = self.seconds // self.MINUTE
+        self.seconds = self.seconds - (self.minutes * self.MINUTE)
 
-    if hours > 0:
-        return f"{hours:.0f} hours, {minutes:.0f} minutes"
+    @property
+    def long_descriptive(self):
+        if self.days > 0:
+            return f"{self.days:.0f} days, {self.hours:.0f} hours, {self.minutes:.0f} minutes"
 
-    if minutes > 0:
-        return f"{minutes:.0f} minutes"
+        if self.hours > 0:
+            return f"{self.hours:.0f} hours, {self.minutes:.0f} minutes"
 
-    if seconds >= 0:
-        return f"Less than a minute"
+        if self.minutes > 0:
+            return f"{self.minutes:.0f} minutes"
+
+        if self.seconds >= 0:
+            return "Less than a minute"
+
+    @property
+    def short_descriptive(self):
+        if self.days > 0:
+            return f"{self.days:.0f}d, {self.hours:.0f}h"
+        if self.hours > 0:
+            return f"{self.hours:.0f}h"
+        if self.minutes > 0 or self.seconds >= 0:
+            return "<1h"
 
 
 def json_continuously_loader(json_string, attempts=10):
