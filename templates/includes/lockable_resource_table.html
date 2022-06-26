@@ -60,7 +60,10 @@
 						<td style="color:{{ lockable_resource.status_properties.color }}">
 							<i class="{{ lockable_resource.status_properties.icon }}"></i>
 							<span>
-								<strong>{{ lockable_resource.status_properties.status }}</strong>
+								<strong>
+									{{ lockable_resource.status_properties.status }}
+								</strong>
+									<br>{{ lockable_resource.status_properties.more_info }}
 							</span>
 						</td>
 						<!-- Row Status End -->

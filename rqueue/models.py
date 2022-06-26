@@ -2,7 +2,7 @@ from django.db import models
 from jsonfield import JSONField
 from django.utils import timezone
 from django.utils.timezone import utc
-from rqueue.utils import get_time_descriptive, json_continuously_loader
+from rqueue.utils import DescriptiveTime, json_continuously_loader
 from django.core.validators import MinValueValidator, MaxValueValidator
 from rqueue.constants import Status
 import datetime
@@ -87,7 +87,7 @@ class Rqueue(models.Model):
             For i.e: instead of showing 2700, we could display 45 minutes
         :return str  Descriptive output of time by knowing the total seconds
         """
-        return get_time_descriptive(self.pending_time.total_seconds())
+        return DescriptiveTime(self.pending_time.total_seconds()).long_descriptive
 
     def __str__(self):
         # Here we override each object definition
