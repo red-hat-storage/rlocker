@@ -14,12 +14,12 @@ class CheckFirstVisitMiddleware:
 
         # Code to run:
         if request.user.is_authenticated:
-            if len(FirstVisit.objects.filter(user=request.user)) == 0 and request.path == '/':
+            if (
+                len(FirstVisit.objects.filter(user=request.user)) == 0
+                and request.path == "/"
+            ):
                 # It's the user's first visit in index page:
-                fv_obj = FirstVisit(
-                    user=request.user,
-                    is_visited=True
-                )
+                fv_obj = FirstVisit(user=request.user, is_visited=True)
                 fv_obj.save()
 
         return response

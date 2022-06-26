@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand
 from lockable_resource.models import LockableResource
 
+
 class Command(BaseCommand):
     help = "Command for Releasing all resources"
 
@@ -12,9 +13,10 @@ class Command(BaseCommand):
             Release all lockable resources
         :return: None
         """
-        confirmation = input("Confirm ? "
-                             "This will release all the locked resources. Y/N")
-        if confirmation.lower() == 'y':
+        confirmation = input(
+            "Confirm ? " "This will release all the locked resources. Y/N"
+        )
+        if confirmation.lower() == "y":
             for lr in LockableResource.objects.all():
                 try:
                     lr.release()

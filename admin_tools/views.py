@@ -4,33 +4,25 @@ from django.contrib import messages
 import yaml
 
 
-
 # For every administrative tool, add this to the tools list to visualize it in
 # The index.
 def index(request):
-    tools = [
-        'Import Lockable Resources From YAML'
-    ]
+    tools = ["Import Lockable Resources From YAML"]
     return render(
         request,
-        template_name='admin_tools/index.html',
-        context={
-            'enum_tools' : enumerate(tools, start=1)
-        }
+        template_name="admin_tools/index.html",
+        context={"enum_tools": enumerate(tools, start=1)},
     )
 
 
 def import_lockable_resources_from_yaml(request):
-    if request.method == 'GET':
-        return render(
-            request,
-            template_name='admin_tools/import_yaml.html'
-        )
+    if request.method == "GET":
+        return render(request, template_name="admin_tools/import_yaml.html")
 
-    if request.method == 'POST':
-        yaml_text = request.POST.get('lockable_resources_yaml')
+    if request.method == "POST":
+        yaml_text = request.POST.get("lockable_resources_yaml")
         parsed_yaml = yaml.safe_load(yaml_text)
-        for lr in parsed_yaml['lockable_resources']:
+        for lr in parsed_yaml["lockable_resources"]:
             lr_name = lr.get("name")
             lr_exists = len(LockableResource.objects.filter(name=lr_name)) > 0
             if lr_exists:
@@ -46,4 +38,4 @@ def import_lockable_resources_from_yaml(request):
             request,
             message=f"Import of YAML completed successfully!",
         )
-        return redirect('admin_tools:import_lockable_resources_from_yaml')
+        return redirect("admin_tools:import_lockable_resources_from_yaml")

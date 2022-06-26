@@ -1,9 +1,12 @@
 from django.db import models
 from lockable_resource.exceptions import AlreadyFreeException, AlreadyLockedException
 from rqueue.models import Rqueue
+from rqueue.utils import get_time_descriptive
 import lockable_resource.constants as const
 import json
 import yaml
+from django.utils.timezone import utc
+import datetime
 
 
 class LockableResource(models.Model):
@@ -22,7 +25,7 @@ class LockableResource(models.Model):
     # in_maintenance - Describes whether if the resource is in maintenance or not, we will disable
     # associated_queue - The queue object that locked the resource
     # all functionalities to lock/release resource is it is.
-
+    # locked_time - The time that identifies when the last time resource is locked
     provider = models.CharField(max_length=256)
     name = models.CharField(max_length=256, unique=True)
     is_locked = models.BooleanField(default=False)
@@ -41,6 +44,7 @@ class LockableResource(models.Model):
         on_delete=models.PROTECT,
         to_field="id",
     )
+    locked_time = models.DateTimeField(null=True, default=None, blank=True)
 
     @property
     def labels(self):
@@ -105,6 +109,50 @@ class LockableResource(models.Model):
         :returns Boolean:
         """
         return self.is_locked
+
+    @property
+    def locked_since(self):
+        """
+        Instance Property
+        This property added way after the application initialized.
+        So it is required to check if the field is not none,
+            before returning a str version of it
+        :returns str: formatted string of datetime object in HH:MM:SS
+        """
+        if self.locked_time:
+            now = datetime.datetime.utcnow().replace(tzinfo=utc)
+            timediff = now - self.locked_time
+            return get_time_descriptive(timediff.total_seconds())
+
+    def next_obj(self):
+        """
+        Instance method
+        Added in order to get the next object
+        Return the first object in the list if last is reached
+
+        """
+        next_object = (
+            LockableResource.objects.filter(pk__gt=self.pk).order_by("pk").first()
+        )  # Do not use the variable name next, it's a built in keyword
+        if next_object:
+            return next_object
+        else:
+            return LockableResource.objects.all().order_by("pk").first()
+
+    def previous_obj(self):
+        """
+        Instance method
+        Added in order to get the previous object
+        Return the first object in the list if last is reached
+
+        """
+        previous = (
+            LockableResource.objects.filter(pk__lt=self.pk).order_by("-pk").first()
+        )
+        if previous:
+            return previous
+        else:
+            return LockableResource.objects.all().order_by("-pk").first()
 
     @property
     def lock_method(self):
@@ -230,7 +278,7 @@ class LockableResource(models.Model):
         Removals are in list: key_removals
         :return: JSON object
         """
-        key_removals = ["_state", "in_maintenance", "is_locked"]
+        key_removals = ["_state", "in_maintenance", "is_locked", "locked_time"]
         obj_dict = self.__dict__
         for key_removal in key_removals:
             # Try to remove the key SILENTLY:
@@ -253,7 +301,7 @@ class LockableResource(models.Model):
         Removals are in list: key_removals
         :return: YAML object
         """
-        key_removals = ["_state", "id"]
+        key_removals = ["_state", "id", "locked_time"]
         obj_dict = self.__dict__
         for key_removal in key_removals:
             # Try to remove the key SILENTLY:

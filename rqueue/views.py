@@ -23,7 +23,7 @@ def pending_requests_page(request):
         rqueue_obj = Rqueue.objects.get(id=rqueue_id)
 
         # We do enter here when a priority is changed!:
-        if request.POST.get('action') == "change_priority":
+        if request.POST.get("action") == "change_priority":
             rqueue_changed_priority = request.POST.get("priority_value")
             # Get the previous priority before changing it to send a message:
             previous_priority = rqueue_obj.priority
@@ -37,17 +37,16 @@ def pending_requests_page(request):
                 f"New Priority: {rqueue_obj.priority}",
             )
         # We do enter here when there is request to abort a request in queue
-        if request.POST.get('action') == const.Status.ABORTED.lower():
+        if request.POST.get("action") == const.Status.ABORTED.lower():
             rqueue_obj.status = const.Status.ABORTED
             rqueue_obj.description = f"Manual Abortion by: {request.user.username}"
             rqueue_obj.save()
             messages.info(
-                request,
-                message=f"Queue with ID {rqueue_obj.id} has been ABORTED!"
+                request, message=f"Queue with ID {rqueue_obj.id} has been ABORTED!"
             )
 
-
         return redirect("pending_requests_page")
+
 
 def finished_requests_page(request):
     finished_requests = Rqueue.objects.filter(
@@ -56,7 +55,7 @@ def finished_requests_page(request):
     # Initialize the paginator object, which will split the given objects:
     paginator = Paginator(finished_requests, const.DISPLAY_COUNT_PER_PAGE)
     # Current page number:
-    page_number = request.GET.get('page')
+    page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
     return render(
         request,

@@ -3,18 +3,31 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.db.models import Q
 from lockable_resource.models import LockableResource
-from rqueue.models import Rqueue
 from lockable_resource.label_manager import LabelManager
 from patch_notifier.models import FirstVisit
 
 
 def dashboard_page(request):
-    if request.method == 'GET':
+    if request.method == "GET":
         label_managers = [
             LabelManager(label) for label in LockableResource.get_all_labels()
         ]
         label_managers.sort(key=lambda x: x.label)
-        display_patch_notes = len(FirstVisit.objects.filter(user=request.user)) == 0 if request.user.is_authenticated else False
+        display_patch_notes = (
+            len(FirstVisit.objects.filter(user=request.user)) == 0
+            if request.user.is_authenticated
+            else False
+        )
+
+        locked_sorted_lrs = LockableResource.objects.filter(is_locked=True).order_by(
+            "locked_time"
+        )
+        maintenance_lrs = LockableResource.objects.filter(in_maintenance=True)
+        unavailable_resources = [lr for lr in locked_sorted_lrs]
+        for lr in maintenance_lrs:
+            if lr not in unavailable_resources:
+                unavailable_resources.append(lr)
+
         return render(
             request,
             template_name="dashboard/index.html",
@@ -23,16 +36,14 @@ def dashboard_page(request):
                 "free_resources": LockableResource.objects.filter(
                     is_locked=False, in_maintenance=False
                 ),
-                "unavailable_resources": LockableResource.objects.filter(
-                    Q(is_locked=True) | Q(in_maintenance=True)
-                ),
-                "user_locked_resources" : LockableResource.objects.filter(
+                "unavailable_resources": unavailable_resources,
+                "user_locked_resources": LockableResource.objects.filter(
                     Q(is_locked=True) & Q(signoff__startswith=request.user.username)
                 ),
-                "display_patch_notes" : display_patch_notes
+                "display_patch_notes": display_patch_notes,
             },
         )
-    if request.method == 'POST':
+    if request.method == "POST":
         action = request.POST.get("action")  # get action
         r_lock_id = int(request.POST.get("id"))  # get ID of lockable resource
         r_lock_obj = LockableResource.objects.get(
@@ -43,4 +54,4 @@ def dashboard_page(request):
             messages.info(
                 request, message=f"{r_lock_obj.name} has been released successfully!"
             )
-        return redirect('dashboard_page')
+        return redirect("dashboard_page")

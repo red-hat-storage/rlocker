@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+
+{% block tab_title %}
+    RLocker - LR - {{ lockable_resource.id }}
+{% endblock %}
+
+{% block pageheader_title %}
+    Lockable Resource
+{% endblock %}
+
+{% block page_description %}
+    More info on Lockable Resource {{ lockable_resource.id }}
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+            <div class="info-box dark-bg">
+                <i class="icon_datareport"></i>
+                <div class="count">{{ lockable_resource.name }}</div>
+                <div class="title">NAME</div>
+            </div>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+            <div class="info-box dark-bg">
+                <i class="fa fa-clock-o"></i>
+                <div class="count">
+                    <!-- Get the field that the resource is locked since -->
+                    {% if lockable_resource.is_locked %}
+                        {{ lockable_resource.locked_time }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </div>
+                <div class="title">Locked Time</div>
+            </div>
+        </div>
+    </div>
+    <div id="attributes" class="row">
+        <div class="col-lg-3 col-md-2 col-sm-12 col-xs-12">
+            <div class="info-box dark-bg">
+                <i class="icon_datareport"></i>
+                <div class="count">{{ lockable_resource.id }}</div>
+                <div class="title">ID</div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-2 col-sm-12 col-xs-12">
+            <div class="info-box dark-bg">
+                <i class="icon_datareport"></i>
+                <div class="count">{{ lockable_resource.provider }}</div>
+                <div class="title">PROVIDER</div>
+            </div>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+            <div class="info-box dark-bg">
+                <i class="fa fa-clock-o"></i>
+                <div class="count">{{ lockable_resource.locked_since }}</div>
+                <div class="title">LOCKED SINCE</div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+            <div class="panel-group m-bot20" id="accordion-one" style="min-height: 280px">
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h4 class="panel-title">
+                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion-one" href="#collapseOne">
+                        LABELS
+                    </a>
+                  </h4>
+                </div>
+                <div id="collapseOne" class="panel-collapse collapse in">
+                  <div class="panel-body">
+                      <div class="row">
+                            {% for label in lockable_resource.labels %}
+                                <div class="col-lg-6">
+                                    <p class="text-left" style="font-size:36px">
+                                        <span class="label dark-bg" style="color:#fed189">
+                                            {{ label }}
+                                        </span>
+                                    </p>
+                                </div>
+                            {% endfor %}
+                      </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+            <div class="info-box" style="background-color: {{ lockable_resource.status_properties.color }}">
+                <i class="fa fa-question"></i>
+                <div class="count">
+                    {{ lockable_resource.status_properties.status }}
+                </div>
+                <div class="title">STATUS</div>
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12" style="font-size: 108px">
+            {% if not lockable_resource.in_maintenance %}
+                <span>
+                    <i class="{{ lockable_resource.status_properties.icon }}"></i>
+                </span>
+            {% else %}
+                <span>
+                    <i style="color: #FF0000" class="icon_tools"></i>
+                </span>
+            {% endif %}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+            <div class="info-box dark-bg">
+                <i class="fa fa-cloud"></i>
+                {% if lockable_resource.has_link %}
+                    <div class="count">
+                        <a style="color: #fabb3d" href="{{ lockable_resource.link }}">Clickable Link to the Job</a>
+                    </div>
+                {% else %}
+                    <div class="count">None</div> <!-- Just put None if no link -->
+                {% endif %}
+                <div class="title">LINK</div>
+            </div>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+            <div class="info-box dark-bg">
+                <i class="icon_pens"></i>
+                <div class="count">
+                    {{ lockable_resource.signoff }}
+                </div>
+                <div class="title">SIGNOFF</div>
+            </div>
+        </div>
+    </div>
+    <div id="previous_next" class="row">
+        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+            <a class="btn-lg btn-info pull-left" href="{% url 'lockable_resource_more_info' previous_lockable_resource.id %}">
+                {% if previous_lockable_resource.id < lockable_resource.id %}
+                    <i class="fa fa-arrow-left"></i>
+                    <span>Previous</span>
+                {% else %}
+                    <i class="fa fa-forward"></i>
+                    <span>Back to Last</span>
+                {% endif %}
+            </a>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+            <a class="btn-lg btn-info pull-right" href="{% url 'lockable_resource_more_info' next_lockable_resource.id %}">
+                {% if next_lockable_resource.id > lockable_resource.id %}
+                    <i class="fa fa-arrow-right"></i>
+                    <span>Next</span>
+                {% else %}
+                    <i class="fa fa-backward"></i>
+                    <span>Back to First</span>
+                {% endif %}
+            </a>
+        </div>
+    </div>
+
+{% endblock %}

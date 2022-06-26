@@ -45,7 +45,7 @@ def lockable_resources_page(request):
                     override_signoff=True,
                     signoff=signoff,
                 ),
-                status=const_rqueue.Status.INITIALIZING
+                status=const_rqueue.Status.INITIALIZING,
             )
             new_queue.save()
             messages.info(
@@ -77,3 +77,20 @@ def lockable_resources_page(request):
             )
 
         return redirect("lockable_resources_page")
+
+
+def lockable_resource_more_info(request, slug):
+    lr = LockableResource.objects.get(id=slug)
+    # Gather the next & previous Lockable resource and send as context
+    # This is useful in this template only for navigating
+    next_lr = lr.next_obj()
+    previous_lr = lr.previous_obj()
+    return render(
+        request,
+        template_name="lockable_resource/lockable_resource_more_info.html",
+        context={
+            "lockable_resource": lr,
+            "next_lockable_resource": next_lr,
+            "previous_lockable_resource": previous_lr,
+        },
+    )

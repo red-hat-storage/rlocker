@@ -14,12 +14,19 @@
 				<th style="text-align: center">
 					<i class="icon_question"></i> Status
 				</th>
+				<th style="text-align: center">
+					<i class="icon_clock"></i> Locked Since
+				</th>
 			</tr>
             {% for lockable_resource in lockable_resources %}
 
 			<tr id="row-{{ lockable_resource.id }}">
 				<td>{{ lockable_resource.id }}</td>
-				<td>{{ lockable_resource.name }}</td>
+				<td>
+					<a href="{% url 'lockable_resource_more_info' lockable_resource.id %}">
+						{{ lockable_resource.name }}
+					</a>
+				</td>
 				<td>
                     {% if not lockable_resource.in_maintenance %}
                         <span>
@@ -32,6 +39,9 @@
                             <strong>UNDER MAINTENANCE</strong>
                         </span>
                     {% endif %}
+				</td>
+				<td>
+					{{ lockable_resource.locked_since }}
 				</td>
 			</tr>
             {% endfor %}
