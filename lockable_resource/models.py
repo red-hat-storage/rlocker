@@ -82,11 +82,15 @@ class LockableResource(models.Model):
             `icon`  : Icon to describe the situation from Bootstrap Classes
         """
         if self.is_locked:
+            # For safety, we check that the locked period is not none before retrieving the total seconds
+            locked_time_description = ""
+            if self.locked_period:
+                locked_time_description = DescriptiveTime(self.locked_period.total_seconds()).short_descriptive
             return {
                 "status": const.STATUS_LOCKED,
                 "color": "#D6212E",
                 "icon": "icon_lock",
-                "more_info": DescriptiveTime(self.locked_period.total_seconds()).short_descriptive,
+                "more_info": locked_time_description,
             }
         else:
             return {
