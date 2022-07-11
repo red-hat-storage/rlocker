@@ -2,6 +2,7 @@
 # Each model that will be registered, will be added as a Managable Model to the Admin Page
 from django.contrib import admin
 from django.contrib.admin import ModelAdmin
+from django.db.models import Field
 from lockable_resource.models import *
 
 
@@ -9,5 +10,5 @@ from lockable_resource.models import *
 class LockableResourceAdmin(ModelAdmin):
     # Display all the fields of Lockable resources
     list_display = [
-        str(field).split(".")[-1] for field in LockableResource._meta.get_fields()
+        str(field).split(".")[-1] for field in LockableResource._meta.get_fields() if isinstance(field, Field)
     ]
