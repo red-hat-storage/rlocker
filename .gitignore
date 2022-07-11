@@ -7,3 +7,5 @@ venv/*
 addons_dev.txt
 addons
 addons/*
+*_addon
+*_addon/*
