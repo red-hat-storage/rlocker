@@ -153,3 +153,13 @@ STATICFILES_DIRS = [
 ]
 # Location where the static files would be collected once running python manage.py collectstatic --noinput
 STATIC_ROOT = BASE_DIR / "nginx" / "static"
+
+# Addons support
+# Give the option to use addons from pip or locally,
+# Because in dev mode, we want to directory clone the plugins to the project dir
+LOCAL_ADDONS = os.environ.get("USE_LOCAL_ADDONS", "False")
+
+addons_file = "addons_dev.txt" if LOCAL_ADDONS == "True" else "addons.txt"
+with open(os.path.join(BASE_DIR, addons_file)) as f:
+    addons = f.readlines()
+INSTALLED_APPS.extend(addons)

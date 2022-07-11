@@ -61,3 +61,12 @@ Django website with applications, `account`, `api`, `dashboard`, `health`, `lock
    - [urls](rqueue/urls.py): Available URL's from the Web UI to manage the requests in queue
    - [utils](rqueue/urls.py): Helper functions for the rqueue applications. for i.e - displaying nicer string for the pended time of a queue
    - [views](rqueue/views.py): Design of the views and actions to take in GET/POST requests.
+
+
+# How to use Addons (Plugins) in the Resource Locker Project
+
+## Dev mode:
+ - To be documented
+
+## Production
+ - To be documented
