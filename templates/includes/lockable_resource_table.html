@@ -86,55 +86,6 @@
 
                         <!-- Row Actions Start -->
                         <td>
-                            <!--
-                            <span id="actions-{{ lockable_resource.id }}">
-                                {% if not lockable_resource.in_maintenance %}
-                                    {% if perms.lockable_resource.change_lockableresource %}
-                                        {% if lockable_resource.can_lock %}
-                                            {% include 'includes/lock_lockable_resources_modal.html' %}
-
-                                            <a class="btn btn-danger" href="#Modal-Lock-{{ lockable_resource.id }}" data-toggle="modal">
-                                                <i class="icon_lock"></i>
-                                                <span>Lock</span>
-                                            </a>
-                                        {% else %}
-                                            {% include 'includes/release_lockable_resources_modal.html' %}
-
-                                            <a class="btn btn-success" href="#Modal-Release-{{ lockable_resource.id }}" data-toggle="modal">
-                                        	    <i class="icon_lock-open"></i>
-                                        	    <span>Release</span>
-                                            </a>
-                                        {% endif %}
-                                    {% endif %}
-                                {% else %}
-                                    <i class="icon_tools"></i>
-                                    <span>
-                                        <strong>UNDER MAINTENANCE</strong>
-                                    </span>
-                                {% endif %}
-                            </span>
-                            {% if user.is_staff %}
-							<div class="btn-group pull-right">
-								<a class="btn btn-warning" style="margin-right: 10px" href="{% url 'admin:lockable_resource_lockableresource_change' lockable_resource.id %}">
-									<i class="icon_pencil-edit"></i>
-									<span>Edit</span>
-								</a>
-                                {% include 'includes/maintenance_mode_modal.html' %}
-
-                                {% if not lockable_resource.in_maintenance %}
-								    <a class="btn btn-primary" style="margin-right: 10px" href="#Modal-Maintenance-Enter-{{ lockable_resource.id }}" data-toggle="modal">
-									    <i class="icon_tools"></i>
-									    <span>Enter Maintenance</span>
-								    </a>
-                                {% else %}
-								    <a class="btn btn-success" style="margin-right: 10px" href="#Modal-Maintenance-Exit-{{ lockable_resource.id }}" data-toggle="modal">
-									    <i class="icon_check"></i>
-									    <span>Exit Maintenance</span>
-								    </a>
-                                {% endif %}
-							</div>
-                            {% endif %}
-                            -->
                             {% include "includes/lockable_resource_actions.html" %}
 						</td>
 					    <!-- Row Actions End -->
