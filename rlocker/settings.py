@@ -78,6 +78,7 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "rqueue.context_processors.rqueue_context_processors",
+                "rlocker.context_processors.global_context_processors"
             ],
         },
     },
@@ -161,5 +162,5 @@ LOCAL_ADDONS = os.environ.get("USE_LOCAL_ADDONS", "False")
 
 addons_file = "addons_dev.txt" if LOCAL_ADDONS == "True" else "addons.txt"
 with open(os.path.join(BASE_DIR, addons_file)) as f:
-    addons = f.readlines()
-INSTALLED_APPS.extend(addons)
+    INSTALLED_ADDONS = f.readlines()
+INSTALLED_APPS.extend(INSTALLED_ADDONS)

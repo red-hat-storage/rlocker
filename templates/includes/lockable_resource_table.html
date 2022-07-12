@@ -31,6 +31,11 @@
 						<th style="text-align: center">
 							<i class="icon_folder-open"></i> Actions
 						</th>
+                        {% if installed_addons %}
+                            <th style="text-align: center">
+							    <i class="icon_plus"></i> Addons Options
+    						</th>
+                        {% endif %}
 					</tr>
                     {% for lockable_resource in lockable_resources %}
 
@@ -81,6 +86,7 @@
 
                         <!-- Row Actions Start -->
                         <td>
+                            <!--
                             <span id="actions-{{ lockable_resource.id }}">
                                 {% if not lockable_resource.in_maintenance %}
                                     {% if perms.lockable_resource.change_lockableresource %}
@@ -128,12 +134,23 @@
                                 {% endif %}
 							</div>
                             {% endif %}
-
+                            -->
+                            {% include "includes/lockable_resource_actions.html" %}
 						</td>
 					    <!-- Row Actions End -->
+                        <!-- AddOns Actions Start -->
+                        {% if installed_addons %}
+                            <td>
+                                {% for i in installed_addons %}
+                                    {% if i == "expiry_addon" %}
+                                        {% include "expiry_addon/extend_lockable_resource_table.html" with lockable_resource=lockable_resource %}
+                                    {% endif %}
+                                {% endfor %}
+                            </td>
+                        {% endif %}
+                        <!-- AddOns Actions End -->
                     </tr>
                     {% endfor %}
-
 				</tbody>
 			</table>
 		</section>
