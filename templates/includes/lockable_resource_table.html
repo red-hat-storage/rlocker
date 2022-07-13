@@ -89,15 +89,9 @@
                             {% include "includes/lockable_resource_actions.html" %}
 						</td>
 					    <!-- Row Actions End -->
-                        <!-- AddOns Actions Start -->
+                        <!-- AddOns Dropdown Start -->
                         {% if installed_addons %}
-                            <td>
-                                {% for i in installed_addons %}
-                                    {% if i == "expiry_addon" %}
-                                        {% include "expiry_addon/extend_lockable_resource_table.html" with lockable_resource=lockable_resource %}
-                                    {% endif %}
-                                {% endfor %}
-                            </td>
+                            {% include "includes/addon_lockable_resource_dropdown.html" %}
                         {% endif %}
                         <!-- AddOns Actions End -->
                     </tr>
