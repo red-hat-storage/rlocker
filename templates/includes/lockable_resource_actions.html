@@ -1,0 +1,68 @@
+{% include 'includes/lock_lockable_resources_modal.html' %}
+{% include 'includes/release_lockable_resources_modal.html' %}
+{% include 'includes/maintenance_mode_modal.html' %}
+<style>
+    #lr-actions a {
+        color: white;
+    }
+    #lr-actions a:hover, a:focus {
+        color: black;
+        background-color: white;
+    }
+</style>
+<div class="btn-group" id="lr-actions">
+    <button data-toggle="dropdown" class="btn btn-default dropdown-toggle" type="button" style="min-width: 105px">
+            <span data-toggle="tooltip" data-placement="top" title="{{ lockable_resource.name }}">
+                <strong>Actions</strong>
+            </span>
+        <!-- Add the icon_tools icon if the lockable resource is in maintenance -->
+        {% if lockable_resource.in_maintenance %} <i class="icon_tools"></i> {% endif %}
+        <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu">
+        {% if not lockable_resource.in_maintenance %}
+            {% if perms.lockable_resource.change_lockableresource %}
+                <li>
+                    {% if lockable_resource.can_lock %}
+                        <a class="btn btn-danger" href="#Modal-Lock-{{ lockable_resource.id }}" data-toggle="modal">
+                            <i class="icon_lock"></i>
+                            <span>Lock</span>
+                        </a>
+                    {% else %}
+                        <a class="btn btn-success" href="#Modal-Release-{{ lockable_resource.id }}" data-toggle="modal">
+                            <i class="icon_lock-open"></i>
+                            <span>Release</span>
+                        </a>
+                    {% endif %}
+                </li>
+            {% endif %}
+        {% else %}
+            <i class="icon_tools"></i>
+            <span>
+                <strong>UNDER MAINTENANCE</strong>
+            </span>
+        {% endif %}
+        {% if user.is_staff %}
+            <li>
+                <a class="btn btn-warning" href="{% url 'admin:lockable_resource_lockableresource_change' lockable_resource.id %}">
+                    <i class="icon_pencil-edit"></i>
+                    <span>Edit</span>
+                </a>
+            </li>
+            <li>
+                {% if not lockable_resource.in_maintenance %}
+                    <a  class="btn btn-primary"  href="#Modal-Maintenance-Enter-{{ lockable_resource.id }}" data-toggle="modal">
+                        <i class="icon_tools"></i>
+                        <span>Enter Maintenance</span>
+                    </a>
+                {% else %}
+                    <a class="btn btn-success"  href="#Modal-Maintenance-Exit-{{ lockable_resource.id }}" data-toggle="modal">
+                        <i class="icon_check"></i>
+                        <span>Exit Maintenance</span>
+                    </a>
+                {% endif %}
+            </li>
+        {% endif %}
+    </ul>
+</div>
+

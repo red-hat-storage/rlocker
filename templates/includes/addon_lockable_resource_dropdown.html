@@ -1,0 +1,36 @@
+<!-- This is the dropdown with the extended options -->
+<!-- PLEASE DO NOT IMPORT MODAL FILES INSIDE <ul> TAGS, it does not function at all -->
+{% for addon in installed_addons %}
+    {% if addon == "expiry_addon" %}
+        {% include "expiry_addon/modal.html" %}
+    {% endif %}
+{% endfor %}
+<style>
+    #addons a {
+        color: white;
+    }
+    #addons a:hover, a:focus {
+        color: black;
+        background-color: white;
+    }
+</style>
+<td>
+    <div class="btn-group" id="addons">
+        <button data-toggle="dropdown" class="btn btn-default dropdown-toggle" type="button" style="min-width: 105px">
+                <span data-toggle="tooltip" data-placement="top" title="{{ lockable_resource.name }}">
+                    <strong>Extended Options</strong>
+                </span>
+            <span class="caret"></span>
+        </button>
+
+        <ul class="dropdown-menu">
+            {% for addon in installed_addons %}
+                <!-- TODO: Find a better approach to differentiate what to display depending on which addon we iterate, avoid too much if's! -->
+                {% if addon == "expiry_addon" %}
+                    {% include "expiry_addon/dropdown.html" %}
+                {% endif %}
+            {% endfor %}
+        </ul>
+
+    </div>
+</td>
