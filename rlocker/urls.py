@@ -27,3 +27,8 @@ urlpatterns = [
     path("admin_tools/", include("admin_tools.urls")),
     path("patch_notifier/", include("patch_notifier.urls")),
 ]
+# AddOns Urls
+for addon in settings.INSTALLED_ADDONS:
+    urlpatterns.append(
+        path(f"{addon}/", include(f"{addon}.urls"))
+    )
