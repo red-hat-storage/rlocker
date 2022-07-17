@@ -85,7 +85,9 @@ class LockableResource(models.Model):
             # For safety, we check that the locked period is not none before retrieving the total seconds
             locked_time_description = ""
             if self.locked_period:
-                locked_time_description = DescriptiveTime(self.locked_period.total_seconds()).short_descriptive
+                locked_time_description = DescriptiveTime(
+                    self.locked_period.total_seconds()
+                ).short_descriptive
             return {
                 "status": const.STATUS_LOCKED,
                 "color": "#D6212E",

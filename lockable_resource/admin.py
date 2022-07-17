@@ -10,5 +10,7 @@ from lockable_resource.models import *
 class LockableResourceAdmin(ModelAdmin):
     # Display all the fields of Lockable resources
     list_display = [
-        str(field).split(".")[-1] for field in LockableResource._meta.get_fields() if isinstance(field, Field)
+        str(field).split(".")[-1]
+        for field in LockableResource._meta.get_fields()
+        if isinstance(field, Field)
     ]
