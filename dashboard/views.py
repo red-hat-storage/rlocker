@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.db.models import Q
 from lockable_resource.models import LockableResource
 from lockable_resource.label_manager import LabelManager
-from lockable_resource.action_manager import get_lr_actions_object
+from lockable_resource.action_manager import LRActionObjectsHandler
 from patch_notifier.models import FirstVisit
 
 
@@ -45,7 +45,9 @@ def dashboard_page(request):
             },
         )
     if request.method == "POST":
-        desired_action = get_lr_actions_object(request)
-        desired_action.complete_action()
+        desired_action_obj = LRActionObjectsHandler(
+            request
+        ).get_desired_action_instance()
+        desired_action_obj.complete_action()
 
         return redirect("dashboard_page")
