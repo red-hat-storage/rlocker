@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.db.models import Q
 from lockable_resource.models import LockableResource
 from lockable_resource.label_manager import LabelManager
+from lockable_resource.action_manager import get_lr_actions_object
 from patch_notifier.models import FirstVisit
 
 
@@ -44,14 +45,7 @@ def dashboard_page(request):
             },
         )
     if request.method == "POST":
-        action = request.POST.get("action")  # get action
-        r_lock_id = int(request.POST.get("id"))  # get ID of lockable resource
-        r_lock_obj = LockableResource.objects.get(
-            id=r_lock_id
-        )  # get object of lockable resource
-        if action == l_r_const.ACTION_RELEASE:
-            r_lock_obj.release()
-            messages.info(
-                request, message=f"{r_lock_obj.name} has been released successfully!"
-            )
+        desired_action = get_lr_actions_object(request)
+        desired_action.complete_action()
+
         return redirect("dashboard_page")
