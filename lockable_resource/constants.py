@@ -8,8 +8,6 @@ ACTION_RELEASE = "release"
 ACTION_MAINTENANCE_MODE_ENTER = "maintenance_mode_enter"
 ACTION_MAINTENANCE_MODE_EXIT = "maintenance_mode_exit"
 
-VALID_ACTIONS = [ACTION_LOCK, ACTION_RELEASE]
-
 
 class LockMethod:
     MANUAL = "manual"
