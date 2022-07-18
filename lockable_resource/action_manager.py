@@ -116,22 +116,18 @@ class LRActionExitMaintenance(LRActionManager):
         )
 
 
-class LRActionObjectsHandler(LRActionManager):
-    def get_supported_actions_objects(self):
+class LRActionObjectsHandler():
+    SUPPORTED_ACTION_OBJECTS = {
+        const.ACTION_LOCK: LRActionLock,
+        const.ACTION_RELEASE: LRActionRelease,
+        const.ACTION_MAINTENANCE_MODE_ENTER: LRActionEnterMaintenance,
+        const.ACTION_MAINTENANCE_MODE_EXIT: LRActionExitMaintenance,
+    }
+    def add_supported_action_object_pair(self, key, value):
         """
-        A method to return the wanted instance of LR Action
-        TODO: Possibly find a way to refer to request obj without passing it
-            separately to each one of the LRAction implementations ?
+            Wrapper instance method to add k&v to supported action objects
         """
-
-        SUPPORTED_ACTIONS_OBJECTS = {
-            const.ACTION_LOCK: LRActionLock(self.request),
-            const.ACTION_RELEASE: LRActionRelease(self.request),
-            const.ACTION_MAINTENANCE_MODE_ENTER: LRActionEnterMaintenance(self.request),
-            const.ACTION_MAINTENANCE_MODE_EXIT: LRActionExitMaintenance(self.request),
-        }
-
-        return SUPPORTED_ACTIONS_OBJECTS
-
-    def get_desired_action_instance(self):
-        return self.get_supported_actions_objects().get(self.action)
+        if key not in self.__class__.SUPPORTED_ACTION_OBJECTS:
+            self.__class__.SUPPORTED_ACTION_OBJECTS[key] = value
+        else:
+            raise Exception(f"Cannot add {key} to supported_action_objects. {key} already exists, it's instance is: {value}")
