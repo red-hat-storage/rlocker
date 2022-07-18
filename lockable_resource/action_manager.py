@@ -1,7 +1,10 @@
 # This file is in order to manage different actions for each lockable resources
 # We also want to be able to return the desired actions for the possible addons
+
 # Conventions for shortening class names:
 # LR -> Lockable Resource
+
+
 import lockable_resource.constants as const
 import rqueue.constants as const_rqueue
 from abc import abstractmethod
@@ -12,14 +15,22 @@ from rqueue.models import Rqueue
 from rqueue.constants import Priority
 
 
-class LRActionManager:
-    SUPPORTED_ACTIONS = [
-        const.ACTION_LOCK,
-        const.ACTION_RELEASE,
-        const.ACTION_MAINTENANCE_MODE_ENTER,
-        const.ACTION_MAINTENANCE_MODE_EXIT,
-    ]
+# CHANGE THIS COMMENT SECTION IF THE LOGIC OF THIS FILE IS MODIFIED!
+# How to add an action ?
+# Add it to SUPPORTED_ACTIONS (Better to first create a constant of it like the existings)
+# Implement a new subclass of LRActionManager
+# In the SUPPORTED_ACTIONS_OBJECTS<LRActionObjectsHandler>, add a new key&value pair that returns an instance of the relevant subclass
 
+# This list is not inside the constants.py, since it might be extended by addons
+SUPPORTED_ACTIONS = [
+    const.ACTION_LOCK,
+    const.ACTION_RELEASE,
+    const.ACTION_MAINTENANCE_MODE_ENTER,
+    const.ACTION_MAINTENANCE_MODE_EXIT,
+]
+
+
+class LRActionManager:
     def __init__(self, request: HttpRequest, **kwargs):
         """
         Initialization.
@@ -47,8 +58,8 @@ class LRActionManager:
         Add here validations for the received args in init
         """
         assert (
-            self.action in self.__class__.SUPPORTED_ACTIONS
-        ), f"Action {self.action} not in {self.__class__.SUPPORTED_ACTIONS}"
+            self.action in SUPPORTED_ACTIONS
+        ), f"Action {self.action} not in {SUPPORTED_ACTIONS}"
 
     @abstractmethod
     def complete_action(self):
@@ -105,18 +116,22 @@ class LRActionExitMaintenance(LRActionManager):
         )
 
 
-def get_lr_actions_object(request: HttpRequest):
-    """
-    A function to return the wanted instance of LR Action
-    TODO: Possibly find a way to refer to request obj without passing it
-        separately to each one of the LRAction implementations ?
-    """
-    supported_actions_map = {
-        const.ACTION_LOCK: LRActionLock(request),
-        const.ACTION_RELEASE: LRActionRelease(request),
-        const.ACTION_MAINTENANCE_MODE_ENTER: LRActionEnterMaintenance(request),
-        const.ACTION_MAINTENANCE_MODE_EXIT: LRActionExitMaintenance(request),
-    }
+class LRActionObjectsHandler(LRActionManager):
+    def get_supported_actions_objects(self):
+        """
+        A method to return the wanted instance of LR Action
+        TODO: Possibly find a way to refer to request obj without passing it
+            separately to each one of the LRAction implementations ?
+        """
 
-    r = LRActionManager(request)
-    return supported_actions_map.get(r.action)
+        SUPPORTED_ACTIONS_OBJECTS = {
+            const.ACTION_LOCK: LRActionLock(self.request),
+            const.ACTION_RELEASE: LRActionRelease(self.request),
+            const.ACTION_MAINTENANCE_MODE_ENTER: LRActionEnterMaintenance(self.request),
+            const.ACTION_MAINTENANCE_MODE_EXIT: LRActionExitMaintenance(self.request),
+        }
+
+        return SUPPORTED_ACTIONS_OBJECTS
+
+    def get_desired_action_instance(self):
+        return self.get_supported_actions_objects().get(self.action)

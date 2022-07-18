@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.shortcuts import render, redirect, HttpResponse
 from lockable_resource.models import *
 from lockable_resource.query_param_manager import QueryParamManager
-from lockable_resource.action_manager import get_lr_actions_object
+from lockable_resource.action_manager import LRActionObjectsHandler
 
 
 def lockable_resources_page(request):
@@ -27,8 +27,10 @@ def lockable_resources_page(request):
         )
 
     if request.method == "POST":
-        desired_action = get_lr_actions_object(request)
-        desired_action.complete_action()
+        desired_action_obj = LRActionObjectsHandler(
+            request
+        ).get_desired_action_instance()
+        desired_action_obj.complete_action()
 
         return redirect("lockable_resources_page")
 
