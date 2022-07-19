@@ -33,4 +33,11 @@
         </ul>
 
     </div>
+    <div>
+        {% for addon in installed_addons %}
+            {% if addon == "expiry_addon" %}
+                {% include "expiry_addon/info.html" %}
+            {% endif %}
+        {% endfor %}
+    </div>
 </td>
