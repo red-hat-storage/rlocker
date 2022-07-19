@@ -128,7 +128,6 @@ class LRActionObjectsHandler():
             Wrapper instance method to add k&v to supported action objects
         """
         if key not in self.__class__.SUPPORTED_ACTION_OBJECTS:
-            print(key, " added!", " value is: ", value)
             self.__class__.SUPPORTED_ACTION_OBJECTS[key] = value
         else:
             raise Exception(f"Cannot add {key} to supported_action_objects. {key} already exists, it's instance is: {value}")
