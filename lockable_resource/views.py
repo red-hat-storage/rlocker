@@ -27,11 +27,13 @@ def lockable_resources_page(request):
         )
 
     if request.method == "POST":
-        desired_action_obj = LRActionObjectsHandler(
-            request
-        ).get_desired_action_instance()
-        desired_action_obj.complete_action()
-
+        # Get Desired Action:
+        desired_action = request.POST.get("action")
+        action_handler = LRActionObjectsHandler.SUPPORTED_ACTION_OBJECTS.get(desired_action)
+        # Create an instance of the desired action handler
+        action_obj = action_handler(request)
+        action_obj.complete_action()
+        
         return redirect("lockable_resources_page")
 
 
