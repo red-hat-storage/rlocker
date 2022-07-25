@@ -2,8 +2,8 @@
 ## This project is a Back-end service with API endpoints and web UI, for monitoring the resources created in different cloud providers, define their usage availability by locking/unlocking a resource.
 
 ### Project Dependencies:
- - [rlockerservices](https://github.com/jimdevops19/rlockerservices) - Services repository that the rlocker uses
- - [rlockertools](https://github.com/jimdevops19/rlockertools) -  A Python based client interface to interact with the platform
+ - [rlockerservices](https://github.com/red-hat-storage/rlockerservices) - Services repository that the rlocker uses
+ - [rlockertools](https://github.com/red-hat-storage/rlockertools) -  A Python based client interface to interact with the platform
 
 ### Quick Start Video will be added soon
 
@@ -99,6 +99,6 @@ Django website with applications, `account`, `api`, `dashboard`, `health`, `lock
      - `python manage.py runserver <OPTIONAL_PORT>` As said above, you do NOT HAVE to mention the <OPTIONAL_PORT>
    - Login Credentials are: `admin`, `Admin-1`
  - Next Steps:
-   - Visit the [rlockerservices](https://github.com/jimdevops19/rlockerservices) project in order to setup the `queue_service`. 
+   - Visit the [rlockerservices](https://github.com/red-hat-storage/rlockerservices) project in order to setup the `queue_service`. The queue service is the component that processes the queues that are coming from rlocker-cli. 
 ## Production
  - To be documented
