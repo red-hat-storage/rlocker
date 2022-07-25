@@ -95,9 +95,9 @@ Django website with applications, `account`, `api`, `dashboard`, `health`, `lock
        - `export DJANGO_SECRET='<YOUR_COPIED_SECRET>'` Set this env variable. The wrapping with single quotes is important!
        - `export USE_DEV_DB=True` Here we specify to use the local `db.sqlite3` file and not a PostgreSQL database engine (That is why, we could skip the `psycopg2-binary` package in previous steps)
        - `export DEBUG=True` Debug mode on.
-       - `export USE_LOCAL_ADDONS=True` Do use local addon applications (other Django apps)
    - Launch the website on the desired port (default is 8000)
      - `python manage.py runserver <OPTIONAL_PORT>` As said above, you do NOT HAVE to mention the <OPTIONAL_PORT>
+   - Login Credentials are: `admin`, `Admin-1`
  - Next Steps:
    - Visit the [rlockerservices](https://github.com/jimdevops19/rlockerservices) project in order to setup the `queue_service`. 
 ## Production
