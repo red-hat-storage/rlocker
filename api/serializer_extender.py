@@ -14,8 +14,7 @@ class SerializerExtenderManagerByAddon:
         :param key:
         :return Query Params object:
         """
-        if not addon_name in settings.INSTALLED_ADDONS:
-            # TODO: Consider throwing an exception here
+        if not settings.INSTALLED_ADDONS:
             return None
 
         # create a new instance and set attributes on it
