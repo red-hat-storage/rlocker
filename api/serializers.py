@@ -1,4 +1,5 @@
 from rest_framework import serializers, status, exceptions
+from api.serializer_extender import SerializerExtenderManagerByAddon
 from lockable_resource.models import LockableResource
 from rqueue.models import Rqueue
 
@@ -10,6 +11,12 @@ class LockableResourceSerializer(serializers.ModelSerializer):
         model = LockableResource
         fields = "__all__"
         read_only_fields = ["id"]
+
+    # Use this section to add data from addons
+    expiry_addon = SerializerExtenderManagerByAddon(
+        addon_name="expiry_addon",
+        cls_serializer="LockableResourceSerializer",
+    )
 
     def validate(self, attrs):
         """
