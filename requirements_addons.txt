@@ -1,1 +1,1 @@
-rlocker-expiryaddon
+rlocker-expiryaddon==0.0.6

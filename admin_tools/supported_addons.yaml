@@ -1,0 +1,11 @@
+---
+# This file is all the supported addons
+# There will be a logic inside the app that this file is located.
+# Which will create the entries in the DB (Addon Model) to maintain which addon is installed or not
+# Please visit models.py to see the fields metadata
+addons:
+  -
+    package_name: rlocker-expiryaddon
+    package_url: https://pypi.org/project/rlocker-expiryaddon
+    project_url: https://github.com/jimdevops19/rlocker_expiry_addon
+    application_name: expiry_addon

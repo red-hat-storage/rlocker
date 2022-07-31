@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block tab_title %}
+    RLocker - Administrative Tools
+{% endblock %}
+
+{% block pageheader_title %}
+    Administrative Tools
+{% endblock %}
+
+{% block page_description %}
+    Import Lockable Resources from YAML
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+      <div class="col-lg-9 justify-content-center">
+        <section class="panel">
+          <header class="panel-heading">
+           Plugins
+          </header>
+        {% include "includes/addon_status_table.html" %}
+        </section>
+      </div>
+    </div>
+{% endblock %}

@@ -4,6 +4,7 @@ __pycache__
 nginx/static/*
 venv
 venv/*
+addons.txt
 addons_dev.txt
 addons
 addons/*

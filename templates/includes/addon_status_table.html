@@ -1,0 +1,32 @@
+<table class="table table-striped table-advance table-hover center-block" style="text-align: center">
+  <tbody>
+    <tr>
+      <th style="text-align: center">
+        <i class="icon_book"></i> ID
+      </th>
+      <th style="text-align: center">
+        <i class="icon_loading"></i> Plugin Name
+      </th>
+      <th style="text-align: center">
+        <i class="icon_clock"></i> Actions
+      </th>
+    </tr> {% for i, addon in addons %} <tr>
+      <td>
+        {{ i }}
+      </td>
+      <td>
+        {{ addon.package_name }}
+      </td>
+      <td>
+        <form class="form-inline" role="form" method="POST">
+          {% csrf_token %}
+          <input type="hidden" id='addon_application_name' name="addon_application_name" value="{{ addon.application_name }}" />
+          <button type="submit" class="btn btn-success">
+            <i style="margin-right: 5px" class="icon_cart"></i>
+            <b>Install Addon!</b>
+          </button>
+        </form>
+      </td>
+    </tr> {% endfor %}
+  </tbody>
+</table>
