@@ -12,7 +12,8 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 from pathlib import Path
 import os
-
+import yaml
+import rlocker.utils as u
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -156,11 +157,21 @@ STATICFILES_DIRS = [
 STATIC_ROOT = BASE_DIR / "nginx" / "static"
 
 # Addons support
-# Give the option to use addons from pip or locally,
-# Because in dev mode, we want to directory clone the plugins to the project dir
-LOCAL_ADDONS = os.environ.get("USE_LOCAL_ADDONS", "False")
+USE_DEV_ADDONS = True if os.environ.get("USE_DEV_ADDONS") == "True" else False
+ADDONS_FILE = BASE_DIR / "addons_dev.txt" if USE_DEV_ADDONS else BASE_DIR / "addons.txt"
 
-addons_file = "addons_dev.txt" if LOCAL_ADDONS == "True" else "addons.txt"
-with open(os.path.join(BASE_DIR, addons_file)) as f:
-    INSTALLED_ADDONS = f.readlines()
-INSTALLED_APPS.extend(INSTALLED_ADDONS)
+
+INSTALLED_ADDONS = []
+try:
+    with open(ADDONS_FILE, "r") as f:
+        INSTALLED_ADDONS = u.CustomList(f.readlines(), no_duplicates=True)
+        # WA: DO NOT include new lines in the list if they exist
+        INSTALLED_ADDONS.remove_if_exist("\n")
+except FileNotFoundError as e:
+    print(
+        f"File not found {ADDONS_FILE} \n"
+        "Perhaps you need to execute python manage.py prepare_installed_addons ?"
+    )
+finally:
+    # Extend the INSTALLED_APPS based on the installed addons (whether if from dev addons or not)
+    INSTALLED_APPS.extend(INSTALLED_ADDONS)

@@ -73,7 +73,7 @@ Django website with applications, `account`, `api`, `dashboard`, `health`, `lock
    - [views](rqueue/views.py): Design of the views and actions to take in GET/POST requests.
 
 
-# How to use Addons (Plugins) in the Resource Locker Project
+# How to use Addons (Plugins) in the Resource Locker Project (To be documented)
 
 ## Dev mode:
  - The following are commands to run in your terminal, each line represents a pattern of:   `command to run` __Explanation__

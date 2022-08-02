@@ -1,0 +1,39 @@
+<table class="table table-striped table-advance table-hover center-block" style="text-align: center">
+  <tbody>
+    <tr>
+      <th style="text-align: center">
+        <i class="icon_book"></i> ID
+      </th>
+      <th style="text-align: center">
+        <i class="icon_loading"></i> Addon Package Name
+      </th>
+      <th style="text-align: center">
+        <i class="icon_clock"></i> Actions
+      </th>
+    </tr>
+    {% for addon in addons %}
+      <tr>
+        <td>{{ addon.id }}</td>
+      <td>{{ addon.package_name }}</td>
+      <td>
+        <form class="form-inline" role="form" method="POST">
+          {% csrf_token %}
+          <input type="hidden" id='addon_application_name' name="addon_application_name" value="{{ addon.application_name }}"/>
+          {% if addon.is_installed %}
+            <input type="hidden" id="action" name="action" value="uninstall_addon">
+            <button type="submit" class="btn btn-danger">
+              <i style="margin-right: 5px" class="icon_cart"></i>
+              <b>Uninstall Addon!</b>
+            </button>
+          {% else %}
+            <input type="hidden" id="action" name="action" value="install_addon">
+            <button type="submit" class="btn btn-success">
+              <i style="margin-right: 5px" class="icon_cart"></i>
+              <b>Install Addon!</b>
+            </button>
+          {% endif %}
+        </form>
+      </td>
+    </tr> {% endfor %}
+  </tbody>
+</table>
