@@ -17,6 +17,8 @@ class Command(BaseCommand):
             key="application_name"
         )
         if not settings.USE_DEV_ADDONS:
+            print(f"FOUND {len(installed_addons)} addons to finalize installation. ")
+            print("Django will write a new file to {settings.ADDONS_FILE} with all the installed addons if there are any.")
             with open(settings.ADDONS_FILE, "w") as f:
                 for installed_addon in installed_addons:
                     f.write(installed_addon)

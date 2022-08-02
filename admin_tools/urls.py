@@ -12,9 +12,9 @@ urlpatterns = [
         name="import_lockable_resources_from_yaml",
     ),
     path(
-        "manage_plugins",
-        views.manage_plugins,
-        name="manage_plugins",
+        "manage_addons",
+        views.manage_addons,
+        name="manage_addons",
     ),
 ]
 

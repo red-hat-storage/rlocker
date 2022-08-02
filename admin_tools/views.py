@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect, reverse
 from lockable_resource.models import LockableResource
 from django.contrib import messages
 from admin_tools.models import Addon
-from rlocker import settings
+import admin_tools.constants as const
 import yaml
 
 
@@ -20,8 +20,8 @@ def index(request):
             "url": reverse("admin_tools:import_lockable_resources_from_yaml"),
         },
         {
-            "name": "Plugin Management",
-            "url": reverse("admin_tools:manage_plugins"),
+            "name": "Addon Management",
+            "url": reverse("admin_tools:manage_addons"),
         },
 
     ]
@@ -59,7 +59,7 @@ def import_lockable_resources_from_yaml(request):
         )
         return redirect("admin_tools:import_lockable_resources_from_yaml")
 
-def manage_plugins(request):
+def manage_addons(request):
     addons = Addon.objects.all()
     if request.method == "GET":
         return render(
@@ -71,7 +71,19 @@ def manage_plugins(request):
         )
     if request.method == "POST":
         addon_application_name = request.POST.get("addon_application_name")
-        addon_obj = Addon.objects.get(addon_application_name)
-        addon_obj.is_installed = True
+        action = request.POST.get("action") # TODO: Maybe extend the class inside lockable_resource/action_manager.py and use it's methods ?
+
+        addon_obj = Addon.objects.get(application_name=addon_application_name)
+        # Not using a one-liner if here because more actions might be needed for an addon in the future
+        if action == const.ACTION_INSTALL_ADDON:
+            addon_obj.is_installed = True
+        elif action == const.ACTION_UNINSTALL_ADDON:
+            addon_obj.is_installed = False
         addon_obj.save()
-        return redirect("admin_tools:manage_plugins")
+        messages.info(
+            request,
+            f"{addon_application_name} installed/uninstalled! "
+            f"A restart of the Resource Locker is required for completing the actions successfully, "
+            f"please consider executing python manage.py prepare_installed_addons and then runserver!"
+         )
+        return redirect("admin_tools:manage_addons")
