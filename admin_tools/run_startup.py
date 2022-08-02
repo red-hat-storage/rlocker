@@ -17,5 +17,4 @@ def insert_supported_addons_on_runserver():
 
 
 def main():
-    print(sys.argv)
     insert_supported_addons_on_runserver()
