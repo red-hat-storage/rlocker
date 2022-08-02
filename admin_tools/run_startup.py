@@ -5,6 +5,7 @@
 import sys
 from admin_tools.models import Addon
 
+
 def insert_supported_addons_on_runserver():
     """
     Run this chunk of command only on runserver

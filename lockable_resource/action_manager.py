@@ -116,18 +116,21 @@ class LRActionExitMaintenance(LRActionManager):
         )
 
 
-class LRActionObjectsHandler():
+class LRActionObjectsHandler:
     SUPPORTED_ACTION_OBJECTS = {
         const.ACTION_LOCK: LRActionLock,
         const.ACTION_RELEASE: LRActionRelease,
         const.ACTION_MAINTENANCE_MODE_ENTER: LRActionEnterMaintenance,
         const.ACTION_MAINTENANCE_MODE_EXIT: LRActionExitMaintenance,
     }
+
     def add_supported_action_object_pair(self, key, value):
         """
-            Wrapper instance method to add k&v to supported action objects
+        Wrapper instance method to add k&v to supported action objects
         """
         if key not in self.__class__.SUPPORTED_ACTION_OBJECTS:
             self.__class__.SUPPORTED_ACTION_OBJECTS[key] = value
         else:
-            raise Exception(f"Cannot add {key} to supported_action_objects. {key} already exists, it's instance is: {value}")
+            raise Exception(
+                f"Cannot add {key} to supported_action_objects. {key} already exists, it's instance is: {value}"
+            )

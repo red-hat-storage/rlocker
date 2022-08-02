@@ -47,7 +47,9 @@ def dashboard_page(request):
     if request.method == "POST":
         # Get Desired Action:
         desired_action = request.POST.get("action")
-        action_handler = LRActionObjectsHandler.SUPPORTED_ACTION_OBJECTS.get(desired_action)
+        action_handler = LRActionObjectsHandler.SUPPORTED_ACTION_OBJECTS.get(
+            desired_action
+        )
         # Create an instance of the desired action handler
         action_obj = action_handler(request)
         action_obj.complete_action()
