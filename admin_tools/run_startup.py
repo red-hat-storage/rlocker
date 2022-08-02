@@ -9,7 +9,7 @@ def insert_supported_addons_on_runserver():
     """
     Run this chunk of command only on runserver
     """
-    sub_command = sys.argv[2]
+    sub_command = sys.argv[1]
     if sub_command == "runserver":
         Addon.insert_supported_addons()
     else:
@@ -17,4 +17,5 @@ def insert_supported_addons_on_runserver():
 
 
 def main():
+    print(sys.argv)
     insert_supported_addons_on_runserver()
