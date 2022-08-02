@@ -26,9 +26,8 @@ class Addon(models.Model):
         default=None,
         unique=True,
     )
-    is_installed = models.BooleanField(
-        default=False
-    )
+    is_installed = models.BooleanField(default=False)
+
     def __str__(self):
         return self.package_name
 

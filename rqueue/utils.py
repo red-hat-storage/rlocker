@@ -9,6 +9,7 @@ class DescriptiveTime:
     For i.e: We don't want to display 24 hours when the seconds is 86400, instead,
     it could have been nice to display 1 Day
     """
+
     DAY = 86400
     HOUR = 3600
     MINUTE = 60

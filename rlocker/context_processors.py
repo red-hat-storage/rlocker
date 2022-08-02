@@ -6,6 +6,4 @@ from django.conf import settings
 
 
 def global_context_processors(request):
-    return {
-        "installed_addons" : settings.INSTALLED_ADDONS
-    }
+    return {"installed_addons": settings.INSTALLED_ADDONS}

@@ -30,6 +30,4 @@ urlpatterns = [
 ]
 # AddOns Urls
 for addon in settings.INSTALLED_ADDONS:
-    urlpatterns.append(
-        path(f"{addon}/", include(f"{addon}.urls"))
-    )
+    urlpatterns.append(path(f"{addon}/", include(f"{addon}.urls")))

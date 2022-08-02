@@ -23,14 +23,11 @@ def index(request):
             "name": "Addon Management",
             "url": reverse("admin_tools:manage_addons"),
         },
-
     ]
     return render(
         request,
         template_name="admin_tools/index.html",
-        context={
-            "enum_tools": enumerate(tools, start=1)
-        },
+        context={"enum_tools": enumerate(tools, start=1)},
     )
 
 
@@ -59,19 +56,20 @@ def import_lockable_resources_from_yaml(request):
         )
         return redirect("admin_tools:import_lockable_resources_from_yaml")
 
+
 def manage_addons(request):
     addons = Addon.objects.all()
     if request.method == "GET":
         return render(
             request,
             template_name="admin_tools/manage_addons.html",
-            context={
-                "addons" : addons
-            }
+            context={"addons": addons},
         )
     if request.method == "POST":
         addon_application_name = request.POST.get("addon_application_name")
-        action = request.POST.get("action") # TODO: Maybe extend the class inside lockable_resource/action_manager.py and use it's methods ?
+        action = request.POST.get(
+            "action"
+        )  # TODO: Maybe extend the class inside lockable_resource/action_manager.py and use it's methods ?
 
         addon_obj = Addon.objects.get(application_name=addon_application_name)
         # Not using a one-liner if here because more actions might be needed for an addon in the future
@@ -84,6 +82,6 @@ def manage_addons(request):
             request,
             f"{addon_application_name} installed/uninstalled! "
             f"A restart of the Resource Locker is required for completing the actions successfully, "
-            f"please consider executing python manage.py prepare_installed_addons and then runserver!"
-         )
+            f"please consider executing python manage.py prepare_installed_addons and then runserver!",
+        )
         return redirect("admin_tools:manage_addons")

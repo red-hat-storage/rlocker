@@ -13,7 +13,7 @@ class CustomList(list):
             pass
 
     def elimininate_new_lines(self):
-        self.l = [e.replace('\n', '') for e in self.l]
+        self.l = [e.replace("\n", "") for e in self.l]
 
     def eliminate_duplicates(self):
         """
