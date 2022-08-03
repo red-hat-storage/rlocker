@@ -14,7 +14,7 @@ class Command(BaseCommand):
         Method will filter the installed addons and write
             their application names to a file
         """
-        installed_addons = Addon.get_installed_addons(key="application_name")
+        installed_addons = Addon.get_installed_addons(key="application_name", run_migrate=True)
         if not settings.USE_DEV_ADDONS:
             print(f"FOUND {len(installed_addons)} addons to finalize installation. ")
             print(

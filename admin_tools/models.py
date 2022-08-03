@@ -1,5 +1,7 @@
 from django.db import models
+from django.core import management
 import admin_tools.constants as const
+from admin_tools.apps import AdminToolsConfig
 import yaml
 
 
@@ -49,11 +51,17 @@ class Addon(models.Model):
                 print(f"Added: {addon_obj}!")
 
     @staticmethod
-    def get_installed_addons(key=None):
+    def get_installed_addons(
+            key=None,
+            run_migrate=False,
+    ):
         """
         Build a queryset on installed addons
         :param key: If provided, will build a list of all the fields
+        :run_migrate: If True, will run migrate of this app
         """
+        if run_migrate:
+            management.call_command("migrate", AdminToolsConfig.name)
         installed_addons = Addon.objects.filter(is_installed=True)
         if not key:
             return installed_addons
