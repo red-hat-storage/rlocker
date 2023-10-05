@@ -4,5 +4,5 @@ from .models import ResoucesDC
 class ResourcesDCSerializer(serializers.ModelSerializer):
     class Meta:
         model = ResoucesDC
-        fields = ('id', 'dc', 'storage', 'cpu', 'memory')
+        fields = ('id', 'dc', 'storage', 'cpu', 'memory', 'usedstorage', 'usedcpu', 'usedmemory')
         
