@@ -33,9 +33,9 @@ class LockableResource(models.Model):
     signoff = models.CharField(
         max_length=2048, null=True, default=None, blank=True, unique=True
     )
-    cpu = models.CharField(max_length=100)
-    memory = models.CharField(max_length=100)
-    storage = models.CharField(max_length=100)
+    cpu = models.IntegerField(default=0)
+    memory = models.IntegerField(default=0)
+    storage = models.IntegerField(default=0)
     description = models.CharField(max_length=2048, null=True, default=None, blank=True)
     link = models.CharField(max_length=2048, null=True, default=None, blank=True)
     in_maintenance = models.BooleanField(default=False)
