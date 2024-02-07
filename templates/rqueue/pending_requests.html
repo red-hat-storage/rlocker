@@ -12,6 +12,11 @@
     Pending Requests
 {% endblock %}
 
+{% block messages_area %}
+    <div id="messages-area" class="col-lg-5">
+    </div>
+{% endblock %}
+
 {% block content %}
     {% if pending_requests_amount > 0 %}
         {% include 'includes/pending_requests_table.html' %}

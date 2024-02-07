@@ -12,6 +12,11 @@
     Finished Requests
 {% endblock %}
 
+{% block messages_area %}
+    <div id="messages-area" class="col-lg-5">
+    </div>
+{% endblock %}
+
 {% block content %}
     {% include 'includes/finished_requests_table.html' %}
 {% endblock %}
