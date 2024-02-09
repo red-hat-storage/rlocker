@@ -67,19 +67,19 @@
                     <!-- Row Description End -->
                     <!-- Row Label Start -->
                     <td>
-                        {{ finishedqueue.data.name }}
-                        {{ finishedqueue.data.label }}
-                        <!--{{ finishedqueue.data.labels_string }}-->
+                        {{ finishedqueue.name }}
+                        {{ finishedqueue.label }}
+                        <!--{{ finishedqueue.labels_string }}-->
                     </td>
                     <!-- Row Label End -->
                     <!-- Row Signoff Start -->
                     <td>
-                        {% if finishedqueue.data.link and finishedqueue.data.link != "None" %}
-                            <a href="{{ finishedqueue.data.link }}">
-                                {{ finishedqueue.data.signoff }}
+                        {% if finishedqueue.link and finishedqueue.link != "None" %}
+                            <a href="{{ finishedqueue.link }}">
+                                {{ finishedqueue.signoff }}
                             </a>
                         {% else %}
-                            {{ finishedqueue.data.signoff }}
+                            {{ finishedqueue.signoff }}
                         {% endif %}
                     </td>
                     <!-- Row Signoff End -->
