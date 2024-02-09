@@ -139,6 +139,26 @@ class Rqueue(models.Model):
 
         self.save()
 
+    def get_data_value(self, key):
+        data = dict(json_continuously_loader(self.data))
+        return data.get(key, "")
+
+    @property
+    def name(self):
+        return self.get_data_value("name")
+
+    @property
+    def signoff(self):
+        return self.get_data_value("signoff")
+
+    @property
+    def label(self):
+        return self.get_data_value("label")
+
+    @property
+    def link(self):
+        return self.get_data_value("link")
+
     class Meta:
         # Here you can put more descriptive to display in Admin
         verbose_name_plural = "Requests in Queue"

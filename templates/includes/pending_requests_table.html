@@ -99,19 +99,19 @@
                     <!-- Row Description End -->
                     <!-- Row Label Start -->
                     <td>
-                        {{ rqueue.data.name }}
-                        {{ rqueue.data.label }}
-                        <!--{{ rqueue.data.labels_string }}-->
+                        {{ rqueue.name }}
+                        {{ rqueue.label }}
+                        <!--{{ rqueue.labels_string }}-->
                     </td>
                     <!-- Row Label End -->
                     <!-- Row Signoff Start -->
                     <td>
-                        {% if rqueue.data.link and rqueue.data.link != "None" %}
-                            <a href="{{ rqueue.data.link }}">
-                                {{ rqueue.data.signoff }}
+                        {% if rqueue.link and rqueue.link != "None" %}
+                            <a href="{{ rqueue.link }}">
+                                {{ rqueue.signoff }}
                             </a>
                         {% else %}
-                            {{ rqueue.data.signoff }}
+                            {{ rqueue.signoff }}
                         {% endif %}
                     </td>
                     <!-- Row Signoff End -->
