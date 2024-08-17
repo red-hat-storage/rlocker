@@ -44,6 +44,9 @@ class LockableResource(models.Model):
         on_delete=models.PROTECT,
         to_field="id",
     )
+    storage_cluster  = models.IntegerField(default=0)
+    cpu_cluster = models.IntegerField(default=0)
+    memory_cluster = models.IntegerField(default=0)
     locked_time = models.DateTimeField(null=True, default=None, blank=True)
 
     @property
