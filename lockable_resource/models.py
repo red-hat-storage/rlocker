@@ -94,6 +94,13 @@ class LockableResource(models.Model):
                 "icon": "icon_lock",
                 "more_info": locked_time_description,
             }
+        elif self.in_maintenance:
+            return {
+                "status": const.STATUS_MAINTENANCE,
+                "color": "#FFA500",
+                "icon": "icon_lock",
+                "more_info": "",
+            }
         else:
             return {
                 "status": const.STATUS_FREE,
