@@ -27,6 +27,7 @@ urlpatterns = [
     path("", include("health.urls")),
     path("admin_tools/", include("admin_tools.urls")),
     path("patch_notifier/", include("patch_notifier.urls")),
+    path("", include('resource_hw.urls')),
 ]
 # AddOns Urls
 for addon in settings.INSTALLED_ADDONS:
