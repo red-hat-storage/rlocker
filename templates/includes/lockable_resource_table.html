@@ -4,6 +4,72 @@
 			<header class="panel-heading">
                 Lockable Resources
             </header>
+			{% if show_filters %}
+			<div class="panel-body">
+				<form method="get" action="{% url 'lockable_resources_page' %}">
+					<div class="row" style="margin-bottom: 15px;">
+						<div class="col-lg-12">
+							<div class="form-inline">
+								<div class="form-group" style="margin-right: 15px;">
+									<label style="margin-right: 5px;"><strong>Status:</strong></label>
+									<div class="btn-group" role="group" aria-label="Filter by availability">
+										<a href="javascript:void(0)" onclick="setStatusFilter('all')"
+										   class="btn btn-sm {% if status_filter == 'all' %}btn-primary{% else %}btn-default{% endif %}">
+											<i class="icon_box-checked"></i> All
+										</a>
+										<a href="javascript:void(0)" onclick="setStatusFilter('free')"
+										   class="btn btn-sm {% if status_filter == 'free' %}btn-success{% else %}btn-default{% endif %}">
+											<i class="icon_lock-open"></i> Free
+										</a>
+										<a href="javascript:void(0)" onclick="setStatusFilter('locked')"
+										   class="btn btn-sm {% if status_filter == 'locked' %}btn-danger{% else %}btn-default{% endif %}">
+											<i class="icon_lock"></i> Locked
+										</a>
+										<a href="javascript:void(0)" onclick="setStatusFilter('maintenance')"
+										   class="btn btn-sm {% if status_filter == 'maintenance' %}btn-warning{% else %}btn-default{% endif %}">
+											<i class="icon_lock"></i> Maintenance
+										</a>
+									</div>
+									<input type="hidden" name="status" id="status" value="{{ status_filter }}">
+								</div>
+								<div class="form-group" style="margin-right: 15px;">
+									<label for="provider" style="margin-right: 5px;"><strong>Provider:</strong></label>
+									<select name="provider" id="provider" class="form-control input-sm" onchange="this.form.submit()">
+										<option value="">All Providers</option>
+										{% for provider in all_providers %}
+											<option value="{{ provider }}" {% if provider_filter == provider %}selected{% endif %}>
+												{{ provider }}
+											</option>
+										{% endfor %}
+									</select>
+								</div>
+								<div class="form-group">
+									<label for="search" style="margin-right: 5px;"><strong>Search:</strong></label>
+									<input type="text" name="search" id="search" class="form-control input-sm"
+									       placeholder="Name, Label, Sign Off, Description"
+									       value="{{ search_text }}"
+									       style="width: 300px;">
+									<button type="submit" class="btn btn-sm btn-info" style="margin-left: 5px;">
+										<i class="icon_search"></i> Search
+									</button>
+									{% if search_text or provider_filter or status_filter != 'all' %}
+										<a href="{% url 'lockable_resources_page' %}" class="btn btn-sm btn-default" style="margin-left: 5px;">
+											<i class="icon_close"></i> Clear
+										</a>
+									{% endif %}
+								</div>
+							</div>
+						</div>
+					</div>
+				</form>
+				<script>
+					function setStatusFilter(status) {
+						document.getElementById('status').value = status;
+						document.querySelector('form').submit();
+					}
+				</script>
+			</div>
+			{% endif %}
 			<table class="table table-striped table-advance table-hover center-block" style="text-align: center">
 				<tbody>
 					<tr>
