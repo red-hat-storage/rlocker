@@ -14,9 +14,10 @@ CMD python manage.py check && \
     python manage.py prepare_installed_addons && \
     gunicorn rlocker.wsgi:application \
     --bind 0.0.0.0:8000 \
-    --workers 4 \
+    --workers 3 \
     --worker-class sync \
     --timeout 600 \
     --max-requests 1000 \
     --max-requests-jitter 50 \
+    --worker-connections 1000 \
     --log-level info
