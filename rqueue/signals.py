@@ -34,7 +34,7 @@ def fetch_for_available_lockable_resources(sender, instance, created, **kwargs):
         data_signoff = data.get("signoff")
 
         if instance.priority == Priority.UI.value:
-            lock_res_object = LockableResource.objects.get(id=data_id)
+            lock_res_object = LockableResource.objects.select_for_update().get(id=data_id)
             lock_res_object.lock(signoff=data_signoff)
             lock_res_object.associated_queue = instance
             lock_res_object.save()
@@ -102,7 +102,7 @@ def execute_pre_save_actions_for_rqueue(sender, instance, **kwargs):
             )
             if final_resource:
                 # Get the resource object:
-                final_resource_obj = LockableResource.objects.get(name=final_resource)
+                final_resource_obj = LockableResource.objects.select_for_update().get(name=final_resource)
                 final_resource_obj.associated_queue = instance
                 final_resource_obj.save()
 
