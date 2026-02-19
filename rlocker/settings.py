@@ -99,6 +99,11 @@ PROD_DB = {
         "USER": os.environ.get("POSTGRESQL_USER"),
         "PASSWORD": os.environ.get("POSTGRESQL_PASSWORD"),
         "HOST": os.environ.get("DATABASE_SERVICE_NAME"),
+        "CONN_MAX_AGE": 600,  # Reuse connections for 10 minutes
+        "OPTIONS": {
+            "connect_timeout": 10,
+            "options": "-c statement_timeout=30000"  # 30 second statement timeout
+        }
     }
 }
 
