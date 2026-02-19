@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from rqueue.models import Rqueue
@@ -8,6 +9,7 @@ from urllib.parse import unquote
 
 
 @receiver(post_save, sender=Rqueue)
+@transaction.atomic
 def fetch_for_available_lockable_resources(sender, instance, created, **kwargs):
     """
     The logic to add requests to queue is with the following convention:
@@ -56,6 +58,7 @@ def fetch_for_available_lockable_resources(sender, instance, created, **kwargs):
 
 
 @receiver(pre_save, sender=Rqueue)
+@transaction.atomic
 def execute_pre_save_actions_for_rqueue(sender, instance, **kwargs):
     """
     For any changes prior saving a Rqueue obj, do it here!
