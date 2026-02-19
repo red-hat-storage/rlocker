@@ -10,4 +10,13 @@ COPY . /code/
 #Give permissions for the code dir, to write logs
 RUN chgrp -R 0 /code && \
     chmod -R g=u /code
-CMD python manage.py check && python manage.py prepare_installed_addons && python manage.py runserver 0.0.0.0:8000
+CMD python manage.py check && \
+    python manage.py prepare_installed_addons && \
+    gunicorn rlocker.wsgi:application \
+    --bind 0.0.0.0:8000 \
+    --workers 4 \
+    --worker-class sync \
+    --timeout 600 \
+    --max-requests 1000 \
+    --max-requests-jitter 50 \
+    --log-level info
