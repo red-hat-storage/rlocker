@@ -39,7 +39,7 @@ def dashboard_page(request):
                 ),
                 "unavailable_resources": unavailable_resources,
                 "user_locked_resources": LockableResource.objects.filter(
-                    Q(is_locked=True) & Q(signoff__startswith=request.user.username)
+                    Q(is_locked=True) & Q(signoff__contains=request.user.username)
                 ),
                 "display_patch_notes": display_patch_notes,
             },
