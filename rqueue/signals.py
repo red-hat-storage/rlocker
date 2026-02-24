@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from rqueue.models import Rqueue
@@ -8,6 +9,7 @@ from urllib.parse import unquote
 
 
 @receiver(post_save, sender=Rqueue)
+@transaction.atomic
 def fetch_for_available_lockable_resources(sender, instance, created, **kwargs):
     """
     The logic to add requests to queue is with the following convention:
@@ -32,7 +34,7 @@ def fetch_for_available_lockable_resources(sender, instance, created, **kwargs):
         data_signoff = data.get("signoff")
 
         if instance.priority == Priority.UI.value:
-            lock_res_object = LockableResource.objects.get(id=data_id)
+            lock_res_object = LockableResource.objects.select_for_update().get(id=data_id)
             lock_res_object.lock(signoff=data_signoff)
             lock_res_object.associated_queue = instance
             lock_res_object.save()
@@ -56,6 +58,7 @@ def fetch_for_available_lockable_resources(sender, instance, created, **kwargs):
 
 
 @receiver(pre_save, sender=Rqueue)
+@transaction.atomic
 def execute_pre_save_actions_for_rqueue(sender, instance, **kwargs):
     """
     For any changes prior saving a Rqueue obj, do it here!
@@ -99,7 +102,7 @@ def execute_pre_save_actions_for_rqueue(sender, instance, **kwargs):
             )
             if final_resource:
                 # Get the resource object:
-                final_resource_obj = LockableResource.objects.get(name=final_resource)
+                final_resource_obj = LockableResource.objects.select_for_update().get(name=final_resource)
                 final_resource_obj.associated_queue = instance
                 final_resource_obj.save()
 
