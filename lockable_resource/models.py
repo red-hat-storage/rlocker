@@ -5,7 +5,7 @@ from rqueue.utils import DescriptiveTime
 import lockable_resource.constants as const
 import json
 import yaml
-from django.utils.timezone import utc
+from datetime import timezone as tz
 import datetime
 
 
@@ -135,7 +135,7 @@ class LockableResource(models.Model):
         :returns timedelta: The kind of object when subtracting datetime objects
         """
         if self.locked_time:
-            now = datetime.datetime.utcnow().replace(tzinfo=utc)
+            now = datetime.datetime.utcnow().replace(tzinfo=tz.utc)
             timediff = now - self.locked_time
             return timediff
 

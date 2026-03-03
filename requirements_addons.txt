@@ -1,1 +1,1 @@
-rlocker-expiryaddon
+git+https://github.com/dahorak/rlocker_expiry_addon.git@update-compatibility-for-django-5#egg=rlocker-expiryaddon

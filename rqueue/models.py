@@ -1,7 +1,7 @@
 from django.db import models
 from django.db.models import JSONField
 from django.utils import timezone
-from django.utils.timezone import utc
+from datetime import timezone as tz
 from rqueue.utils import DescriptiveTime, json_continuously_loader
 from django.core.validators import MinValueValidator, MaxValueValidator
 from rqueue.constants import Status
@@ -76,7 +76,7 @@ class Rqueue(models.Model):
             For i.e: instead of showing 2700, we could display 45 minutes
         :return str  Descriptive output of time by knowing the total seconds
         """
-        now = datetime.datetime.utcnow().replace(tzinfo=utc)
+        now = datetime.datetime.utcnow().replace(tzinfo=tz.utc)
         timediff = now - self.time_requested
         return timediff
 
