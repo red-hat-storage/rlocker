@@ -32,6 +32,13 @@ DEBUG = os.environ.get("DEBUG") == "True"
 
 ALLOWED_HOSTS = ["*"]
 
+# CSRF Configuration for production/OpenShift
+# Set CSRF_TRUSTED_ORIGINS from environment variable (comma-separated list)
+CSRF_TRUSTED_ORIGINS = os.environ.get("CSRF_TRUSTED_ORIGINS", "").split(",") if os.environ.get("CSRF_TRUSTED_ORIGINS") else []
+
+# Trust X-Forwarded-Proto header from reverse proxy (OpenShift router/nginx)
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
 
 # Application definition
 
