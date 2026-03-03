@@ -4,6 +4,9 @@ Django management command to clean up old completed queue records.
 This command deletes old queue records that are in completed status
 (FINISHED, ABORTED, FAILED) to prevent database bloat.
 
+Safety: Queues that are still referenced by LockableResource.associated_queue
+are automatically excluded and will not be deleted, even if they are old.
+
 Usage:
     python manage.py cleanup_old_queues --days=30
     python manage.py cleanup_old_queues --days=30 --dry-run
@@ -19,7 +22,10 @@ from rqueue.constants import Status
 
 
 class Command(BaseCommand):
-    help = "Delete old completed queue records to prevent database bloat"
+    help = (
+        "Delete old completed queue records to prevent database bloat. "
+        "Queues still referenced by active resources are automatically skipped."
+    )
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -76,6 +82,7 @@ class Command(BaseCommand):
         failed_cutoff = now - timedelta(days=failed_days)
 
         # Build querysets for each status
+        # Exclude queues that are still referenced by LockableResource.associated_queue
         deletion_plan = [
             {
                 "status": Status.FINISHED,
@@ -83,7 +90,7 @@ class Command(BaseCommand):
                 "days": finished_days,
                 "queryset": Rqueue.objects.filter(
                     status=Status.FINISHED, time_requested__lt=finished_cutoff
-                ),
+                ).exclude(lockableresource__isnull=False),
             },
             {
                 "status": Status.ABORTED,
@@ -91,7 +98,7 @@ class Command(BaseCommand):
                 "days": aborted_days,
                 "queryset": Rqueue.objects.filter(
                     status=Status.ABORTED, time_requested__lt=aborted_cutoff
-                ),
+                ).exclude(lockableresource__isnull=False),
             },
             {
                 "status": Status.FAILED,
@@ -99,7 +106,7 @@ class Command(BaseCommand):
                 "days": failed_days,
                 "queryset": Rqueue.objects.filter(
                     status=Status.FAILED, time_requested__lt=failed_cutoff
-                ),
+                ).exclude(lockableresource__isnull=False),
             },
         ]
 
@@ -108,6 +115,17 @@ class Command(BaseCommand):
         self.stdout.write(self.style.WARNING(f"\n{'=' * 60}"))
         self.stdout.write(self.style.WARNING(f"  Queue Cleanup - {mode}"))
         self.stdout.write(self.style.WARNING(f"{'=' * 60}\n"))
+
+        # Count queues still referenced by resources (will be skipped)
+        referenced_count = Rqueue.objects.filter(
+            lockableresource__isnull=False
+        ).count()
+        if referenced_count > 0:
+            self.stdout.write(
+                self.style.NOTICE(
+                    f"ℹ Skipping {referenced_count} queue(s) still referenced by active resources\n"
+                )
+            )
 
         total_to_delete = 0
         total_deleted = 0
