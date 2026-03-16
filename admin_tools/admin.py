@@ -39,6 +39,6 @@ try:
             list_display.extend(readonly_fields)
 
         admin.site.register(ResourceExpiryPolicy, ResourceExpiryPolicyAdmin)
-except ImportError:
-    # expiry_addon not installed, skip
+except (ImportError, RuntimeError):
+    # expiry_addon not installed or not in INSTALLED_APPS, skip
     pass
