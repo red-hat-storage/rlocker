@@ -114,7 +114,7 @@ When deploying to production (e.g., OpenShift), the following environment variab
 - `POSTGRESQL_USER` - PostgreSQL username
 - `POSTGRESQL_PASSWORD` - PostgreSQL password
 - `DATABASE_SERVICE_NAME` - PostgreSQL host/service name
-- `CSRF_TRUSTED_ORIGINS` - Comma-separated list of trusted origins for CSRF validation (Required for Django 4.0+)
+- `CSRF_TRUSTED_ORIGINS` - Comma-separated list of trusted origins for CSRF validation (Required for Django 5.0+)
   - Example: `https://rlocker.apps.example.com,https://rlocker-dev.apps.example.com`
   - **Important:** Must match your application's route URL(s) with the `https://` protocol
 
