@@ -13,7 +13,7 @@ In the `nginx` directory:
 ```
 podman login quay.io...
 
-export TAG=test-01
+export TAG=2026-03-25a
 
 podman build --tag rlocker-nginx:${TAG} -f ./Dockerfile
 
@@ -21,3 +21,9 @@ podman tag rlocker-nginx:${TAG} quay.io/ocsci/rlocker-nginx:${TAG}
 
 podman push rlocker-nginx:${TAG} quay.io/ocsci/rlocker-nginx:${TAG}
 ```
+
+
+# tags
+## 2026-03-25a - django5 update
+
+## 2026-03-24a - updated
