@@ -8,9 +8,9 @@ server {
         proxy_pass ${NGINX_PROXY_PASS};
 
         # Timeout configuration to match Django REQUEST_TIMEOUT (600s)
-        proxy_connect_timeout 10s;
+        proxy_connect_timeout 60s;
         proxy_read_timeout 600s;
-        proxy_send_timeout 30s;
+        proxy_send_timeout 60s;
 
         # Performance optimizations
         proxy_buffering off;

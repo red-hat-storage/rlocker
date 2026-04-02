@@ -150,3 +150,37 @@ oc set env deployment/<deployment-name> \
 ```
 
 Alternatively, set environment variables via the OpenShift Web Console under Deployment → Environment tab.
+
+### Database Maintenance
+
+#### Queue Cleanup
+
+The `rqueue_rqueue` table accumulates completed queue records over time. To prevent database bloat, use the cleanup management command:
+
+```bash
+# Manual cleanup - delete records older than 30 days
+python manage.py cleanup_old_queues --days=30
+
+# Dry run to preview what would be deleted
+python manage.py cleanup_old_queues --days=30 --dry-run
+
+# Different retention by status
+python manage.py cleanup_old_queues \
+  --finished-days=30 \
+  --aborted-days=60 \
+  --failed-days=90
+```
+
+For automated cleanup in OpenShift, deploy the provided CronJob:
+
+```bash
+# Edit openshift/cronjob-cleanup-queues.yaml to match your configuration
+# Then deploy:
+oc apply -f openshift/cronjob-cleanup-queues.yaml
+
+# Monitor the CronJob
+oc get cronjobs
+oc get jobs
+```
+
+See [docs/QUEUE_CLEANUP.md](docs/QUEUE_CLEANUP.md) for detailed documentation.

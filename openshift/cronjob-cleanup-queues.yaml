@@ -1,0 +1,88 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: rlocker-cleanup-queues
+  labels:
+    app: rlocker
+    component: cleanup
+spec:
+  # Run daily at 2:00 AM UTC
+  schedule: "0 2 * * *"
+
+  # Keep history of last 3 successful and failed jobs
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+
+  # Don't start new job if previous is still running
+  concurrencyPolicy: Forbid
+
+  jobTemplate:
+    metadata:
+      labels:
+        app: rlocker
+        component: cleanup
+    spec:
+      # Clean up completed jobs after 1 hour
+      ttlSecondsAfterFinished: 3600
+
+      template:
+        metadata:
+          labels:
+            app: rlocker
+            component: cleanup
+        spec:
+          restartPolicy: OnFailure
+
+          containers:
+          - name: cleanup
+            # Update this to match your rlocker image
+            image: image-registry.openshift-image-registry.svc:5000/your-namespace/rlocker:latest
+
+            command:
+            - python
+            - manage.py
+            - cleanup_old_queues
+            - --finished-days=30
+            - --aborted-days=60
+            - --failed-days=90
+            - --verbose
+
+            env:
+            # Django settings
+            - name: DJANGO_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: rlocker-secrets
+                  key: django-secret
+
+            # Database connection
+            - name: POSTGRESQL_DATABASE
+              value: "rlocker"
+
+            - name: POSTGRESQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgresql-secret
+                  key: database-user
+
+            - name: POSTGRESQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgresql-secret
+                  key: database-password
+
+            - name: DATABASE_SERVICE_NAME
+              value: "postgresql"
+
+            # Optional: CSRF not needed for management commands
+            # but include if your Django settings require it
+            - name: CSRF_TRUSTED_ORIGINS
+              value: ""
+
+            resources:
+              requests:
+                memory: "256Mi"
+                cpu: "100m"
+              limits:
+                memory: "512Mi"
+                cpu: "500m"
