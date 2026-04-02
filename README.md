@@ -95,10 +95,58 @@ Django website with applications, `account`, `api`, `dashboard`, `health`, `lock
        - `export DJANGO_SECRET='<YOUR_COPIED_SECRET>'` Set this env variable. The wrapping with single quotes is important!
        - `export USE_DEV_DB=True` Here we specify to use the local `db.sqlite3` file and not a PostgreSQL database engine (That is why, we could skip the `psycopg2-binary` package in previous steps)
        - `export DEBUG=True` Debug mode on.
+       - `export CSRF_TRUSTED_ORIGINS='http://localhost:8000'` __(Optional for dev)__ CSRF trusted origins. For local development, use localhost.
    - Launch the website on the desired port (default is 8000)
      - `python manage.py runserver <OPTIONAL_PORT>` As said above, you do NOT HAVE to mention the <OPTIONAL_PORT>
    - Login Credentials are: `admin`, `Admin-1`
  - Next Steps:
-   - Visit the [rlockerservices](https://github.com/red-hat-storage/rlockerservices) project in order to setup the `queue_service`. The queue service is the component that processes the queues that are coming from rlocker-cli. 
+   - Visit the [rlockerservices](https://github.com/red-hat-storage/rlockerservices) project in order to setup the `queue_service`. The queue service is the component that processes the queues that are coming from rlocker-cli.
+
 ## Production
- - To be documented
+
+### Required Environment Variables
+
+When deploying to production (e.g., OpenShift), the following environment variables must be configured:
+
+#### Required:
+- `DJANGO_SECRET` - Django secret key for cryptographic signing. Generate using [djecrety.ir](https://djecrety.ir/)
+- `POSTGRESQL_DATABASE` - PostgreSQL database name
+- `POSTGRESQL_USER` - PostgreSQL username
+- `POSTGRESQL_PASSWORD` - PostgreSQL password
+- `DATABASE_SERVICE_NAME` - PostgreSQL host/service name
+- `CSRF_TRUSTED_ORIGINS` - Comma-separated list of trusted origins for CSRF validation (Required for Django 5.0+)
+  - Example: `https://rlocker.apps.example.com,https://rlocker-dev.apps.example.com`
+  - **Important:** Must match your application's route URL(s) with the `https://` protocol
+
+#### Optional:
+- `DEBUG` - Set to `True` for debug mode (should be `False` in production)
+- `USE_DEV_DB` - Set to `True` to use SQLite instead of PostgreSQL (not recommended for production)
+- `USE_DEV_ADDONS` - Set to `True` to use development addons
+
+### Proxy Configuration
+
+The application is configured to work behind reverse proxies (nginx, OpenShift router, etc.):
+- `SECURE_PROXY_SSL_HEADER` is set to trust the `X-Forwarded-Proto` header
+- This allows Django to correctly identify HTTPS connections when behind a reverse proxy
+
+### OpenShift Deployment
+
+To set environment variables in OpenShift:
+
+```bash
+# Get your route URL
+oc get routes
+
+# Set CSRF trusted origins (replace with your actual route)
+oc set env deployment/<deployment-name> CSRF_TRUSTED_ORIGINS="https://your-app-route.apps.example.com"
+
+# Set other required environment variables
+oc set env deployment/<deployment-name> \
+  DJANGO_SECRET="<your-secret-key>" \
+  POSTGRESQL_DATABASE="<db-name>" \
+  POSTGRESQL_USER="<db-user>" \
+  POSTGRESQL_PASSWORD="<db-password>" \
+  DATABASE_SERVICE_NAME="<db-service-name>"
+```
+
+Alternatively, set environment variables via the OpenShift Web Console under Deployment → Environment tab.
