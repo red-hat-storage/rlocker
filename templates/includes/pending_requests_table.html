@@ -34,6 +34,7 @@
                         {% if user.is_staff %}
                             {% include 'includes/change_priority_modals.html' %}
                             <div id="priority-options-{{ rqueue.id }}" class="btn-group">
+                                <a href="#Change-Priority-0-{{ rqueue.id }}" class="btn btn-danger" type="button" data-toggle="modal">0</a>
                                 <a href="#Change-Priority-1-{{ rqueue.id }}" class="btn btn-danger" type="button" data-toggle="modal">1</a>
                                 <a href="#Change-Priority-2-{{ rqueue.id }}" class="btn btn-danger" type="button" data-toggle="modal">2</a>
                                 <a href="#Change-Priority-3-{{ rqueue.id }}" class="btn btn-danger" type="button" data-toggle="modal">3</a>
