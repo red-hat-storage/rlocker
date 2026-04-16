@@ -7,14 +7,15 @@ class Priority(Enum):
     If a resource is requested to lock from the UI, it means
         that it is ready to be locked immediately.
     But if a resource is requested to retrieve from search_string,
-        then it should include the priority level from 1 to any integer you decide
+        then it should include the priority level from 0 to 4
     For Example, a group could decide to priority their queues that are pending for a request
         in the following way:
 
-    UI - 0
-    PRODUCTION TESTING - 1
-    LOAD TESTING - 2
+    CRITICAL/URGENT - 0 (highest priority)
+    HIGH PRIORITY PRODUCTION TESTING - 1
+    PRODUCTION TESTING - 2
     DEVELOPMENT TESTING - 3
+    LOW PRIORITY - 4 (lowest priority)
     """
 
     UI = 0

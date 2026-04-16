@@ -29,7 +29,7 @@ class Rqueue(models.Model):
 
     data = JSONField(default=dict)
     priority = models.IntegerField(
-        default=3, validators=[MinValueValidator(0), MaxValueValidator(3)]
+        default=3, validators=[MinValueValidator(0), MaxValueValidator(4)]
     )
     time_requested = models.DateTimeField(default=timezone.now)
     status = models.CharField(
