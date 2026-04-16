@@ -1,8 +1,8 @@
 asgiref==3.11.1
-Django==5.2.12
+Django==5.2.13
 django-extensions==4.1
 django-filter==25.2
-djangorestframework==3.16.1
+djangorestframework==3.17.1
 Markdown==3.10.2
 gunicorn==21.2.0
 psycopg2-binary==2.9.11
