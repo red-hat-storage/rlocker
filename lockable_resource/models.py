@@ -186,9 +186,16 @@ class LockableResource(models.Model):
         :return str:
         """
         if self.associated_queue:
+            # Determine lock method based on queue data, not just priority
+            # API requests (search_string) include a "username" field
+            # UI requests do not include "username"
+            from rqueue.utils import json_continuously_loader
+            queue_data = json_continuously_loader(self.associated_queue.data)
+            has_username = queue_data.get("username") is not None
+
             return (
                 const.LockMethod.AUTO
-                if self.associated_queue.priority > 0
+                if has_username
                 else const.LockMethod.MANUAL
             )
 

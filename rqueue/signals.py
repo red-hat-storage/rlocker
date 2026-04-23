@@ -31,9 +31,16 @@ def fetch_for_available_lockable_resources(sender, instance, created, **kwargs):
     if created:
         data = json_continuously_loader(instance.data)
         data_id = data.get("id")
+        data_label = data.get("label")
         data_signoff = data.get("signoff")
 
-        if instance.priority == Priority.UI.value:
+        # Differentiate based on data structure, not just priority:
+        # - If data has "id": we know the exact resource to lock (UI or search_by_name)
+        # - If data has "label": we need to find a free resource (search_by_label)
+
+        if data_id:
+            # This handles both UI locks and search_by_name requests
+            # Lock immediately since we know which specific resource to lock
             lock_res_object = LockableResource.objects.select_for_update().get(id=data_id)
             lock_res_object.lock(signoff=data_signoff)
             lock_res_object.associated_queue = instance
@@ -45,12 +52,12 @@ def fetch_for_available_lockable_resources(sender, instance, created, **kwargs):
                 f"Resource {lock_res_object.name} has been locked with priority {instance.priority}"
             )
 
-        elif instance.priority > Priority.UI.value:
+        elif data_label:
+            # This is a search_by_label request
+            # The resource is not yet determined, external service will handle it
             # We should be able to handle here multiple request queues in parallel.
             # We should sort them by urgency level, the lower the priority is.
             # The more urgent to handle the request in queue
-            # This case is when the locking requests are arriving from an API,
-            # therefore, it should be handled from an external service.
             pass
 
     if not created:
