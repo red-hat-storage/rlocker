@@ -7,8 +7,8 @@ function initializeJS() {
     jQuery('.popovers').popover();
 
     //custom scrollbar
-        //for html
-    jQuery("html").niceScroll({styler:"fb",cursorcolor:"#007AFF", cursorwidth: '6', cursorborderradius: '10px', background: '#F7F7F7', cursorborder: '', zindex: '1000'});
+        //for html - DISABLED: interferes with browser's Ctrl+F find functionality
+    //jQuery("html").niceScroll({styler:"fb",cursorcolor:"#007AFF", cursorwidth: '6', cursorborderradius: '10px', background: '#F7F7F7', cursorborder: '', zindex: '1000'});
         //for sidebar
     jQuery("#sidebar").niceScroll({styler:"fb",cursorcolor:"#007AFF", cursorwidth: '3', cursorborderradius: '10px', background: '#F7F7F7', cursorborder: ''});
         // for scroll panel
