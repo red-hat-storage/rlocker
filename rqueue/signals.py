@@ -4,6 +4,7 @@ from django.dispatch import receiver
 from rqueue.models import Rqueue
 from rqueue.constants import Priority, Interval, Status
 from lockable_resource.models import LockableResource
+from lockable_resource.exceptions import AlreadyLockedException
 from rqueue.utils import *
 from urllib.parse import unquote
 
@@ -42,15 +43,23 @@ def fetch_for_available_lockable_resources(sender, instance, created, **kwargs):
             # This handles both UI locks and search_by_name requests
             # Lock immediately since we know which specific resource to lock
             lock_res_object = LockableResource.objects.select_for_update().get(id=data_id)
-            lock_res_object.lock(signoff=data_signoff)
-            lock_res_object.associated_queue = instance
-            lock_res_object.save()
-            instance.add_to_data_json(json_to_add=lock_res_object.json_parse())
-            instance.report_finish()
-            print(
-                f"A queue has been changed to status FINISHED. \n"
-                f"Resource {lock_res_object.name} has been locked with priority {instance.priority}"
-            )
+            try:
+                lock_res_object.lock(signoff=data_signoff)
+                lock_res_object.associated_queue = instance
+                lock_res_object.save()
+                instance.add_to_data_json(json_to_add=lock_res_object.json_parse())
+                instance.report_finish()
+                print(
+                    f"A queue has been changed to status FINISHED. \n"
+                    f"Resource {lock_res_object.name} has been locked with priority {instance.priority}"
+                )
+            except AlreadyLockedException:
+                # Resource is already locked, leave the queue in PENDING status
+                # An external service will retry when the resource becomes available
+                print(
+                    f"Resource {lock_res_object.name} is already locked. "
+                    f"Queue {instance.id} remains PENDING with priority {instance.priority}"
+                )
 
         elif data_label:
             # This is a search_by_label request
