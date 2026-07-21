@@ -1,5 +1,9 @@
 #WARNING, DO NOT BUILD THE IMAGE WITHOUT RUNNING python manage.py collectstatic --noinput!
 FROM nginx:latest
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 RUN rm -rf /static
 RUN mkdir /static
 COPY ./static/ /static/

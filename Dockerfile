@@ -1,5 +1,9 @@
 FROM python:3.12
 ENV PYTHONUNBUFFERED 1
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 RUN mkdir /code
 WORKDIR /code
 COPY requirements.txt /code/
