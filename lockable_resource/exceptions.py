@@ -11,6 +11,13 @@ class AlreadyFreeException(Exception):
         print("The Lockable Resource you are trying to Release is already Free!")
 
 
+class ResourceInMaintenanceException(Exception):
+    def __init__(self, name=""):
+        print(
+            f"The Lockable Resource {name} is under maintenance and cannot be locked!"
+        )
+
+
 class FreeResourceNotAvailableException(Exception):
     def __init__(self, attempted_string):
         print(

@@ -20,12 +20,17 @@ class LockableResourceSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         """
-        Check that the Resource is not Locked
+        Check that the Resource is not Locked and not in Maintenance
         :param data:
         :return:
         """
         lr_name = attrs.get("name")
         lr_object_pre_save = LockableResource.objects.get(name=lr_name)
+        if lr_object_pre_save.in_maintenance and attrs.get("is_locked"):
+            raise exceptions.NotAcceptable(
+                detail=f"Lockable Resource [{lr_name}] is under maintenance and cannot be locked! "
+                "Please wait until maintenance is over before attempting to lock this resource. "
+            )
         if lr_object_pre_save.is_locked and attrs.get("is_locked"):
             # Important note: raises 406 code status for handling in different services
             raise exceptions.NotAcceptable(
