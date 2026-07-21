@@ -4,7 +4,7 @@ from django.dispatch import receiver
 from rqueue.models import Rqueue
 from rqueue.constants import Priority, Interval, Status
 from lockable_resource.models import LockableResource
-from lockable_resource.exceptions import AlreadyLockedException
+from lockable_resource.exceptions import AlreadyLockedException, ResourceInMaintenanceException
 from rqueue.utils import *
 from urllib.parse import unquote
 
@@ -58,6 +58,13 @@ def fetch_for_available_lockable_resources(sender, instance, created, **kwargs):
                 # An external service will retry when the resource becomes available
                 print(
                     f"Resource {lock_res_object.name} is already locked. "
+                    f"Queue {instance.id} remains PENDING with priority {instance.priority}"
+                )
+            except ResourceInMaintenanceException:
+                # Resource is under maintenance, leave the queue in PENDING status
+                # An external service will retry when maintenance is over
+                print(
+                    f"Resource {lock_res_object.name} is under maintenance. "
                     f"Queue {instance.id} remains PENDING with priority {instance.priority}"
                 )
 

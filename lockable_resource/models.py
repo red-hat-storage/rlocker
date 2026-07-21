@@ -1,5 +1,9 @@
 from django.db import models
-from lockable_resource.exceptions import AlreadyFreeException, AlreadyLockedException
+from lockable_resource.exceptions import (
+    AlreadyFreeException,
+    AlreadyLockedException,
+    ResourceInMaintenanceException,
+)
 from rqueue.models import Rqueue
 from rqueue.utils import DescriptiveTime
 import lockable_resource.constants as const
@@ -207,9 +211,12 @@ class LockableResource(models.Model):
         This method will lock the resource if it is requested.
             It will assign a new signoff message.
 
+        :raises: ResourceInMaintenanceException
         :raises: AlreadyLockedException
         :returns: None
         """
+        if self.in_maintenance:
+            raise ResourceInMaintenanceException(self.name)
         if self.can_lock:
             self.is_locked = True
             self.signoff = signoff
