@@ -34,6 +34,7 @@ def fetch_for_available_lockable_resources(sender, instance, created, **kwargs):
         data_id = data.get("id")
         data_label = data.get("label")
         data_signoff = data.get("signoff")
+        data_link = data.get("link")
 
         # Differentiate based on data structure, not just priority:
         # - If data has "id": we know the exact resource to lock (UI or search_by_name)
@@ -46,6 +47,8 @@ def fetch_for_available_lockable_resources(sender, instance, created, **kwargs):
             try:
                 lock_res_object.lock(signoff=data_signoff)
                 lock_res_object.associated_queue = instance
+                if data_link and data_link != "None":
+                    lock_res_object.link = data_link
                 lock_res_object.save()
                 instance.add_to_data_json(json_to_add=lock_res_object.json_parse())
                 instance.report_finish()
