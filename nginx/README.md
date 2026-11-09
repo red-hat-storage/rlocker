@@ -13,7 +13,7 @@ In the `nginx` directory:
 ```
 podman login quay.io...
 
-export TAG=2026-07-08a
+export TAG=2026-11-09
 
 podman build --tag rlocker-nginx:${TAG} -f ./Dockerfile
 
@@ -24,6 +24,7 @@ podman push rlocker-nginx:${TAG} quay.io/ocsci/rlocker-nginx:${TAG}
 
 
 # tags
+## 2026-11-09 - update system packages to fix various CVEs
 
 ## 2026-07-08a - update system packages to fix various CVEs
 
